@@ -1,0 +1,219 @@
+[
+  {
+    "type": "amm",
+    "network": "bsc-testnet",
+    "baseSymbol": "WBNB",
+    "quoteSymbol": "USDT",
+    "address": "0x5F52Ad4bD4f519AE79999400ad8B83A3D002fD92"
+  },
+  {
+    "type": "clmm",
+    "network": "bsc-testnet",
+    "baseSymbol": "WBNB",
+    "quoteSymbol": "USDT",
+    "address": "0x29A37a042b71705F7231F6aa7022D5C30c52A588"
+  },
+  {
+    "type": "clmm",
+    "network": "bsc-testnet",
+    "baseSymbol": "WBNB",
+    "quoteSymbol": "USDT",
+    "address": "0x2dbB5a4c235164B9f772179A43faca2c71a8abDB"
+  },
+  {
+    "type": "clmm",
+    "network": "bsc-testnet",
+    "baseSymbol": "WBNB",
+    "quoteSymbol": "USDT",
+    "address": "0x4025602F13e7f328eeb9f5B3557A2817348fC4C6"
+  },
+  {
+    "type": "amm",
+    "network": "bsc-testnet",
+    "baseSymbol": "WBNB",
+    "quoteSymbol": "BUSD",
+    "address": "0x575Cb459b6E6B8187d3Ef9a25105D64011874820"
+  },
+  {
+    "type": "clmm",
+    "network": "bsc-testnet",
+    "baseSymbol": "WBNB",
+    "quoteSymbol": "BUSD",
+    "address": "0xACf30D531C2DAc92a99a917d41Fa98ce7FBbED17"
+  },
+  {
+    "type": "clmm",
+    "network": "bsc-testnet",
+    "baseSymbol": "WBNB",
+    "quoteSymbol": "BUSD",
+    "address": "0xa0172eaa8aC038FaDC47129F8dFE9d20c3073Ea9"
+  },
+  {
+    "type": "clmm",
+    "network": "bsc-testnet",
+    "baseSymbol": "WBNB",
+    "quoteSymbol": "BUSD",
+    "address": "0x4c79696E1931733B6649C5978A2F7483cBb4Cd16"
+  },
+  {
+    "type": "amm",
+    "network": "bsc-testnet",
+    "baseSymbol": "WBNB",
+    "quoteSymbol": "USDC",
+    "address": "0xBBbEA32C9f6400d36ABA0804F907bd860BA8a96f"
+  },
+  {
+    "type": "clmm",
+    "network": "bsc-testnet",
+    "baseSymbol": "WBNB",
+    "quoteSymbol": "USDC",
+    "address": "0x750b4bEae21C8b43994b85EB26e7DAf8Eb06eCe2"
+  },
+  {
+    "type": "clmm",
+    "network": "bsc-testnet",
+    "baseSymbol": "WBNB",
+    "quoteSymbol": "USDC",
+    "address": "0x3E9eB43FDcbC21790008AFc127AbE261F048ed58"
+  },
+  {
+    "type": "clmm",
+    "network": "bsc-testnet",
+    "baseSymbol": "WBNB",
+    "quoteSymbol": "USDC",
+    "address": "0x87F516Fb6d8cFe99E3D3423BB83F7140aa54cA30"
+  },
+  {
+    "type": "amm",
+    "network": "bsc-testnet",
+    "baseSymbol": "WBNB",
+    "quoteSymbol": "CAKE",
+    "address": "0xa96818CA65B57bEc2155Ba5c81a70151f63300CD"
+  },
+  {
+    "type": "clmm",
+    "network": "bsc-testnet",
+    "baseSymbol": "WBNB",
+    "quoteSymbol": "CAKE",
+    "address": "0x3AD3f791d0e04bA135f28Ee385d1e0e6BB01FCfa"
+  },
+  {
+    "type": "clmm",
+    "network": "bsc-testnet",
+    "baseSymbol": "WBNB",
+    "quoteSymbol": "CAKE",
+    "address": "0xeaf78e3AA2C19dF9495318Cd9EA2aD83Be7D5015"
+  },
+  {
+    "type": "clmm",
+    "network": "bsc-testnet",
+    "baseSymbol": "WBNB",
+    "quoteSymbol": "CAKE",
+    "address": "0x703bc57fc0a39bd81D668B2477f7c20E546945fD"
+  },
+  {
+    "type": "amm",
+    "network": "bsc-testnet",
+    "baseSymbol": "USDT",
+    "quoteSymbol": "BUSD",
+    "address": "0x4B0598Ecf9924ce4b910179D40D29835a90f2226"
+  },
+  {
+    "type": "clmm",
+    "network": "bsc-testnet",
+    "baseSymbol": "USDT",
+    "quoteSymbol": "BUSD",
+    "address": "0x26e888A6d81B5A9Ce7C3D1346035E1f270dAc993"
+  },
+  {
+    "type": "clmm",
+    "network": "bsc-testnet",
+    "baseSymbol": "USDT",
+    "quoteSymbol": "BUSD",
+    "address": "0xA072CfBA150c724D408Fb3041b6d3B05eA9cE0c8"
+  },
+  {
+    "type": "amm",
+    "network": "bsc-testnet",
+    "baseSymbol": "USDT",
+    "quoteSymbol": "USDC",
+    "address": "0x9369844Fd5FACbE471260C621a5A4a2073e64e0f"
+  },
+  {
+    "type": "clmm",
+    "network": "bsc-testnet",
+    "baseSymbol": "USDT",
+    "quoteSymbol": "USDC",
+    "address": "0x6baD9Cb227548c98D74409aD50b0497a0EB17d11"
+  },
+  {
+    "type": "amm",
+    "network": "bsc-testnet",
+    "baseSymbol": "USDT",
+    "quoteSymbol": "CAKE",
+    "address": "0x2B4D17cAAC0CB710b497Fd291AF3056800162171"
+  },
+  {
+    "type": "clmm",
+    "network": "bsc-testnet",
+    "baseSymbol": "USDT",
+    "quoteSymbol": "CAKE",
+    "address": "0xA70Fa8FCf906EE4b93e4dA63001bb0B7a6AE477E"
+  },
+  {
+    "type": "clmm",
+    "network": "bsc-testnet",
+    "baseSymbol": "USDT",
+    "quoteSymbol": "CAKE",
+    "address": "0x110F83ebF344aCB880B0e2a9dB0908b90178254f"
+  },
+  {
+    "type": "amm",
+    "network": "bsc-testnet",
+    "baseSymbol": "BUSD",
+    "quoteSymbol": "USDC",
+    "address": "0x462Dd8E17f0d4e20370B880145f8BEa906e87976"
+  },
+  {
+    "type": "clmm",
+    "network": "bsc-testnet",
+    "baseSymbol": "BUSD",
+    "quoteSymbol": "USDC",
+    "address": "0x46DA4e6CcE79F5F4D125A8F6a4832de601dB8994"
+  },
+  {
+    "type": "clmm",
+    "network": "bsc-testnet",
+    "baseSymbol": "BUSD",
+    "quoteSymbol": "USDC",
+    "address": "0x8Fff99736Cd446B775DEC91377278ab083157190"
+  },
+  {
+    "type": "amm",
+    "network": "bsc-testnet",
+    "baseSymbol": "BUSD",
+    "quoteSymbol": "CAKE",
+    "address": "0xB4af73Af1b985bfB76d5a3d346415C4694538e09"
+  },
+  {
+    "type": "clmm",
+    "network": "bsc-testnet",
+    "baseSymbol": "BUSD",
+    "quoteSymbol": "CAKE",
+    "address": "0x43712a03Dc694892dad713D3D1A018D5a87dCEB4"
+  },
+  {
+    "type": "amm",
+    "network": "bsc-testnet",
+    "baseSymbol": "USDC",
+    "quoteSymbol": "CAKE",
+    "address": "0xcaABf6D1494E15e1f10e6E821ac1c6bcA72fA65b"
+  },
+  {
+    "type": "amm",
+    "network": "bsc-testnet",
+    "baseSymbol": "PERL",
+    "quoteSymbol": "BNBX",
+    "address": "0x3d8eE5b7249dF76E8fB6Cf2Ec53956a02Fa22369"
+  }
+]

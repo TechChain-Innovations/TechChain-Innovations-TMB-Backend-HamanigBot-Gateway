@@ -50,6 +50,10 @@ configurations:
     configurationPath: chains/ethereum/polygon.yml
     schemaPath: ethereum-network-schema.json
 
+  $namespace ethereum-bsc-testnet:
+    configurationPath: chains/ethereum/bsc-testnet.yml
+    schemaPath: ethereum-network-schema.json
+
   # Solana networks
   $namespace solana-mainnet-beta:
     configurationPath: chains/solana/mainnet-beta.yml
