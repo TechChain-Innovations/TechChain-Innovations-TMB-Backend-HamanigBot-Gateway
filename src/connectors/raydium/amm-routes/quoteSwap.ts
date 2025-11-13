@@ -155,23 +155,27 @@ async function quoteCpmmSwap(
     const inputAmount = new BN(amountIn);
 
     // swap pool mintA for mintB
-    const swapResult = CurveCalculator.swap(
+    const swapResult = CurveCalculator.swapBaseInput(
       inputAmount,
       baseIn ? rpcData.baseReserve : rpcData.quoteReserve,
       baseIn ? rpcData.quoteReserve : rpcData.baseReserve,
       rpcData.configInfo!.tradeFeeRate,
+      rpcData.configInfo!.creatorFeeRate,
+      rpcData.configInfo!.protocolFeeRate,
+      rpcData.configInfo!.fundFeeRate,
+      false
     );
 
     // Apply slippage to output amount
     const effectiveSlippage = slippagePct === undefined ? 0.01 : slippagePct / 100;
-    const minAmountOut = swapResult.destinationAmountSwapped
+    const minAmountOut = swapResult.outputAmount
       .mul(new BN(Math.floor((1 - effectiveSlippage) * 10000)))
       .div(new BN(10000));
 
     return {
       poolInfo,
       amountIn: inputAmount,
-      amountOut: swapResult.destinationAmountSwapped,
+      amountOut: swapResult.outputAmount,
       minAmountOut,
       maxAmountIn: inputAmount,
       fee: swapResult.tradeFee,
@@ -195,23 +199,24 @@ async function quoteCpmmSwap(
       outputAmount=${outputAmount.toString()}`);
 
     // swap pool mintA for mintB
-    const swapResult = CurveCalculator.swapBaseOut({
-      poolMintA: poolInfo.mintA,
-      poolMintB: poolInfo.mintB,
-      tradeFeeRate: rpcData.configInfo!.tradeFeeRate,
-      baseReserve: rpcData.baseReserve,
-      quoteReserve: rpcData.quoteReserve,
-      outputMint: outputMintPk,
+    const swapResult = CurveCalculator.swapBaseOutput(
       outputAmount,
-    });
+      baseIn ? rpcData.quoteReserve : rpcData.baseReserve, // input vault is the one we are not outputting
+      baseIn ? rpcData.baseReserve : rpcData.quoteReserve, // output vault is the one we are outputting
+      rpcData.configInfo!.tradeFeeRate,
+      rpcData.configInfo!.creatorFeeRate,
+      rpcData.configInfo!.protocolFeeRate,
+      rpcData.configInfo!.fundFeeRate,
+      false
+    );
 
     // Apply slippage to input amount
     const effectiveSlippage = slippagePct === undefined ? 0.01 : slippagePct / 100;
-    const maxAmountIn = swapResult.amountIn.mul(new BN(Math.floor((1 + effectiveSlippage) * 10000))).div(new BN(10000));
+    const maxAmountIn = swapResult.inputAmount.mul(new BN(Math.floor((1 + effectiveSlippage) * 10000))).div(new BN(10000));
 
     return {
       poolInfo,
-      amountIn: swapResult.amountIn,
+      amountIn: swapResult.inputAmount,
       amountOut: outputAmount,
       minAmountOut: outputAmount,
       maxAmountIn,

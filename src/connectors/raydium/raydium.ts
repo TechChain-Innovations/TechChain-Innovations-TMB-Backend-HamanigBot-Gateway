@@ -9,7 +9,6 @@ import {
   PositionUtils,
   TickUtils,
   ClmmKeys,
-  ClmmRpcData,
   TxVersion,
   AmmV4Keys,
   AmmV5Keys,
@@ -117,8 +116,8 @@ export class Raydium {
     logger.info('Raydium SDK reinitialized with owner');
   }
 
-  async getClmmPoolfromRPC(poolAddress: string): Promise<ClmmRpcData | null> {
-    const poolInfoResponse: ClmmRpcData = await this.raydiumSDK.clmm.getRpcClmmPoolInfo({ poolId: poolAddress });
+  async getClmmPoolfromRPC(poolAddress: string): Promise<any | null> {
+    const poolInfoResponse = await this.raydiumSDK.clmm.getRpcClmmPoolInfo({ poolId: poolAddress });
     return poolInfoResponse;
   }
 

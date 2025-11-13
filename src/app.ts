@@ -8,7 +8,7 @@ import fastifySwagger from '@fastify/swagger';
 import fastifySwaggerUi from '@fastify/swagger-ui';
 import { TypeBoxTypeProvider } from '@fastify/type-provider-typebox';
 import { Type } from '@sinclair/typebox';
-import Fastify, { FastifyInstance } from 'fastify';
+import Fastify, { FastifyInstance, FastifyError } from 'fastify';
 
 // Internal dependencies
 
@@ -120,6 +120,47 @@ const swaggerOptions = {
 // Make docsServer accessible to startGateway
 let docsServer: FastifyInstance | null = null;
 
+type ExtendedFastifyError = FastifyError & {
+  details?: unknown;
+  data?: unknown;
+  response?: {
+    data?: unknown;
+  };
+  cause?: unknown;
+};
+
+const extractForwardableErrorDetails = (error: ExtendedFastifyError): unknown => {
+  if (!error) {
+    return undefined;
+  }
+
+  if (error.details) {
+    return error.details;
+  }
+
+  if (error.data) {
+    return error.data;
+  }
+
+  if (error.response && typeof error.response === 'object' && 'data' in error.response) {
+    return (error.response as { data?: unknown }).data;
+  }
+
+  if (typeof error.cause === 'string') {
+    return { cause: error.cause };
+  }
+
+  if (error.cause && typeof error.cause === 'object') {
+    if (error.cause instanceof Error) {
+      return { message: error.cause.message };
+    }
+
+    return error.cause;
+  }
+
+  return undefined;
+};
+
 // Create gateway app configuration function
 const configureGatewayServer = () => {
   const server = Fastify({
@@ -150,7 +191,7 @@ const configureGatewayServer = () => {
 
   // Register rate limiting globally
   server.register(fastifyRateLimit, {
-    max: 100, // maximum 100 requests
+    max: 1000, // maximum 1000 requests
     timeWindow: '1 minute', // per 1 minute window
     global: true, // apply to all routes
     errorResponseBuilder: function (_request, context) {
@@ -264,7 +305,7 @@ const configureGatewayServer = () => {
   );
 
   // Global error handler
-  server.setErrorHandler((error, request, reply) => {
+  server.setErrorHandler((error: ExtendedFastifyError, request, reply) => {
     // Handle validation errors
     if ('validation' in error && error.validation) {
       return reply.status(400).send({
@@ -277,11 +318,18 @@ const configureGatewayServer = () => {
 
     // Handle Fastify's native errors
     if (error.statusCode && error.statusCode >= 400) {
-      return reply.status(error.statusCode).send({
+      const responseBody: Record<string, unknown> = {
         statusCode: error.statusCode,
         error: error.name,
         message: error.message,
-      });
+      };
+
+      const details = extractForwardableErrorDetails(error);
+      if (details !== undefined) {
+        responseBody.details = details;
+      }
+
+      return reply.status(error.statusCode).send(responseBody);
     }
 
     // Log and handle unexpected errors
@@ -292,11 +340,18 @@ const configureGatewayServer = () => {
       params: request.params,
     });
 
-    reply.status(500).send({
+    const responseBody: Record<string, unknown> = {
       statusCode: 500,
-      error: 'Internal Server Error',
-      message: 'An unexpected error occurred',
-    });
+      error: error.name || 'Internal Server Error',
+      message: error.message || 'An unexpected error occurred',
+    };
+
+    const details = extractForwardableErrorDetails(error);
+    if (details !== undefined) {
+      responseBody.details = details;
+    }
+
+    reply.status(500).send(responseBody);
   });
 
   // Health check route (outside registerRoutes, only on main server)

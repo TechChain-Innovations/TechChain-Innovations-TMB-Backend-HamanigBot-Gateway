@@ -85,6 +85,19 @@ export const contractAddresses: NetworkContractAddresses = {
     // Universal Router V2 - Official Pancakeswap address
     universalRouterV2Address: '0x13f4EA83D0bd40E75C8222255bc855a974568Dd4',
   },
+  sepolia: {
+    // V2 contracts - Official Pancakeswap addresses for Sepolia testnet
+    pancakeswapV2RouterAddress: '0x9Ac64Cc6e4415144C455BD8E4837Fea55603e5c3',
+    pancakeswapV2FactoryAddress: '0x5757371414417b8C6CAad45bAeF941aBc7d3Ab32',
+    // V3 contracts - Not applicable for Sepolia testnet
+    pancakeswapV3SwapRouter02Address: '0x1b81D678ffb9C0263b24A97847620C99d213eB14',
+    pancakeswapV3NftManagerAddress: '0x46A15B0b27311cedF172AB29E4f4766fbE7F4364',
+    pancakeswapV3QuoterV2ContractAddress: '0xB048Bbc1Ee6b733FFfCFb9e9CeF7375518e25997',
+    pancakeswapV3FactoryAddress: '0x0BFbCF9fa4f9C56B0F40a671Ad40E0805A091865',
+    pancakeswapV3PoolDeployerAddress: '0x41ff9AA7e16B8B1a8a8dc4f0eFacd93D02d071c9',
+    // Universal Router V2 - Official Pancakeswap address for Sepolia
+    universalRouterV2Address: '0x13f4EA83D0bd40E75C8222255bc855a974568Dd4',
+  },
 };
 
 /**

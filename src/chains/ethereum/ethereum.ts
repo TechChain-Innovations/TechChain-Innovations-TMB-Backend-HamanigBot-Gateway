@@ -172,6 +172,7 @@ export class Ethereum {
       this.chainId === 137 ||
       this.chainId === 42161 ||
       this.chainId === 10 ||
+      this.chainId === 11155111 ||
       this.chainId === 8453;
 
     if (supportsEIP1559) {

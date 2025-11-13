@@ -5,7 +5,7 @@ import { bigNumberWithDecimalToStr } from '../../../services/base';
 import { logger } from '../../../services/logger';
 import { Ethereum } from '../ethereum';
 import { EthereumLedger } from '../ethereum-ledger';
-import { waitForTransactionWithTimeout } from '../ethereum.utils';
+import { waitForTransactionWithTimeout, APPROVAL_TRANSACTION_TIMEOUT } from '../ethereum.utils';
 import { UnwrapRequestSchema, UnwrapResponseSchema, UnwrapRequestType, UnwrapResponseType } from '../schemas';
 
 // Default gas limit for unwrap operations
@@ -138,8 +138,13 @@ export async function unwrapEthereum(fastify: FastifyInstance, network: string, 
       // Send the signed transaction
       const txResponse = await ethereum.provider.sendTransaction(signedTx);
 
-      // Wait for confirmation with timeout (30 seconds for hardware wallets)
-      receipt = await waitForTransactionWithTimeout(txResponse, 30000);
+      // Wait for confirmation with timeout (60 seconds for unwrap operations)
+      receipt = await waitForTransactionWithTimeout(txResponse, APPROVAL_TRANSACTION_TIMEOUT);
+
+      // Check if receipt was received
+      if (!receipt) {
+        throw new Error(`Transaction timeout. Hash: ${txResponse.hash}`);
+      }
 
       transaction = {
         hash: receipt.transactionHash,
@@ -178,8 +183,13 @@ export async function unwrapEthereum(fastify: FastifyInstance, network: string, 
       transaction = await wallet.sendTransaction(withdrawTx);
       nonce = transaction.nonce;
 
-      // Wait for transaction confirmation with timeout
-      receipt = await waitForTransactionWithTimeout(transaction);
+      // Wait for transaction confirmation with timeout (60 seconds)
+      receipt = await waitForTransactionWithTimeout(transaction, APPROVAL_TRANSACTION_TIMEOUT);
+    }
+
+    // Check if receipt was received
+    if (!receipt) {
+      throw new Error(`Transaction timeout. Hash: ${transaction.hash}`);
     }
 
     // Calculate actual fee from receipt

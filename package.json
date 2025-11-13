@@ -65,7 +65,7 @@
     "@pancakeswap/v3-periphery": "^1.0.2",
     "@pancakeswap/v3-sdk": "^3.9.5",
     "@pancakeswap/v4-sdk": "^0.1.8",
-    "@raydium-io/raydium-sdk-v2": "0.1.141-alpha",
+    "@raydium-io/raydium-sdk-v2": "0.2.30-alpha",
     "@sinclair/typebox": "^0.33.22",
     "@solana/spl-token": "0.4.8",
     "@solana/spl-token-registry": "^0.2.4574",
