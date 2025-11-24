@@ -261,7 +261,7 @@ describe('GET /quote-swap', () => {
       0.5,
       false,
       true,
-      'ExactOut',
+      'ExactOut'
     );
 
     // Subsequent calls should be ExactIn approximations
@@ -273,7 +273,7 @@ describe('GET /quote-swap', () => {
       0.5,
       false,
       true,
-      'ExactIn',
+      'ExactIn'
     );
   });
 });

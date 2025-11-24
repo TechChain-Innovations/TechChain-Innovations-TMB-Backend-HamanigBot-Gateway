@@ -86,7 +86,7 @@ export const findPoolAddress = (
   _baseToken: string,
   _quoteToken: string,
   _poolType: 'amm' | 'clmm',
-  _network: string,
+  _network: string
 ): string | null => {
   // Pools are now managed separately, return null for dynamic pool discovery
   return null;
@@ -121,7 +121,7 @@ export const formatTokenAmount = (amount: string | number, decimals: number): nu
 export async function getFullTokenFromSymbol(
   fastify: FastifyInstance,
   ethereum: Ethereum,
-  tokenSymbol: string,
+  tokenSymbol: string
 ): Promise<Token> {
   if (!ethereum.ready()) {
     await ethereum.init();
@@ -139,7 +139,7 @@ export async function getFullTokenFromSymbol(
     tokenInfo.address,
     tokenInfo.decimals,
     tokenInfo.symbol,
-    tokenInfo.name,
+    tokenInfo.name
   );
 
   if (!uniswapToken) {
@@ -165,7 +165,7 @@ export function getUniswapV3PoolWithTickProvider(
   fee: FeeAmount,
   sqrtPriceX96: string,
   liquidity: string,
-  tick: number,
+  tick: number
 ): V3Pool {
   return new V3Pool(
     tokenA,
@@ -189,7 +189,7 @@ export function getUniswapV3PoolWithTickProvider(
         const nextTick = lte ? tick - tickSpacing : tick + tickSpacing;
         return [nextTick, false];
       },
-    },
+    }
   );
 }
 
@@ -294,7 +294,7 @@ export async function getV3PoolInfo(poolAddress: string, network: string): Promi
 export async function getUniswapPoolInfo(
   poolAddress: string,
   network: string,
-  poolType?: 'amm' | 'clmm',
+  poolType?: 'amm' | 'clmm'
 ): Promise<UniswapPoolInfo | null> {
   // If pool type is specified, use the appropriate method
   if (poolType === 'amm') {

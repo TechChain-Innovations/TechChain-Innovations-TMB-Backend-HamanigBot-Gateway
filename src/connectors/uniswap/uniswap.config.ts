@@ -6,8 +6,8 @@ export namespace UniswapConfig {
   // Supported networks for Uniswap
   // See https://docs.uniswap.org/protocol/reference/deployments
   export const chain = 'ethereum';
-  export const networks = getAvailableEthereumNetworks().filter(network =>
-    ['mainnet', 'arbitrum', 'avalanche', 'base', 'bsc', 'celo', 'optimism', 'polygon', 'sepolia'].includes(network),
+  export const networks = getAvailableEthereumNetworks().filter((network) =>
+    ['mainnet', 'arbitrum', 'avalanche', 'base', 'bsc', 'celo', 'optimism', 'polygon', 'sepolia'].includes(network)
   );
   export type Network = string;
 

@@ -71,7 +71,7 @@ export const removeWalletRoute: FastifyPluginAsync = async (fastify) => {
       return {
         message: `Wallet ${validatedAddress} removed successfully`,
       };
-    },
+    }
   );
 };
 

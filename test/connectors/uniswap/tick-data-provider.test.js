@@ -49,7 +49,7 @@ describe('Uniswap Tick Data Provider Tests', () => {
         mockPoolData.sqrtPriceX96.toString(),
         mockPoolData.liquidity.toString(),
         mockPoolData.tick,
-        mockTickDataProvider,
+        mockTickDataProvider
       );
 
       // Test that the pool instance has the expected properties
@@ -73,7 +73,7 @@ describe('Uniswap Tick Data Provider Tests', () => {
         mockPoolData.sqrtPriceX96.toString(),
         mockPoolData.liquidity.toString(),
         mockPoolData.tick,
-        mockTickDataProvider,
+        mockTickDataProvider
       );
 
       // Test the tick data provider methods
@@ -87,7 +87,7 @@ describe('Uniswap Tick Data Provider Tests', () => {
       const [nextTickUp, initializedUp] = await pool.tickDataProvider.nextInitializedTickWithinOneWord(
         testTick,
         false,
-        pool.tickSpacing,
+        pool.tickSpacing
       );
       expect(nextTickUp).toBe(testTick + pool.tickSpacing);
       expect(initializedUp).toBe(false);
@@ -96,7 +96,7 @@ describe('Uniswap Tick Data Provider Tests', () => {
       const [nextTickDown, initializedDown] = await pool.tickDataProvider.nextInitializedTickWithinOneWord(
         testTick,
         true,
-        pool.tickSpacing,
+        pool.tickSpacing
       );
       expect(nextTickDown).toBe(testTick - pool.tickSpacing);
       expect(initializedDown).toBe(false);

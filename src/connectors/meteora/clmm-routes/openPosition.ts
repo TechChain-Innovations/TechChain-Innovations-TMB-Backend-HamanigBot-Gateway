@@ -35,7 +35,7 @@ async function openPosition(
   baseTokenAmount: number | undefined,
   quoteTokenAmount: number | undefined,
   slippagePct?: number,
-  strategyType?: number,
+  strategyType?: number
 ): Promise<OpenPositionResponseType> {
   const solana = await Solana.getInstance(network);
   const meteora = await Meteora.getInstance(network);
@@ -83,13 +83,13 @@ async function openPosition(
 
   if (balances[tokenXSymbol] < requiredBaseAmount) {
     throw fastify.httpErrors.badRequest(
-      INSUFFICIENT_BALANCE_MESSAGE(tokenXSymbol, requiredBaseAmount.toString(), balances[tokenXSymbol].toString()),
+      INSUFFICIENT_BALANCE_MESSAGE(tokenXSymbol, requiredBaseAmount.toString(), balances[tokenXSymbol].toString())
     );
   }
 
   if (tokenYSymbol && balances[tokenYSymbol] < requiredQuoteAmount) {
     throw fastify.httpErrors.badRequest(
-      `Insufficient ${tokenYSymbol} balance. Required: ${requiredQuoteAmount}, Available: ${balances[tokenYSymbol]}`,
+      `Insufficient ${tokenYSymbol} balance. Required: ${requiredQuoteAmount}, Available: ${balances[tokenYSymbol]}`
     );
   }
 
@@ -103,8 +103,8 @@ async function openPosition(
       throw fastify.httpErrors.badRequest(
         OPEN_POSITION_ERROR_MESSAGE(
           `Current price ${currentPrice.toFixed(4)} is below lower price ${lowerPrice.toFixed(4)}. ` +
-            `Requires positive ${tokenXSymbol} amount and zero ${tokenYSymbol} amount.`,
-        ),
+            `Requires positive ${tokenXSymbol} amount and zero ${tokenYSymbol} amount.`
+        )
       );
     }
   } else if (currentPrice > upperPrice) {
@@ -112,8 +112,8 @@ async function openPosition(
       throw fastify.httpErrors.badRequest(
         OPEN_POSITION_ERROR_MESSAGE(
           `Current price ${currentPrice.toFixed(4)} is above upper price ${upperPrice.toFixed(4)}. ` +
-            `Requires positive ${tokenYSymbol} amount and zero ${tokenXSymbol} amount.`,
-        ),
+            `Requires positive ${tokenYSymbol} amount and zero ${tokenXSymbol} amount.`
+        )
       );
     }
   }
@@ -146,10 +146,14 @@ async function openPosition(
   });
 
   logger.info(
-    `Opening position in pool ${poolAddress} with price range ${lowerPrice.toFixed(4)} - ${upperPrice.toFixed(4)} ${tokenYSymbol}/${tokenXSymbol}`,
+    `Opening position in pool ${poolAddress} with price range ${lowerPrice.toFixed(4)} - ${upperPrice.toFixed(
+      4
+    )} ${tokenYSymbol}/${tokenXSymbol}`
   );
   logger.info(
-    `Token amounts: ${(baseTokenAmount || 0).toFixed(6)} ${tokenXSymbol}, ${(quoteTokenAmount || 0).toFixed(6)} ${tokenYSymbol}`,
+    `Token amounts: ${(baseTokenAmount || 0).toFixed(6)} ${tokenXSymbol}, ${(quoteTokenAmount || 0).toFixed(
+      6
+    )} ${tokenYSymbol}`
   );
   logger.info(`Bin IDs: min=${minBinId}, max=${maxBinId}, active=${activeBin.binId}`);
   if (slippageBps) {
@@ -196,11 +200,13 @@ async function openPosition(
       tokenXSymbol === 'SOL'
         ? Math.abs(baseTokenBalanceChange - txFee)
         : tokenYSymbol === 'SOL'
-          ? Math.abs(quoteTokenBalanceChange - txFee)
-          : txFee;
+        ? Math.abs(quoteTokenBalanceChange - txFee)
+        : txFee;
 
     logger.info(
-      `Position opened at ${newImbalancePosition.publicKey.toBase58()}: ${Math.abs(baseTokenBalanceChange).toFixed(4)} ${tokenXSymbol}, ${Math.abs(quoteTokenBalanceChange).toFixed(4)} ${tokenYSymbol}`,
+      `Position opened at ${newImbalancePosition.publicKey.toBase58()}: ${Math.abs(baseTokenBalanceChange).toFixed(
+        4
+      )} ${tokenXSymbol}, ${Math.abs(quoteTokenBalanceChange).toFixed(4)} ${tokenYSymbol}`
     );
 
     return {
@@ -263,7 +269,7 @@ export const openPositionRoute: FastifyPluginAsync = async (fastify) => {
           baseTokenAmount,
           quoteTokenAmount,
           slippagePct,
-          strategyType,
+          strategyType
         );
       } catch (e) {
         logger.error(e);
@@ -272,7 +278,7 @@ export const openPositionRoute: FastifyPluginAsync = async (fastify) => {
         }
         throw fastify.httpErrors.internalServerError('Internal server error');
       }
-    },
+    }
   );
 };
 

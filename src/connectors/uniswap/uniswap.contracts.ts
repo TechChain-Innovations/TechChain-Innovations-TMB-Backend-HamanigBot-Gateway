@@ -312,14 +312,21 @@ export function getSpender(network: string, connectorName: string): string {
     return getUniswapV2RouterAddress(network);
   }
 
-  // Check for CLMM swap-specific pattern - use SwapRouter02
-  if (connectorName.includes('/clmm/swap')) {
-    return getUniswapV3SwapRouter02Address(network);
-  }
-
   // Check for CLMM (V3) connector pattern
+  // For swap operations, use SwapRouter02
+  // For liquidity position operations, use NFT Position Manager
   if (connectorName.includes('/clmm')) {
-    return getUniswapV3NftManagerAddress(network);
+    // If it's a liquidity position operation, use NFT Manager
+    if (
+      connectorName.includes('/addPosition') ||
+      connectorName.includes('/removePosition') ||
+      connectorName.includes('/increaseLiquidity') ||
+      connectorName.includes('/decreaseLiquidity')
+    ) {
+      return getUniswapV3NftManagerAddress(network);
+    }
+    // For swaps and other operations, use SwapRouter02
+    return getUniswapV3SwapRouter02Address(network);
   }
 
   // For router connector pattern or regular uniswap connector, use Universal Router V2

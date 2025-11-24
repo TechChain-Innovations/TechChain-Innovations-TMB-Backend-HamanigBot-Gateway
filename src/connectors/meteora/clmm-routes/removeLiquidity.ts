@@ -21,7 +21,7 @@ export async function removeLiquidity(
   network: string,
   walletAddress: string,
   positionAddress: string,
-  percentageToRemove: number,
+  percentageToRemove: number
 ): Promise<RemoveLiquidityResponseType> {
   const solana = await Solana.getInstance(network);
   const meteora = await Meteora.getInstance(network);
@@ -39,7 +39,7 @@ export async function removeLiquidity(
 
   if (!positionResult || !positionResult.position) {
     throw fastify.httpErrors.notFound(
-      `Position not found: ${positionAddress}. Please provide a valid position address`,
+      `Position not found: ${positionAddress}. Please provide a valid position address`
     );
   }
 
@@ -123,7 +123,9 @@ export async function removeLiquidity(
     const tokenYRemovedAmount = balanceChanges[1];
 
     logger.info(
-      `Liquidity removed from position ${positionAddress}: ${Math.abs(tokenXRemovedAmount).toFixed(4)} ${tokenXSymbol}, ${Math.abs(tokenYRemovedAmount).toFixed(4)} ${tokenYSymbol}`,
+      `Liquidity removed from position ${positionAddress}: ${Math.abs(tokenXRemovedAmount).toFixed(
+        4
+      )} ${tokenXSymbol}, ${Math.abs(tokenYRemovedAmount).toFixed(4)} ${tokenYSymbol}`
     );
 
     return {
@@ -175,7 +177,7 @@ export const removeLiquidityRoute: FastifyPluginAsync = async (fastify) => {
         }
         throw fastify.httpErrors.internalServerError('Internal server error');
       }
-    },
+    }
   );
 };
 

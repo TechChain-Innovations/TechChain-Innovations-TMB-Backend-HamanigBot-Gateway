@@ -77,7 +77,7 @@ export class Meteora {
   async getPools(
     limit: number = 100,
     tokenMintA?: string,
-    tokenMintB?: string,
+    tokenMintB?: string
   ): Promise<{ publicKey: PublicKey; account: LbPair }[]> {
     const timeoutMs = 10000;
     try {
@@ -233,7 +233,7 @@ export class Meteora {
     const [matchingPosition] = Array.from(allPositions.values())
       .map((position) => ({
         position: position.lbPairPositionsData.find(
-          (lbPosition) => lbPosition.publicKey.toBase58() === positionAddress,
+          (lbPosition) => lbPosition.publicKey.toBase58() === positionAddress
         ),
         info: position,
       }))
@@ -302,7 +302,7 @@ export class Meteora {
     poolAddress: string,
     lowerPrice: number,
     upperPrice: number,
-    padBins: number = 1,
+    padBins: number = 1
   ): Promise<{ minBinId: number; maxBinId: number }> {
     const dlmmPool = await this.getDlmmPool(poolAddress);
     if (!dlmmPool) {

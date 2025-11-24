@@ -24,7 +24,7 @@ export const UniswapAmmGetPoolInfoRequest = Type.Object({
       description: 'The EVM network to use',
       default: ethereumChainConfig.defaultNetwork,
       enum: [...UniswapConfig.networks],
-    }),
+    })
   ),
   poolAddress: Type.String({
     description: 'Uniswap V2 pool address',
@@ -42,7 +42,7 @@ export const UniswapClmmGetPoolInfoRequest = Type.Object({
       description: 'The EVM network to use',
       default: ethereumChainConfig.defaultNetwork,
       enum: [...UniswapConfig.networks],
-    }),
+    })
   ),
   poolAddress: Type.String({
     description: 'Uniswap V3 pool address',
@@ -61,7 +61,7 @@ export const UniswapQuoteSwapRequest = Type.Object({
       description: 'The EVM network to use',
       default: ethereumChainConfig.defaultNetwork,
       enum: [...UniswapConfig.networks],
-    }),
+    })
   ),
   baseToken: Type.String({
     description: 'First token in the trading pair',
@@ -86,13 +86,13 @@ export const UniswapQuoteSwapRequest = Type.Object({
       maximum: 100,
       description: 'Maximum acceptable slippage percentage',
       default: UniswapConfig.config.slippagePct,
-    }),
+    })
   ),
   walletAddress: Type.Optional(
     Type.String({
       description: 'Wallet address for more accurate quotes (optional)',
       default: ethereumChainConfig.defaultWallet,
-    }),
+    })
   ),
 });
 
@@ -128,7 +128,7 @@ export const UniswapQuoteSwapResponse = Type.Object({
   routePath: Type.Optional(
     Type.String({
       description: 'Human-readable route path',
-    }),
+    })
   ),
 });
 
@@ -139,14 +139,14 @@ export const UniswapExecuteQuoteRequest = Type.Object({
       description: 'Wallet address that will execute the swap',
       default: ethereumChainConfig.defaultWallet,
       examples: [ethereumChainConfig.defaultWallet],
-    }),
+    })
   ),
   network: Type.Optional(
     Type.String({
       description: 'The blockchain network to use',
       default: ethereumChainConfig.defaultNetwork,
       enum: [...UniswapConfig.networks],
-    }),
+    })
   ),
   quoteId: Type.String({
     description: 'ID of the quote to execute',
@@ -161,13 +161,13 @@ export const UniswapAmmAddLiquidityRequest = Type.Object({
       description: 'The EVM network to use',
       default: ethereumChainConfig.defaultNetwork,
       enum: [...UniswapConfig.networks],
-    }),
+    })
   ),
   walletAddress: Type.Optional(
     Type.String({
       description: 'Wallet address that will add liquidity',
       default: ethereumChainConfig.defaultWallet,
-    }),
+    })
   ),
   poolAddress: Type.String({
     description: 'Address of the Uniswap V2 pool',
@@ -184,18 +184,18 @@ export const UniswapAmmAddLiquidityRequest = Type.Object({
       maximum: 100,
       description: 'Maximum acceptable slippage percentage',
       default: UniswapConfig.config.slippagePct,
-    }),
+    })
   ),
   gasPrice: Type.Optional(
     Type.String({
       description: 'Gas price in wei for the transaction',
-    }),
+    })
   ),
   maxGas: Type.Optional(
     Type.Number({
       description: 'Maximum gas limit for the transaction',
       examples: [300000],
-    }),
+    })
   ),
 });
 
@@ -206,13 +206,13 @@ export const UniswapAmmRemoveLiquidityRequest = Type.Object({
       description: 'The EVM network to use',
       default: ethereumChainConfig.defaultNetwork,
       enum: [...UniswapConfig.networks],
-    }),
+    })
   ),
   walletAddress: Type.Optional(
     Type.String({
       description: 'Wallet address that will remove liquidity',
       default: ethereumChainConfig.defaultWallet,
-    }),
+    })
   ),
   poolAddress: Type.String({
     description: 'Address of the Uniswap V2 pool',
@@ -225,13 +225,13 @@ export const UniswapAmmRemoveLiquidityRequest = Type.Object({
   gasPrice: Type.Optional(
     Type.String({
       description: 'Gas price in wei for the transaction',
-    }),
+    })
   ),
   maxGas: Type.Optional(
     Type.Number({
       description: 'Maximum gas limit for the transaction',
       examples: [300000],
-    }),
+    })
   ),
 });
 
@@ -241,20 +241,20 @@ export const UniswapAmmExecuteSwapRequest = Type.Object({
     Type.String({
       description: 'Wallet address that will execute the swap',
       default: ethereumChainConfig.defaultWallet,
-    }),
+    })
   ),
   network: Type.Optional(
     Type.String({
       description: 'The EVM network to use',
       default: ethereumChainConfig.defaultNetwork,
       enum: [...UniswapConfig.networks],
-    }),
+    })
   ),
   poolAddress: Type.Optional(
     Type.String({
       description: 'Pool address (optional - can be looked up from tokens)',
       default: '',
-    }),
+    })
   ),
   baseToken: Type.String({
     description: 'Base token symbol or address',
@@ -264,7 +264,7 @@ export const UniswapAmmExecuteSwapRequest = Type.Object({
     Type.String({
       description: 'Quote token symbol or address',
       examples: [QUOTE_TOKEN],
-    }),
+    })
   ),
   amount: Type.Number({
     description: 'Amount to swap',
@@ -280,7 +280,7 @@ export const UniswapAmmExecuteSwapRequest = Type.Object({
       maximum: 100,
       description: 'Maximum acceptable slippage percentage',
       default: UniswapConfig.config.slippagePct,
-    }),
+    })
   ),
 });
 
@@ -291,14 +291,14 @@ export const UniswapExecuteSwapRequest = Type.Object({
       description: 'Wallet address that will execute the swap',
       default: ethereumChainConfig.defaultWallet,
       examples: [ethereumChainConfig.defaultWallet],
-    }),
+    })
   ),
   network: Type.Optional(
     Type.String({
       description: 'The blockchain network to use',
       default: ethereumChainConfig.defaultNetwork,
       enum: [...UniswapConfig.networks],
-    }),
+    })
   ),
   baseToken: Type.String({
     description: 'Token to determine swap direction',
@@ -324,7 +324,7 @@ export const UniswapExecuteSwapRequest = Type.Object({
       description: 'Maximum acceptable slippage percentage',
       default: UniswapConfig.config.slippagePct,
       examples: [1],
-    }),
+    })
   ),
 });
 
@@ -335,13 +335,13 @@ export const UniswapClmmOpenPositionRequest = Type.Object({
       description: 'The EVM network to use',
       default: ethereumChainConfig.defaultNetwork,
       enum: [...UniswapConfig.networks],
-    }),
+    })
   ),
   walletAddress: Type.Optional(
     Type.String({
       description: 'Wallet address that will open the position',
       default: ethereumChainConfig.defaultWallet,
-    }),
+    })
   ),
   lowerPrice: Type.Number({
     description: 'Lower price bound for the position',
@@ -355,12 +355,12 @@ export const UniswapClmmOpenPositionRequest = Type.Object({
   baseTokenAmount: Type.Optional(
     Type.Number({
       description: 'Amount of base token to deposit',
-    }),
+    })
   ),
   quoteTokenAmount: Type.Optional(
     Type.Number({
       description: 'Amount of quote token to deposit',
-    }),
+    })
   ),
   slippagePct: Type.Optional(
     Type.Number({
@@ -368,18 +368,18 @@ export const UniswapClmmOpenPositionRequest = Type.Object({
       maximum: 100,
       description: 'Maximum acceptable slippage percentage',
       default: UniswapConfig.config.slippagePct,
-    }),
+    })
   ),
   gasPrice: Type.Optional(
     Type.String({
       description: 'Gas price in wei for the transaction',
-    }),
+    })
   ),
   maxGas: Type.Optional(
     Type.Number({
       description: 'Maximum gas limit for the transaction',
       examples: [300000],
-    }),
+    })
   ),
 });
 
@@ -390,13 +390,13 @@ export const UniswapClmmAddLiquidityRequest = Type.Object({
       description: 'The EVM network to use',
       default: ethereumChainConfig.defaultNetwork,
       enum: [...UniswapConfig.networks],
-    }),
+    })
   ),
   walletAddress: Type.Optional(
     Type.String({
       description: 'Wallet address that will add liquidity',
       default: ethereumChainConfig.defaultWallet,
-    }),
+    })
   ),
   positionAddress: Type.String({
     description: 'NFT token ID of the position',
@@ -413,18 +413,18 @@ export const UniswapClmmAddLiquidityRequest = Type.Object({
       maximum: 100,
       description: 'Maximum acceptable slippage percentage',
       default: UniswapConfig.config.slippagePct,
-    }),
+    })
   ),
   gasPrice: Type.Optional(
     Type.String({
       description: 'Gas price in wei for the transaction',
-    }),
+    })
   ),
   maxGas: Type.Optional(
     Type.Number({
       description: 'Maximum gas limit for the transaction',
       examples: [300000],
-    }),
+    })
   ),
 });
 
@@ -435,13 +435,13 @@ export const UniswapClmmRemoveLiquidityRequest = Type.Object({
       description: 'The EVM network to use',
       default: ethereumChainConfig.defaultNetwork,
       enum: [...UniswapConfig.networks],
-    }),
+    })
   ),
   walletAddress: Type.Optional(
     Type.String({
       description: 'Wallet address that will remove liquidity',
       default: ethereumChainConfig.defaultWallet,
-    }),
+    })
   ),
   positionAddress: Type.String({
     description: 'NFT token ID of the position',
@@ -454,13 +454,13 @@ export const UniswapClmmRemoveLiquidityRequest = Type.Object({
   gasPrice: Type.Optional(
     Type.String({
       description: 'Gas price in wei for the transaction',
-    }),
+    })
   ),
   maxGas: Type.Optional(
     Type.Number({
       description: 'Maximum gas limit for the transaction',
       examples: [300000],
-    }),
+    })
   ),
 });
 
@@ -471,13 +471,13 @@ export const UniswapClmmClosePositionRequest = Type.Object({
       description: 'The EVM network to use',
       default: ethereumChainConfig.defaultNetwork,
       enum: [...UniswapConfig.networks],
-    }),
+    })
   ),
   walletAddress: Type.Optional(
     Type.String({
       description: 'Wallet address that will close the position',
       default: ethereumChainConfig.defaultWallet,
-    }),
+    })
   ),
   positionAddress: Type.String({
     description: 'NFT token ID of the position to close',
@@ -485,13 +485,13 @@ export const UniswapClmmClosePositionRequest = Type.Object({
   gasPrice: Type.Optional(
     Type.String({
       description: 'Gas price in wei for the transaction',
-    }),
+    })
   ),
   maxGas: Type.Optional(
     Type.Number({
       description: 'Maximum gas limit for the transaction',
       examples: [300000],
-    }),
+    })
   ),
 });
 
@@ -502,13 +502,13 @@ export const UniswapClmmCollectFeesRequest = Type.Object({
       description: 'The EVM network to use',
       default: ethereumChainConfig.defaultNetwork,
       enum: [...UniswapConfig.networks],
-    }),
+    })
   ),
   walletAddress: Type.Optional(
     Type.String({
       description: 'Wallet address that will collect fees',
       default: ethereumChainConfig.defaultWallet,
-    }),
+    })
   ),
   positionAddress: Type.String({
     description: 'NFT token ID of the position',
@@ -516,13 +516,13 @@ export const UniswapClmmCollectFeesRequest = Type.Object({
   gasPrice: Type.Optional(
     Type.String({
       description: 'Gas price in wei for the transaction',
-    }),
+    })
   ),
   maxGas: Type.Optional(
     Type.Number({
       description: 'Maximum gas limit for the transaction',
       examples: [300000],
-    }),
+    })
   ),
 });
 
@@ -532,19 +532,19 @@ export const UniswapClmmExecuteSwapRequest = Type.Object({
     Type.String({
       description: 'Wallet address that will execute the swap',
       default: ethereumChainConfig.defaultWallet,
-    }),
+    })
   ),
   network: Type.Optional(
     Type.String({
       description: 'The EVM network to use',
       default: ethereumChainConfig.defaultNetwork,
       enum: [...UniswapConfig.networks],
-    }),
+    })
   ),
   poolAddress: Type.Optional(
     Type.String({
       description: 'Pool address (optional - can be looked up from tokens)',
-    }),
+    })
   ),
   baseToken: Type.String({
     description: 'Base token symbol or address',
@@ -554,7 +554,7 @@ export const UniswapClmmExecuteSwapRequest = Type.Object({
     Type.String({
       description: 'Quote token symbol or address',
       examples: [QUOTE_TOKEN],
-    }),
+    })
   ),
   amount: Type.Number({
     description: 'Amount to swap',
@@ -570,17 +570,17 @@ export const UniswapClmmExecuteSwapRequest = Type.Object({
       maximum: 100,
       description: 'Maximum acceptable slippage percentage',
       default: UniswapConfig.config.slippagePct,
-    }),
+    })
   ),
   gasPrice: Type.Optional(
     Type.String({
       description: 'Gas price in wei for the transaction',
-    }),
+    })
   ),
   maxGas: Type.Optional(
     Type.Number({
       description: 'Maximum gas limit for the transaction',
       examples: [300000],
-    }),
+    })
   ),
 });

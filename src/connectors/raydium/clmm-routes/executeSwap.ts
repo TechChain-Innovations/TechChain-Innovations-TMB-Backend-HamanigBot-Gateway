@@ -78,7 +78,7 @@ export async function executeSwap(
   side: 'BUY' | 'SELL',
   poolAddress: string,
   slippagePct?: number,
-  useNativeSolBalance: boolean = false,
+  useNativeSolBalance: boolean = false
 ): Promise<ExecuteSwapResponseType> {
   const ctx = await resolveClmmContext(fastify, network, poolAddress);
   const { solana, raydium, poolInfo: resolvedPoolInfo, poolKeys, network: networkToUse } = ctx;
@@ -106,9 +106,7 @@ export async function executeSwap(
 
   // Use configured slippage if not provided; keep explicit zero safe
   const effectiveSlippage =
-    slippagePct === undefined || slippagePct === null
-      ? RaydiumConfig.config.slippagePct
-      : Number(slippagePct);
+    slippagePct === undefined || slippagePct === null ? RaydiumConfig.config.slippagePct : Number(slippagePct);
 
   const { inputToken, outputToken, response, clmmPoolInfo } = await getSwapQuote(
     fastify,
@@ -119,7 +117,7 @@ export async function executeSwap(
     side,
     poolAddress,
     effectiveSlippage,
-    ctx,
+    ctx
   );
 
   logger.info(`Raydium CLMM getSwapQuote:`, {
@@ -188,7 +186,9 @@ export async function executeSwap(
     const maxAmountInRaw = pseudo.maxAmountIn.amount;
     const amountOutRaw = pseudo.realAmountOut.amount;
     logger.debug(
-      `CLMM BUY swap | amountOut=${amount} ${outputToken.symbol} -> input=${inputToken.symbol} maxInRaw=${maxAmountInRaw.toString()}`,
+      `CLMM BUY swap | amountOut=${amount} ${outputToken.symbol} -> input=${
+        inputToken.symbol
+      } maxInRaw=${maxAmountInRaw.toString()}`
     );
 
     ({ transaction } = (await raydium.raydiumSDK.clmm.swapBaseOut({
@@ -234,7 +234,7 @@ export async function executeSwap(
     transaction,
     walletAddress,
     isHardwareWallet,
-    wallet,
+    wallet
   )) as VersionedTransaction;
 
   // Simulate transaction with proper error handling
@@ -251,12 +251,14 @@ export async function executeSwap(
     inputToken.address,
     outputToken.address,
     walletAddress,
-    side,
+    side
   );
 
   if (result.status === 1) {
     logger.info(
-      `Swap executed successfully: ${result.data?.amountIn.toFixed(4)} ${inputToken.symbol} -> ${result.data?.amountOut.toFixed(4)} ${outputToken.symbol}`,
+      `Swap executed successfully: ${result.data?.amountIn.toFixed(4)} ${
+        inputToken.symbol
+      } -> ${result.data?.amountOut.toFixed(4)} ${outputToken.symbol}`
     );
   }
 
@@ -295,14 +297,14 @@ export const executeSwapRoute: FastifyPluginAsync = async (fastify) => {
         } = request.body;
         const networkToUse = network;
 
-    errContext = {
-      walletAddress,
-      poolAddress,
-      amount,
-      side,
-      tokenIn: side === 'BUY' ? quoteToken : baseToken, // BUY spends quote, SELL spends base
-      tokenOut: side === 'BUY' ? baseToken : quoteToken,
-    };
+        errContext = {
+          walletAddress,
+          poolAddress,
+          amount,
+          side,
+          tokenIn: side === 'BUY' ? quoteToken : baseToken, // BUY spends quote, SELL spends base
+          tokenOut: side === 'BUY' ? baseToken : quoteToken,
+        };
 
         // If no pool address provided, find default pool
         let poolAddressToUse = poolAddress;
@@ -315,7 +317,7 @@ export const executeSwapRoute: FastifyPluginAsync = async (fastify) => {
 
           if (!baseTokenInfo || !quoteTokenInfo) {
             throw fastify.httpErrors.badRequest(
-              sanitizeErrorMessage('Token not found: {}', !baseTokenInfo ? baseToken : quoteToken),
+              sanitizeErrorMessage('Token not found: {}', !baseTokenInfo ? baseToken : quoteToken)
             );
           }
 
@@ -328,12 +330,12 @@ export const executeSwapRoute: FastifyPluginAsync = async (fastify) => {
             networkToUse,
             'clmm',
             baseTokenInfo.symbol,
-            quoteTokenInfo.symbol,
+            quoteTokenInfo.symbol
           );
 
           if (!pool) {
             throw fastify.httpErrors.notFound(
-              `No CLMM pool found for ${baseTokenInfo.symbol}-${quoteTokenInfo.symbol} on Raydium`,
+              `No CLMM pool found for ${baseTokenInfo.symbol}-${quoteTokenInfo.symbol} on Raydium`
             );
           }
 
@@ -352,12 +354,12 @@ export const executeSwapRoute: FastifyPluginAsync = async (fastify) => {
           side as 'BUY' | 'SELL',
           poolAddressToUse,
           slippagePct,
-          useNativeSolBalance ?? false,
+          useNativeSolBalance ?? false
         );
       } catch (e) {
         throw mapSwapError(fastify, e, errContext);
       }
-    },
+    }
   );
 };
 

@@ -132,7 +132,7 @@ export async function addWallet(fastify: FastifyInstance, req: AddWalletRequest)
     }
   } catch (_e: unknown) {
     throw fastify.httpErrors.badRequest(
-      `Unable to retrieve wallet address for provided private key: ${req.privateKey.substring(0, 5)}...`,
+      `Unable to retrieve wallet address for provided private key: ${req.privateKey.substring(0, 5)}...`
     );
   }
 
@@ -190,7 +190,7 @@ export async function removeWallet(fastify: FastifyInstance, req: RemoveWalletRe
 
 export async function removeAllWalletsForChain(
   fastify: FastifyInstance,
-  chain: string,
+  chain: string
 ): Promise<{ removedWallets: number; hardwareCleared: boolean }> {
   logger.info(`Removing all wallets for chain: ${chain}`);
 
@@ -298,7 +298,7 @@ async function getJsonFiles(source: string): Promise<string[]> {
 export async function getWallets(
   fastify: FastifyInstance,
   _showReadOnly: boolean = true,
-  showHardware: boolean = true,
+  showHardware: boolean = true
 ): Promise<GetWalletResponse[]> {
   logger.info('Getting all wallets');
   try {

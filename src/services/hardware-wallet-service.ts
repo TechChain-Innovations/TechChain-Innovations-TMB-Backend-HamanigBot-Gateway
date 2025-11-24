@@ -106,7 +106,7 @@ export class HardwareWalletService {
   public async signSolanaTransaction(
     derivationPath: string,
     transaction: Transaction | VersionedTransaction,
-    options?: SignTransactionOptions,
+    options?: SignTransactionOptions
   ): Promise<Buffer> {
     const timeout = options?.timeout || 60000; // Default 60 seconds
     const displayMessage = options?.displayMessage || 'Please confirm the transaction on your Ledger device';
@@ -160,7 +160,7 @@ export class HardwareWalletService {
   public async signEthereumTransaction(
     derivationPath: string,
     rawTxHex: string,
-    options?: SignTransactionOptions,
+    options?: SignTransactionOptions
   ): Promise<{ v: string; r: string; s: string }> {
     const timeout = options?.timeout || 60000;
     const displayMessage = options?.displayMessage || 'Please confirm the transaction on your Ledger device';

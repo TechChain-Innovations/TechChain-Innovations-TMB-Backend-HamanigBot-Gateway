@@ -9,7 +9,7 @@ export async function getEthereumBalances(
   fastify: FastifyInstance,
   network: string,
   address: string,
-  tokens?: string[],
+  tokens?: string[]
 ): Promise<BalanceResponseType> {
   try {
     const ethereum = await Ethereum.getInstance(network);
@@ -41,7 +41,7 @@ export const balancesRoute: FastifyPluginAsync = async (fastify) => {
     async (request) => {
       const { network, address, tokens } = request.body;
       return await getEthereumBalances(fastify, network, address, tokens);
-    },
+    }
   );
 };
 

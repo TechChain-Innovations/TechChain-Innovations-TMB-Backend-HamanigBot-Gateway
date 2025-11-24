@@ -10,7 +10,7 @@ export const QuoteSwapRequest = Type.Object(
     network: Type.Optional(
       Type.String({
         description: 'The blockchain network to use',
-      }),
+      })
     ),
     baseToken: Type.String({
       description: 'Token to determine swap direction',
@@ -31,10 +31,10 @@ export const QuoteSwapRequest = Type.Object(
         minimum: 0,
         maximum: 100,
         description: 'Maximum acceptable slippage percentage',
-      }),
+      })
     ),
   },
-  { $id: 'QuoteSwapRequest' },
+  { $id: 'QuoteSwapRequest' }
 );
 export type QuoteSwapRequestType = Static<typeof QuoteSwapRequest>;
 
@@ -68,7 +68,7 @@ export const QuoteSwapResponse = Type.Object(
       description: 'Maximum amount of tokenIn that will be spent',
     }),
   },
-  { $id: 'QuoteSwapResponse' },
+  { $id: 'QuoteSwapResponse' }
 );
 export type QuoteSwapResponseType = Static<typeof QuoteSwapResponse>;
 
@@ -77,18 +77,18 @@ export const ExecuteQuoteRequest = Type.Object(
     walletAddress: Type.Optional(
       Type.String({
         description: 'Wallet address that will execute the swap',
-      }),
+      })
     ),
     network: Type.Optional(
       Type.String({
         description: 'The blockchain network to use',
-      }),
+      })
     ),
     quoteId: Type.String({
       description: 'ID of the quote to execute',
     }),
   },
-  { $id: 'ExecuteQuoteRequest' },
+  { $id: 'ExecuteQuoteRequest' }
 );
 export type ExecuteQuoteRequestType = Static<typeof ExecuteQuoteRequest>;
 
@@ -97,12 +97,12 @@ export const ExecuteSwapRequest = Type.Object(
     walletAddress: Type.Optional(
       Type.String({
         description: 'Wallet address that will execute the swap',
-      }),
+      })
     ),
     network: Type.Optional(
       Type.String({
         description: 'The blockchain network to use',
-      }),
+      })
     ),
     baseToken: Type.String({
       description: 'Token to determine swap direction',
@@ -123,10 +123,10 @@ export const ExecuteSwapRequest = Type.Object(
         minimum: 0,
         maximum: 100,
         description: 'Maximum acceptable slippage percentage',
-      }),
+      })
     ),
   },
-  { $id: 'ExecuteSwapRequest' },
+  { $id: 'ExecuteSwapRequest' }
 );
 export type ExecuteSwapRequestType = Static<typeof ExecuteSwapRequest>;
 
@@ -163,9 +163,9 @@ export const SwapExecuteResponse = Type.Object(
         quoteTokenBalanceChange: Type.Number({
           description: 'Change in quote token balance (negative for decrease)',
         }),
-      }),
+      })
     ),
   },
-  { $id: 'SwapExecuteResponse' },
+  { $id: 'SwapExecuteResponse' }
 );
 export type SwapExecuteResponseType = Static<typeof SwapExecuteResponse>;

@@ -39,7 +39,7 @@ export const poolInfoRoute: FastifyPluginAsync = async (fastify) => {
         }
         throw fastify.httpErrors.internalServerError('Internal server error');
       }
-    },
+    }
   );
 };
 

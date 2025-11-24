@@ -38,7 +38,7 @@ function validateBalanceResponse(response) {
         typeof balance.address === 'string' &&
         typeof balance.decimals === 'number' &&
         typeof balance.name === 'string' &&
-        typeof balance.balance === 'string',
+        typeof balance.balance === 'string'
     )
   );
 }
@@ -54,7 +54,7 @@ function validateTokensResponse(response) {
         typeof token.symbol === 'string' &&
         typeof token.address === 'string' &&
         typeof token.decimals === 'number' &&
-        typeof token.name === 'string',
+        typeof token.name === 'string'
     )
   );
 }
@@ -146,7 +146,7 @@ describe('Ethereum Chain Tests (Base Network)', () => {
             wallet: TEST_WALLET,
             tokens: ['ETH', 'USDC', 'WETH'],
           }),
-        }),
+        })
       );
     });
 
@@ -170,7 +170,7 @@ describe('Ethereum Chain Tests (Base Network)', () => {
             wallet: 'invalidwallet',
             tokens: ['ETH'],
           },
-        }),
+        })
       ).rejects.toMatchObject({
         response: {
           status: 400,
@@ -215,7 +215,7 @@ describe('Ethereum Chain Tests (Base Network)', () => {
           params: expect.objectContaining({
             network: NETWORK,
           }),
-        }),
+        })
       );
     });
   });
@@ -253,7 +253,7 @@ describe('Ethereum Chain Tests (Base Network)', () => {
           params: expect.objectContaining({
             network: NETWORK,
           }),
-        }),
+        })
       );
     });
   });
@@ -294,7 +294,7 @@ describe('Ethereum Chain Tests (Base Network)', () => {
           address: TEST_WALLET,
           spenderAddress: TEST_SPENDER,
           tokens: ['USDC', 'DAI'],
-        }),
+        })
       );
     });
 
@@ -325,7 +325,7 @@ describe('Ethereum Chain Tests (Base Network)', () => {
         `http://localhost:15888/chains/${CHAIN}/allowances`,
         expect.objectContaining({
           tokens: [TEST_TOKEN_ADDRESS, '0x6B175474E89094C44Da98b954EedeAC495271d0F'],
-        }),
+        })
       );
     });
 
@@ -348,7 +348,7 @@ describe('Ethereum Chain Tests (Base Network)', () => {
           address: TEST_WALLET,
           spenderAddress: TEST_SPENDER,
           tokens: ['INVALID_TOKEN'],
-        }),
+        })
       ).rejects.toMatchObject({
         response: {
           status: 400,
@@ -395,7 +395,7 @@ describe('Ethereum Chain Tests (Base Network)', () => {
           address: TEST_WALLET,
           spenderAddress: TEST_SPENDER,
           token: 'USDC',
-        }),
+        })
       );
     });
 
@@ -429,7 +429,7 @@ describe('Ethereum Chain Tests (Base Network)', () => {
         `http://localhost:15888/chains/${CHAIN}/approve`,
         expect.objectContaining({
           token: TEST_TOKEN_ADDRESS,
-        }),
+        })
       );
     });
 
@@ -482,7 +482,7 @@ describe('Ethereum Chain Tests (Base Network)', () => {
           address: TEST_WALLET,
           spenderAddress: TEST_SPENDER,
           token: 'INVALID_TOKEN',
-        }),
+        })
       ).rejects.toMatchObject({
         response: {
           status: 400,
@@ -512,7 +512,7 @@ describe('Ethereum Chain Tests (Base Network)', () => {
           address: TEST_WALLET,
           spenderAddress: TEST_SPENDER,
           token: '0x1234567890abcdef', // Invalid address format
-        }),
+        })
       ).rejects.toMatchObject({
         response: {
           status: 400,

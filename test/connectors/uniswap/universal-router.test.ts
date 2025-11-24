@@ -55,7 +55,7 @@ describe('UniversalRouterService', () => {
       };
 
       await expect(universalRouter.getQuote(WETH, USDC, amount, TradeType.EXACT_INPUT, options)).rejects.toThrow(
-        'No routes found for WETH -> USDC',
+        'No routes found for WETH -> USDC'
       );
     });
 

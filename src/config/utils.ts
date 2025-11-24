@@ -39,7 +39,7 @@ export const updateConfig = (fastify: FastifyInstance, configPath: string, confi
 export const getDefaultPools = async (
   fastify: FastifyInstance,
   connector: string,
-  network: string,
+  network: string
 ): Promise<Record<string, string>> => {
   // Import PoolService here to avoid circular dependency
   const { PoolService } = await import('../services/pool-service');

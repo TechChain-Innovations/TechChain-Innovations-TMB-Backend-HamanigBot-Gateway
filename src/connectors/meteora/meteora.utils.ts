@@ -13,7 +13,7 @@ export const findPoolAddress = (
   _baseToken: string,
   _quoteToken: string,
   _poolType: 'amm' | 'clmm',
-  _network: string = 'mainnet-beta',
+  _network: string = 'mainnet-beta'
 ): string | null => {
   // Pools are now managed separately, return null for dynamic pool discovery
   return null;

@@ -83,13 +83,13 @@ export class UniversalRouterService {
       deadline: number;
       recipient: string;
       protocols?: Protocol[];
-    },
+    }
   ): Promise<UniversalRouterQuoteResult> {
     logger.info(`[UniversalRouter] Starting quote generation`);
     logger.info(`[UniversalRouter] Input: ${amount.toExact()} ${tokenIn.symbol} (${tokenIn.address})`);
     logger.info(`[UniversalRouter] Output: ${tokenOut.symbol} (${tokenOut.address})`);
     logger.info(
-      `[UniversalRouter] Trade type: ${tradeType === TradeType.EXACT_INPUT ? 'EXACT_INPUT' : 'EXACT_OUTPUT'}`,
+      `[UniversalRouter] Trade type: ${tradeType === TradeType.EXACT_INPUT ? 'EXACT_INPUT' : 'EXACT_OUTPUT'}`
     );
     logger.info(`[UniversalRouter] Recipient: ${options.recipient}`);
     logger.info(`[UniversalRouter] Slippage: ${options.slippageTolerance.toSignificant()}%`);
@@ -105,7 +105,7 @@ export class UniversalRouterService {
         const v3Trade = await this.findV3Route(tokenIn, tokenOut, amount, tradeType);
         if (v3Trade) {
           logger.info(
-            `[UniversalRouter] Found V3 route: ${v3Trade.inputAmount.toExact()} -> ${v3Trade.outputAmount.toExact()}`,
+            `[UniversalRouter] Found V3 route: ${v3Trade.inputAmount.toExact()} -> ${v3Trade.outputAmount.toExact()}`
           );
           routes.push({
             routev3: v3Trade.route,
@@ -126,7 +126,7 @@ export class UniversalRouterService {
         const v2Trade = await this.findV2Route(tokenIn, tokenOut, amount, tradeType);
         if (v2Trade) {
           logger.info(
-            `[UniversalRouter] Found V2 route: ${v2Trade.inputAmount.toExact()} -> ${v2Trade.outputAmount.toExact()}`,
+            `[UniversalRouter] Found V2 route: ${v2Trade.inputAmount.toExact()} -> ${v2Trade.outputAmount.toExact()}`
           );
           routes.push({
             routev2: v2Trade.route,
@@ -196,7 +196,7 @@ export class UniversalRouterService {
     // Simple gas cost estimation
     const estimatedGasUsedQuoteToken = CurrencyAmount.fromRawAmount(
       tokenOut,
-      '0', // Simplified for now
+      '0' // Simplified for now
     );
 
     const result = {
@@ -218,7 +218,7 @@ export class UniversalRouterService {
     logger.info(`[UniversalRouter] Quote generation complete`);
     logger.info(`[UniversalRouter] Input: ${bestTrade.inputAmount.toExact()} ${bestTrade.inputAmount.currency.symbol}`);
     logger.info(
-      `[UniversalRouter] Output: ${bestTrade.outputAmount.toExact()} ${bestTrade.outputAmount.currency.symbol}`,
+      `[UniversalRouter] Output: ${bestTrade.outputAmount.toExact()} ${bestTrade.outputAmount.currency.symbol}`
     );
     logger.info(`[UniversalRouter] Price Impact: ${result.priceImpact}%`);
 
@@ -232,7 +232,7 @@ export class UniversalRouterService {
     tokenIn: Token,
     tokenOut: Token,
     amount: CurrencyAmount<Currency>,
-    tradeType: TradeType,
+    tradeType: TradeType
   ): Promise<V3Trade<Currency, Currency, TradeType> | null> {
     // Try each fee tier
     for (const fee of V3_FEE_TIERS) {
@@ -297,7 +297,7 @@ export class UniversalRouterService {
     tokenIn: Token,
     tokenOut: Token,
     amount: CurrencyAmount<Currency>,
-    tradeType: TradeType,
+    tradeType: TradeType
   ): Promise<V2Trade<Currency, Currency, TradeType> | null> {
     try {
       // Compute pair address
@@ -317,7 +317,7 @@ export class UniversalRouterService {
 
       const pair = new V2Pair(
         CurrencyAmount.fromRawAmount(tokenIn, reserveIn.toString()),
-        CurrencyAmount.fromRawAmount(tokenOut, reserveOut.toString()),
+        CurrencyAmount.fromRawAmount(tokenOut, reserveOut.toString())
       );
 
       const route = new V2Route([pair], tokenIn, tokenOut);

@@ -150,7 +150,7 @@ describe('Raydium AMM Tests (Solana Mainnet)', () => {
             baseToken: BASE_TOKEN,
             quoteToken: QUOTE_TOKEN,
           }),
-        }),
+        })
       );
     });
 
@@ -175,7 +175,7 @@ describe('Raydium AMM Tests (Solana Mainnet)', () => {
             baseToken: BASE_TOKEN,
             quoteToken: 'UNKNOWN',
           },
-        }),
+        })
       ).rejects.toMatchObject({
         response: {
           status: 404,
@@ -229,7 +229,7 @@ describe('Raydium AMM Tests (Solana Mainnet)', () => {
             side: 'SELL',
             amount: 1.0,
           }),
-        }),
+        })
       );
     });
 
@@ -298,7 +298,7 @@ describe('Raydium AMM Tests (Solana Mainnet)', () => {
             side: 'SELL',
             amount: 1000000.0, // Very large amount
           },
-        }),
+        })
       ).rejects.toMatchObject({
         response: {
           status: 400,
@@ -365,7 +365,7 @@ describe('Raydium AMM Tests (Solana Mainnet)', () => {
           side: 'SELL',
           amount: 1000000.0,
           walletAddress: TEST_WALLET,
-        }),
+        })
       ).rejects.toMatchObject({
         response: {
           status: 500,
@@ -504,7 +504,7 @@ describe('Raydium AMM Tests (Solana Mainnet)', () => {
           baseTokenAmount: 10000.0, // Large amount
           quoteTokenAmount: 1675000.0,
           walletAddress: TEST_WALLET,
-        }),
+        })
       ).rejects.toMatchObject({
         response: {
           status: 400,
@@ -570,7 +570,7 @@ describe('Raydium AMM Tests (Solana Mainnet)', () => {
           poolAddress: TEST_POOL,
           lpTokenAmount: 10000.0, // Large amount
           walletAddress: TEST_WALLET,
-        }),
+        })
       ).rejects.toMatchObject({
         response: {
           status: 400,

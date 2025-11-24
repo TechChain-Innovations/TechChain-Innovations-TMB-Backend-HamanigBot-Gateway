@@ -294,7 +294,7 @@ export class HeliusService {
       const backoffMs = Math.min(1000 * Math.pow(2, this.reconnectAttempts), 30000);
 
       logger.info(
-        `Attempting WebSocket reconnection ${this.reconnectAttempts}/${this.maxReconnectAttempts} in ${backoffMs}ms`,
+        `Attempting WebSocket reconnection ${this.reconnectAttempts}/${this.maxReconnectAttempts} in ${backoffMs}ms`
       );
 
       this.reconnectTimeout = setTimeout(() => {

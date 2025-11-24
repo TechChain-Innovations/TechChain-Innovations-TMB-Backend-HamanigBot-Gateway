@@ -25,7 +25,7 @@ import { logger } from '../../services/logger';
 import { RaydiumConfig } from './raydium.config';
 import { isValidClmm, isValidAmm, isValidCpmm } from './raydium.utils';
 
-type RaydiumLoadParams = Parameters<typeof RaydiumSDK['load']>[0];
+type RaydiumLoadParams = Parameters<(typeof RaydiumSDK)['load']>[0];
 type ExtendedRaydiumLoadParams = RaydiumLoadParams & {
   // fetchToken exists in runtime implementation but missing from type definitions
   fetchToken?: () => Promise<unknown[]>;
@@ -38,7 +38,7 @@ interface InternalAmmPoolInfo extends AmmPoolInfo {
 
 type PoolInfoResult = [
   ApiV3PoolInfoStandardItem | ApiV3PoolInfoStandardItemCpmm | ApiV3PoolInfoConcentratedItem,
-  AmmV4Keys | AmmV5Keys | CpmmKeys | ClmmKeys | undefined,
+  AmmV4Keys | AmmV5Keys | CpmmKeys | ClmmKeys | undefined
 ];
 
 export class Raydium {
@@ -297,9 +297,7 @@ export class Raydium {
   }
 
   // General Pool Methods
-  async getPoolfromAPI(
-    poolAddress: string,
-  ): Promise<PoolInfoResult | null> {
+  async getPoolfromAPI(poolAddress: string): Promise<PoolInfoResult | null> {
     let poolInfo: PoolInfoResult | null = null;
 
     if (this.solana.network === 'mainnet-beta') {
@@ -318,7 +316,9 @@ export class Raydium {
           logger.warn(`Raydium API returned no data for pool ${poolAddress}, falling back to RPC`);
         }
       } catch (error) {
-        logger.warn(`Raydium API fetchPoolById failed for ${poolAddress}, falling back to RPC: ${(error as Error)?.message}`);
+        logger.warn(
+          `Raydium API fetchPoolById failed for ${poolAddress}, falling back to RPC: ${(error as Error)?.message}`
+        );
       }
     }
 
@@ -455,7 +455,7 @@ export class Raydium {
     transaction: VersionedTransaction | Transaction,
     walletAddress: string,
     isHardwareWallet: boolean,
-    wallet: Keypair | PublicKey,
+    wallet: Keypair | PublicKey
   ): Promise<VersionedTransaction | Transaction> {
     if (isHardwareWallet) {
       logger.info(`Hardware wallet detected for ${walletAddress}. Signing transaction with Ledger.`);

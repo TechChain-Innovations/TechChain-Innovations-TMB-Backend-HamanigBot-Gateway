@@ -19,7 +19,7 @@ async function closePosition(
   _fastify: FastifyInstance,
   network: string,
   walletAddress: string,
-  positionAddress: string,
+  positionAddress: string
 ): Promise<ClosePositionResponseType> {
   try {
     const solana = await Solana.getInstance(network);
@@ -43,7 +43,7 @@ async function closePosition(
         walletAddress,
         positionAddress,
         100,
-        true,
+        true
       );
 
       if (removeLiquidityResponse.status === 1 && removeLiquidityResponse.data) {
@@ -53,7 +53,7 @@ async function closePosition(
           walletAddress,
           baseTokenInfo,
           quoteTokenInfo,
-          removeLiquidityResponse.data.fee * 1e9,
+          removeLiquidityResponse.data.fee * 1e9
         );
 
         // The total balance change includes both liquidity removal and fee collection
@@ -113,7 +113,7 @@ async function closePosition(
       result.transaction,
       walletAddress,
       isHardwareWallet,
-      wallet,
+      wallet
     )) as VersionedTransaction;
 
     const { confirmed, signature, txData } = await solana.sendAndConfirmRawTransaction(signedTransaction);
@@ -178,7 +178,7 @@ export const closePositionRoute: FastifyPluginAsync = async (fastify) => {
         }
         throw fastify.httpErrors.internalServerError('Internal server error');
       }
-    },
+    }
   );
 };
 

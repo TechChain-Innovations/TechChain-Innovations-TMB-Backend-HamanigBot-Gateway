@@ -16,7 +16,7 @@ export async function collectFees(
   fastify: FastifyInstance,
   network: string,
   walletAddress: string,
-  positionAddress: string,
+  positionAddress: string
 ): Promise<CollectFeesResponseType> {
   const solana = await Solana.getInstance(network);
   const raydium = await Raydium.getInstance(network);
@@ -46,7 +46,7 @@ export async function collectFees(
     walletAddress,
     positionAddress,
     1, // 1% of position
-    false, // don't close position
+    false // don't close position
   );
 
   if (removeLiquidityResponse.status === 1 && removeLiquidityResponse.data) {
@@ -56,7 +56,7 @@ export async function collectFees(
       walletAddress,
       tokenA,
       tokenB,
-      removeLiquidityResponse.data.fee * 1e9,
+      removeLiquidityResponse.data.fee * 1e9
     );
 
     // The total balance change includes both liquidity removal and fee collection
@@ -66,7 +66,9 @@ export async function collectFees(
     const quoteFeeCollected = Math.abs(quoteTokenChange) - removeLiquidityResponse.data.quoteTokenAmountRemoved;
 
     logger.info(
-      `Fees collected from position ${positionAddress}: ${Math.max(0, baseFeeCollected).toFixed(4)} ${tokenA.symbol}, ${Math.max(0, quoteFeeCollected).toFixed(4)} ${tokenB.symbol}`,
+      `Fees collected from position ${positionAddress}: ${Math.max(0, baseFeeCollected).toFixed(4)} ${
+        tokenA.symbol
+      }, ${Math.max(0, quoteFeeCollected).toFixed(4)} ${tokenB.symbol}`
     );
 
     return {
@@ -121,7 +123,7 @@ export const collectFeesRoute: FastifyPluginAsync = async (fastify) => {
         }
         throw fastify.httpErrors.internalServerError('Failed to collect fees');
       }
-    },
+    }
   );
 };
 

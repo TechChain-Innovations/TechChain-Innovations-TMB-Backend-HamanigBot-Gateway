@@ -344,7 +344,7 @@ const configureGatewayServer = () => {
   server.addContentTypeParser(
     'application/json',
     { parseAs: 'string' },
-    server.getDefaultJsonParser('ignore', 'ignore'),
+    server.getDefaultJsonParser('ignore', 'ignore')
   );
 
   // Global error handler

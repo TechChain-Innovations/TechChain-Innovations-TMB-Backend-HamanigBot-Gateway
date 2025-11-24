@@ -31,7 +31,7 @@ async function addLiquidity(
   baseTokenAmount: number,
   quoteTokenAmount: number,
   slippagePct?: number,
-  strategyType?: StrategyType,
+  strategyType?: StrategyType
 ): Promise<AddLiquidityResponseType> {
   // Validate addresses first
   try {
@@ -55,7 +55,7 @@ async function addLiquidity(
 
   if (!positionResult || !positionResult.position) {
     throw fastify.httpErrors.notFound(
-      `Position not found: ${positionAddress}. Please provide a valid position address`,
+      `Position not found: ${positionAddress}. Please provide a valid position address`
     );
   }
 
@@ -78,18 +78,20 @@ async function addLiquidity(
 
   if (balances[tokenXSymbol] < requiredBase) {
     throw fastify.httpErrors.badRequest(
-      INSUFFICIENT_BALANCE_MESSAGE(tokenXSymbol, requiredBase.toString(), balances[tokenXSymbol].toString()),
+      INSUFFICIENT_BALANCE_MESSAGE(tokenXSymbol, requiredBase.toString(), balances[tokenXSymbol].toString())
     );
   }
 
   if (balances[tokenYSymbol] < requiredQuote) {
     throw fastify.httpErrors.badRequest(
-      INSUFFICIENT_BALANCE_MESSAGE(tokenYSymbol, requiredQuote.toString(), balances[tokenYSymbol].toString()),
+      INSUFFICIENT_BALANCE_MESSAGE(tokenYSymbol, requiredQuote.toString(), balances[tokenYSymbol].toString())
     );
   }
 
   logger.info(
-    `Adding liquidity to position ${positionAddress}: ${baseTokenAmount.toFixed(4)} ${tokenXSymbol}, ${quoteTokenAmount.toFixed(4)} ${tokenYSymbol}`,
+    `Adding liquidity to position ${positionAddress}: ${baseTokenAmount.toFixed(
+      4
+    )} ${tokenXSymbol}, ${quoteTokenAmount.toFixed(4)} ${tokenYSymbol}`
   );
   const maxBinId = position.positionData.upperBinId;
   const minBinId = position.positionData.lowerBinId;
@@ -140,7 +142,9 @@ async function addLiquidity(
     const tokenYAddedAmount = balanceChanges[1];
 
     logger.info(
-      `Liquidity added to position ${positionAddress}: ${Math.abs(tokenXAddedAmount).toFixed(4)} ${tokenXSymbol}, ${Math.abs(tokenYAddedAmount).toFixed(4)} ${tokenYSymbol}`,
+      `Liquidity added to position ${positionAddress}: ${Math.abs(tokenXAddedAmount).toFixed(
+        4
+      )} ${tokenXSymbol}, ${Math.abs(tokenYAddedAmount).toFixed(4)} ${tokenYSymbol}`
     );
 
     return {
@@ -192,7 +196,7 @@ export const addLiquidityRoute: FastifyPluginAsync = async (fastify) => {
           baseTokenAmount,
           quoteTokenAmount,
           slippagePct,
-          strategyType,
+          strategyType
         );
       } catch (e) {
         logger.error(e);
@@ -201,7 +205,7 @@ export const addLiquidityRoute: FastifyPluginAsync = async (fastify) => {
         }
         throw fastify.httpErrors.internalServerError('Internal server error');
       }
-    },
+    }
   );
 };
 

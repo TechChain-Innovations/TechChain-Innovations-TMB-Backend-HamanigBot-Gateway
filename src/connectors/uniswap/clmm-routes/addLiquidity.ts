@@ -110,7 +110,7 @@ export const addLiquidityRoute: FastifyPluginAsync = async (fastify) => {
         if (baseTokenAmount !== undefined) {
           // Convert baseTokenAmount to raw amount
           const baseAmountRaw = Math.floor(
-            baseTokenAmount * Math.pow(10, isBaseToken0 ? token0.decimals : token1.decimals),
+            baseTokenAmount * Math.pow(10, isBaseToken0 ? token0.decimals : token1.decimals)
           );
 
           if (isBaseToken0) {
@@ -123,7 +123,7 @@ export const addLiquidityRoute: FastifyPluginAsync = async (fastify) => {
         if (quoteTokenAmount !== undefined) {
           // Convert quoteTokenAmount to raw amount
           const quoteAmountRaw = Math.floor(
-            quoteTokenAmount * Math.pow(10, isBaseToken0 ? token1.decimals : token0.decimals),
+            quoteTokenAmount * Math.pow(10, isBaseToken0 ? token1.decimals : token0.decimals)
           );
 
           if (isBaseToken0) {
@@ -161,7 +161,7 @@ export const addLiquidityRoute: FastifyPluginAsync = async (fastify) => {
             token0Contract,
             wallet,
             positionManagerAddress,
-            token0.decimals,
+            token0.decimals
           );
 
           const currentAllowance0 = BigNumber.from(allowance0.value);
@@ -169,7 +169,10 @@ export const addLiquidityRoute: FastifyPluginAsync = async (fastify) => {
 
           if (currentAllowance0.lt(requiredAmount0)) {
             throw fastify.httpErrors.badRequest(
-              `Insufficient ${token0.symbol} allowance. Please approve at least ${formatTokenAmount(requiredAmount0.toString(), token0.decimals)} ${token0.symbol} for the Position Manager (${positionManagerAddress})`,
+              `Insufficient ${token0.symbol} allowance. Please approve at least ${formatTokenAmount(
+                requiredAmount0.toString(),
+                token0.decimals
+              )} ${token0.symbol} for the Position Manager (${positionManagerAddress})`
             );
           }
         }
@@ -181,7 +184,7 @@ export const addLiquidityRoute: FastifyPluginAsync = async (fastify) => {
             token1Contract,
             wallet,
             positionManagerAddress,
-            token1.decimals,
+            token1.decimals
           );
 
           const currentAllowance1 = BigNumber.from(allowance1.value);
@@ -189,7 +192,10 @@ export const addLiquidityRoute: FastifyPluginAsync = async (fastify) => {
 
           if (currentAllowance1.lt(requiredAmount1)) {
             throw fastify.httpErrors.badRequest(
-              `Insufficient ${token1.symbol} allowance. Please approve at least ${formatTokenAmount(requiredAmount1.toString(), token1.decimals)} ${token1.symbol} for the Position Manager (${positionManagerAddress})`,
+              `Insufficient ${token1.symbol} allowance. Please approve at least ${formatTokenAmount(
+                requiredAmount1.toString(),
+                token1.decimals
+              )} ${token1.symbol} for the Position Manager (${positionManagerAddress})`
             );
           }
         }
@@ -206,7 +212,7 @@ export const addLiquidityRoute: FastifyPluginAsync = async (fastify) => {
               type: 'function',
             },
           ],
-          wallet,
+          wallet
         );
 
         // Execute the transaction to increase liquidity
@@ -223,7 +229,7 @@ export const addLiquidityRoute: FastifyPluginAsync = async (fastify) => {
         // Calculate gas fee
         const gasFee = formatTokenAmount(
           receipt.gasUsed.mul(receipt.effectiveGasPrice).toString(),
-          18, // ETH has 18 decimals
+          18 // ETH has 18 decimals
         );
 
         // Calculate actual token amounts added from the position's mint amounts
@@ -251,7 +257,7 @@ export const addLiquidityRoute: FastifyPluginAsync = async (fastify) => {
         }
         throw fastify.httpErrors.internalServerError('Failed to add liquidity');
       }
-    },
+    }
   );
 };
 

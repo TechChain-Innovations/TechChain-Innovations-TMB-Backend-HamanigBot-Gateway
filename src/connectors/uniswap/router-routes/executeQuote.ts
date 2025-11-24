@@ -17,7 +17,7 @@ async function executeQuote(
   fastify: FastifyInstance,
   walletAddress: string,
   network: string,
-  quoteId: string,
+  quoteId: string
 ): Promise<SwapExecuteResponseType> {
   // Retrieve cached quote
   const cached = quoteCache.get(quoteId);
@@ -34,7 +34,9 @@ async function executeQuote(
   const isHardwareWallet = await ethereum.isHardwareWallet(walletAddress);
 
   logger.info(
-    `Executing quote ${quoteId} for ${amount} ${inputToken.symbol} -> ${outputToken.symbol}${isHardwareWallet ? ' with hardware wallet' : ''}`,
+    `Executing quote ${quoteId} for ${amount} ${inputToken.symbol} -> ${outputToken.symbol}${
+      isHardwareWallet ? ' with hardware wallet' : ''
+    }`
   );
 
   // Check and approve allowance if needed - Universal Router V2 uses Permit2
@@ -54,7 +56,7 @@ async function executeQuote(
       throw fastify.httpErrors.badRequest(
         `Insufficient ${inputToken.symbol} allowance to Permit2. ` +
           `Required: ${inputAmount}, Current: ${currentAllowance}. ` +
-          `Please approve ${inputToken.symbol} using spender: "uniswap/router"`,
+          `Please approve ${inputToken.symbol} using spender: "uniswap/router"`
       );
     }
 
@@ -70,7 +72,7 @@ async function executeQuote(
     const [permit2Amount, expiration, nonce] = await permit2Contract.allowance(
       walletAddress,
       inputToken.address,
-      universalRouterAddress,
+      universalRouterAddress
     );
 
     // Check if the Permit2 allowance is expired
@@ -84,13 +86,13 @@ async function executeQuote(
       if (isExpired) {
         throw fastify.httpErrors.badRequest(
           `Permit2 allowance for ${inputToken.symbol} to Universal Router has expired. ` +
-            `Please approve ${inputToken.symbol} again using spender: "uniswap/router"`,
+            `Please approve ${inputToken.symbol} again using spender: "uniswap/router"`
         );
       } else {
         throw fastify.httpErrors.badRequest(
           `Insufficient Permit2 allowance for ${inputToken.symbol} to Universal Router. ` +
             `Required: ${inputAmount}, Current: ${currentPermit2Allowance}. ` +
-            `Please approve ${inputToken.symbol} using spender: "uniswap/router"`,
+            `Please approve ${inputToken.symbol} using spender: "uniswap/router"`
         );
       }
     }
@@ -190,11 +192,11 @@ async function executeQuote(
     // Handle specific error cases
     if (error.message && error.message.includes('insufficient funds')) {
       throw fastify.httpErrors.badRequest(
-        'Insufficient funds for transaction. Please ensure you have enough ETH to cover gas costs.',
+        'Insufficient funds for transaction. Please ensure you have enough ETH to cover gas costs.'
       );
     } else if (error.message && error.message.includes('cannot estimate gas')) {
       throw fastify.httpErrors.badRequest(
-        'Transaction would fail. This could be due to an expired quote, insufficient token balance, or market conditions have changed. Please request a new quote.',
+        'Transaction would fail. This could be due to an expired quote, insufficient token balance, or market conditions have changed. Please request a new quote.'
       );
     } else if (error.message.includes('rejected on Ledger')) {
       throw fastify.httpErrors.badRequest('Transaction rejected on Ledger device');
@@ -223,7 +225,7 @@ async function executeQuote(
     outputToken.address,
     expectedAmountIn,
     expectedAmountOut,
-    side,
+    side
   );
 
   // Handle different transaction states
@@ -231,7 +233,7 @@ async function executeQuote(
     // Transaction failed
     logger.error(`Transaction failed on-chain. Receipt: ${JSON.stringify(txReceipt)}`);
     throw fastify.httpErrors.internalServerError(
-      'Transaction reverted on-chain. This could be due to slippage, expired quote, insufficient funds, or other blockchain issues.',
+      'Transaction reverted on-chain. This could be due to slippage, expired quote, insufficient funds, or other blockchain issues.'
     );
   }
 
@@ -243,7 +245,7 @@ async function executeQuote(
 
   // Transaction confirmed (status === 1)
   logger.info(
-    `Swap executed successfully: ${expectedAmountIn} ${inputToken.symbol} -> ${expectedAmountOut} ${outputToken.symbol}`,
+    `Swap executed successfully: ${expectedAmountIn} ${inputToken.symbol} -> ${expectedAmountOut} ${outputToken.symbol}`
   );
 
   // Remove quote from cache only after successful execution (confirmed)
@@ -282,7 +284,7 @@ export const executeQuoteRoute: FastifyPluginAsync = async (fastify) => {
         logger.error('Error executing quote:', e);
         throw fastify.httpErrors.internalServerError(e.message || 'Internal server error');
       }
-    },
+    }
   );
 };
 

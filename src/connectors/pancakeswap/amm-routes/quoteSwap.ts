@@ -21,7 +21,7 @@ async function quoteAmmSwap(
   quoteToken: Token,
   amount: number,
   side: 'BUY' | 'SELL',
-  slippagePct?: number,
+  slippagePct?: number
 ): Promise<any> {
   try {
     // Get the V2 pair
@@ -43,14 +43,14 @@ async function quoteAmmSwap(
       // For SELL (exactIn), we use the input amount and EXACT_INPUT trade type
       const inputAmount = CurrencyAmount.fromRawAmount(
         inputToken,
-        Math.floor(amount * Math.pow(10, inputToken.decimals)).toString(),
+        Math.floor(amount * Math.pow(10, inputToken.decimals)).toString()
       );
       trade = new V2Trade(route, inputAmount, TradeType.EXACT_INPUT);
     } else {
       // For BUY (exactOut), we use the output amount and EXACT_OUTPUT trade type
       const outputAmount = CurrencyAmount.fromRawAmount(
         outputToken,
-        Math.floor(amount * Math.pow(10, outputToken.decimals)).toString(),
+        Math.floor(amount * Math.pow(10, outputToken.decimals)).toString()
       );
       trade = new V2Trade(route, outputAmount, TradeType.EXACT_OUTPUT);
     }
@@ -112,7 +112,7 @@ export async function getPancakeswapAmmQuote(
   quoteToken: string,
   amount: number,
   side: 'BUY' | 'SELL',
-  slippagePct?: number,
+  slippagePct?: number
 ): Promise<{
   quote: any;
   pancakeswap: any;
@@ -145,7 +145,7 @@ export async function getPancakeswapAmmQuote(
 
   logger.info(`Base token: ${baseTokenObj.symbol}, address=${baseTokenObj.address}, decimals=${baseTokenObj.decimals}`);
   logger.info(
-    `Quote token: ${quoteTokenObj.symbol}, address=${quoteTokenObj.address}, decimals=${quoteTokenObj.decimals}`,
+    `Quote token: ${quoteTokenObj.symbol}, address=${quoteTokenObj.address}, decimals=${quoteTokenObj.decimals}`
   );
 
   // Get the quote
@@ -156,7 +156,7 @@ export async function getPancakeswapAmmQuote(
     quoteTokenObj,
     amount,
     side as 'BUY' | 'SELL',
-    slippagePct,
+    slippagePct
   );
 
   if (!quote) {
@@ -180,10 +180,10 @@ async function formatSwapQuote(
   quoteToken: string,
   amount: number,
   side: 'BUY' | 'SELL',
-  slippagePct?: number,
+  slippagePct?: number
 ): Promise<QuoteSwapResponseType> {
   logger.info(
-    `formatSwapQuote: poolAddress=${poolAddress}, baseToken=${baseToken}, quoteToken=${quoteToken}, amount=${amount}, side=${side}, network=${network}`,
+    `formatSwapQuote: poolAddress=${poolAddress}, baseToken=${baseToken}, quoteToken=${quoteToken}, amount=${amount}, side=${side}, network=${network}`
   );
 
   try {
@@ -196,11 +196,11 @@ async function formatSwapQuote(
       quoteToken,
       amount,
       side,
-      slippagePct,
+      slippagePct
     );
 
     logger.info(
-      `Quote result: estimatedAmountIn=${quote.estimatedAmountIn}, estimatedAmountOut=${quote.estimatedAmountOut}`,
+      `Quote result: estimatedAmountIn=${quote.estimatedAmountIn}, estimatedAmountOut=${quote.estimatedAmountOut}`
     );
 
     // Calculate balance changes based on which tokens are being swapped
@@ -208,7 +208,7 @@ async function formatSwapQuote(
     const quoteTokenBalanceChange = side === 'BUY' ? -quote.estimatedAmountIn : quote.estimatedAmountOut;
 
     logger.info(
-      `Balance changes: baseTokenBalanceChange=${baseTokenBalanceChange}, quoteTokenBalanceChange=${quoteTokenBalanceChange}`,
+      `Balance changes: baseTokenBalanceChange=${baseTokenBalanceChange}, quoteTokenBalanceChange=${quoteTokenBalanceChange}`
     );
 
     // Get gas estimate for V2 swap
@@ -369,7 +369,7 @@ export const quoteSwapRoute: FastifyPluginAsync = async (fastify) => {
           quoteTokenToUse,
           amount,
           side as 'BUY' | 'SELL',
-          slippagePct,
+          slippagePct
         );
       } catch (e) {
         logger.error(`Error in quote-swap route: ${e.message}`);
@@ -398,7 +398,7 @@ export const quoteSwapRoute: FastifyPluginAsync = async (fastify) => {
         logger.error('Error stack:', e.stack);
         throw fastify.httpErrors.internalServerError(e.message || 'Error getting swap quote');
       }
-    },
+    }
   );
 };
 

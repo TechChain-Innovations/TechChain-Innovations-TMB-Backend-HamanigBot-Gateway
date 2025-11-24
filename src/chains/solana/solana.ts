@@ -137,7 +137,9 @@ export class Solana {
         logger.info(`Initializing Solana connector for network: ${this.network}, RPC URL: ${rpcUrl}`);
         logger.info(`✅ Helius API key configured (length: ${heliusApiKey.length} chars)`);
         logger.info(
-          `Helius features enabled - WebSocket: ${useWebSocketRPC}, Sender: ${useSender}, Region: ${regionCode || 'default'}`,
+          `Helius features enabled - WebSocket: ${useWebSocketRPC}, Sender: ${useSender}, Region: ${
+            regionCode || 'default'
+          }`
         );
 
         this.connection = new Connection(rpcUrl, {
@@ -178,7 +180,7 @@ export class Solana {
   private async init(): Promise<void> {
     try {
       logger.info(
-        `Initializing Solana connector for network: ${this.network}, RPC URL: ${this.connection.rpcEndpoint}`,
+        `Initializing Solana connector for network: ${this.network}, RPC URL: ${this.connection.rpcEndpoint}`
       );
       await this.loadTokens();
 
@@ -615,7 +617,7 @@ export class Solana {
   public async getBalances(
     address: string,
     tokens?: string[],
-    fetchAll: boolean = false,
+    fetchAll: boolean = false
   ): Promise<Record<string, number>> {
     const publicKey = new PublicKey(address);
     const balances: Record<string, number> = {};
@@ -748,7 +750,7 @@ export class Solana {
    */
   private handleEmptyTokenAccounts(
     balances: Record<string, number>,
-    effectiveSymbols?: string[],
+    effectiveSymbols?: string[]
   ): Record<string, number> {
     const SOL_NATIVE_MINT = 'So11111111111111111111111111111111111111112';
     if (effectiveSymbols) {
@@ -768,7 +770,7 @@ export class Solana {
   private async processSpecificTokens(
     tokenAccounts: Map<string, TokenAccount>,
     symbols: string[],
-    balances: Record<string, number>,
+    balances: Record<string, number>
   ): Promise<void> {
     const SOL_NATIVE_MINT = 'So11111111111111111111111111111111111111112';
     for (const symbol of symbols) {
@@ -802,7 +804,7 @@ export class Solana {
    */
   private async processAllTokens(
     tokenAccounts: Map<string, TokenAccount>,
-    balances: Record<string, number>,
+    balances: Record<string, number>
   ): Promise<void> {
     logger.info('Processing all token accounts (fetchAll=true)');
 
@@ -832,7 +834,7 @@ export class Solana {
    */
   private async processTokenListOnly(
     tokenAccounts: Map<string, TokenAccount>,
-    balances: Record<string, number>,
+    balances: Record<string, number>
   ): Promise<void> {
     logger.info(`Checking balances for ${this.tokenList.length} tokens in token list`);
 
@@ -966,7 +968,7 @@ export class Solana {
    */
   public async prepareGasOptions(
     priorityFeePerCU?: number,
-    computeUnits?: number,
+    computeUnits?: number
   ): Promise<{
     priorityFeePerCU: number;
     computeUnits: number;
@@ -989,7 +991,7 @@ export class Solana {
 
   public async confirmTransaction(
     signature: string,
-    timeout: number = 3000,
+    timeout: number = 3000
   ): Promise<{ confirmed: boolean; txData?: any }> {
     try {
       // Use Helius WebSocket monitoring if available for real-time confirmation
@@ -1028,7 +1030,7 @@ export class Solana {
       });
 
       const timeoutPromise = new Promise<{ confirmed: boolean }>((_, reject) =>
-        setTimeout(() => reject(new Error('Confirmation timed out')), timeout),
+        setTimeout(() => reject(new Error('Confirmation timed out')), timeout)
       );
 
       return await Promise.race([confirmationPromise, timeoutPromise]);
@@ -1048,7 +1050,7 @@ export class Solana {
   public async sendAndConfirmTransaction(
     tx: Transaction | VersionedTransaction,
     signers: Signer[] = [],
-    priorityFeePerCU?: number,
+    priorityFeePerCU?: number
   ): Promise<{ signature: string; fee: number }> {
     // Use provided priority fee or estimate it
     const currentPriorityFee = priorityFeePerCU ?? (await this.estimateGasPrice());
@@ -1075,7 +1077,7 @@ export class Solana {
         // Add 10% margin for safety
         computeUnitsToUse = Math.ceil(simulationResult.unitsConsumed * 1.1);
         logger.info(
-          `Simulation consumed ${simulationResult.unitsConsumed} units, using ${computeUnitsToUse} with 10% margin`,
+          `Simulation consumed ${simulationResult.unitsConsumed} units, using ${computeUnitsToUse} with 10% margin`
         );
       } else {
         // Fallback to default if simulation doesn't return units
@@ -1089,7 +1091,9 @@ export class Solana {
 
     const basePriorityFeeLamports = currentPriorityFee * computeUnitsToUse;
     logger.info(
-      `Sending transaction with ${currentPriorityFee} lamports/CU priority fee and total priority fee of ${(basePriorityFeeLamports * LAMPORT_TO_SOL).toFixed(6)} SOL`,
+      `Sending transaction with ${currentPriorityFee} lamports/CU priority fee and total priority fee of ${(
+        basePriorityFeeLamports * LAMPORT_TO_SOL
+      ).toFixed(6)} SOL`
     );
 
     // Prepare transaction with compute budget
@@ -1116,7 +1120,7 @@ export class Solana {
     tx: Transaction,
     currentPriorityFee: number,
     computeUnitsToUse: number,
-    signers: Signer[],
+    signers: Signer[]
   ): Promise<Transaction> {
     const priorityFeeMicroLamports = Math.floor(currentPriorityFee * 1_000_000);
     const priorityFeeInstruction = ComputeBudgetProgram.setComputeUnitPrice({
@@ -1151,7 +1155,7 @@ export class Solana {
     tx: VersionedTransaction,
     currentPriorityFee: number,
     computeUnits: number,
-    _signers: Signer[],
+    _signers: Signer[]
   ): Promise<VersionedTransaction> {
     const originalMessage = tx.message;
     const originalStaticCount = originalMessage.staticAccountKeys.length;
@@ -1170,7 +1174,7 @@ export class Solana {
 
     // Check if ComputeBudgetProgram is in static keys
     const computeBudgetProgramIndex = originalMessage.staticAccountKeys.findIndex((key) =>
-      key.equals(ComputeBudgetProgram.programId),
+      key.equals(ComputeBudgetProgram.programId)
     );
 
     // Add ComputeBudget program to static keys, adjust indexes, and create modified instructions
@@ -1206,12 +1210,12 @@ export class Solana {
             data: ix.data instanceof Buffer ? new Uint8Array(ix.data) : ix.data,
           })),
           addressTableLookups: originalMessage.addressTableLookups,
-        }),
+        })
       );
     } else {
       // Remove compute budget instructions from original instructions
       const nonComputeBudgetInstructions = originalMessage.compiledInstructions.filter(
-        (ix) => !originalMessage.staticAccountKeys[ix.programIdIndex].equals(ComputeBudgetProgram.programId),
+        (ix) => !originalMessage.staticAccountKeys[ix.programIdIndex].equals(ComputeBudgetProgram.programId)
       );
 
       // Create modified instructions
@@ -1235,7 +1239,7 @@ export class Solana {
             data: ix.data instanceof Buffer ? new Uint8Array(ix.data) : ix.data,
           })),
           addressTableLookups: originalMessage.addressTableLookups,
-        }),
+        })
       );
     }
     // DON'T DELETE COMMENTS BELOW
@@ -1278,7 +1282,7 @@ export class Solana {
    */
   private async addJitoTipToTransaction(
     transaction: VersionedTransaction,
-    payerPublicKey: PublicKey,
+    payerPublicKey: PublicKey
   ): Promise<VersionedTransaction> {
     if (!this.heliusConfig.useHeliusSender || !this.heliusConfig.jitoTipSOL) {
       return transaction;
@@ -1335,7 +1339,7 @@ export class Solana {
     const originalInstructions = originalMessage.compiledInstructions.map((ix) => ({
       ...ix,
       accountKeyIndexes: ix.accountKeyIndexes.map((index) =>
-        index >= originalStaticCount ? index + indexOffset : index,
+        index >= originalStaticCount ? index + indexOffset : index
       ),
     }));
 
@@ -1368,20 +1372,20 @@ export class Solana {
           data: ix.data instanceof Buffer ? new Uint8Array(ix.data) : ix.data,
         })),
         addressTableLookups: originalMessage.addressTableLookups,
-      }),
+      })
     );
 
     // Copy original signatures - transaction will need to be re-signed by caller
     modifiedTx.signatures = [...transaction.signatures];
 
     logger.info(
-      `Jito tip transaction created successfully with ${modifiedTx.message.staticAccountKeys.length} accounts`,
+      `Jito tip transaction created successfully with ${modifiedTx.message.staticAccountKeys.length} accounts`
     );
     return modifiedTx;
   }
 
   async sendAndConfirmRawTransaction(
-    transaction: VersionedTransaction | Transaction,
+    transaction: VersionedTransaction | Transaction
   ): Promise<{ confirmed: boolean; signature: string; txData: any }> {
     // Convert Transaction to VersionedTransaction if necessary
     if (!(transaction instanceof VersionedTransaction)) {
@@ -1410,7 +1414,7 @@ export class Solana {
 
   // Create a private method to handle the actual sending with Helius best practices
   private async _sendAndConfirmRawTransaction(
-    serializedTx: Buffer | Uint8Array,
+    serializedTx: Buffer | Uint8Array
   ): Promise<{ confirmed: boolean; signature: string; txData: any }> {
     // Get latest blockhash for expiration checking
     const { blockhash, lastValidBlockHeight } = await this.connection.getLatestBlockhash('confirmed');
@@ -1554,7 +1558,7 @@ export class Solana {
   async extractBalanceChangesAndFee(
     signature: string,
     owner: string,
-    tokens: string[],
+    tokens: string[]
   ): Promise<{
     balanceChanges: number[];
     fee: number;
@@ -1583,7 +1587,7 @@ export class Solana {
       if (token === 'So11111111111111111111111111111111111111112') {
         // For native SOL, we need to calculate from lamport balance changes
         const accountIndex = txDetails.transaction.message.accountKeys.findIndex((key) =>
-          key.pubkey.equals(ownerPubkey),
+          key.pubkey.equals(ownerPubkey)
         );
 
         if (accountIndex === -1) {
@@ -1625,7 +1629,7 @@ export class Solana {
     owner: string,
     baseTokenInfo: { address: string; symbol: string },
     quoteTokenInfo: { address: string; symbol: string },
-    txFee: number,
+    txFee: number
   ): Promise<{
     baseTokenChange: number;
     quoteTokenChange: number;
@@ -1741,7 +1745,9 @@ export class Solana {
 
       if (simulatedTransactionResponse.err) {
         const logs = simulatedTransactionResponse.logs || [];
-        const errorMessage = `${SIMULATION_ERROR_MESSAGE}\nError: ${JSON.stringify(simulatedTransactionResponse.err)}\nProgram Logs: ${logs.join('\n')}`;
+        const errorMessage = `${SIMULATION_ERROR_MESSAGE}\nError: ${JSON.stringify(
+          simulatedTransactionResponse.err
+        )}\nProgram Logs: ${logs.join('\n')}`;
 
         logger.error(errorMessage);
 
@@ -1775,27 +1781,27 @@ export class Solana {
         errorMessage.includes('custom program error: 0x1786')
       ) {
         throw fastify.httpErrors.badRequest(
-          `Swap failed: Slippage tolerance exceeded. The output amount would be less than your minimum. Try increasing slippage tolerance.`,
+          `Swap failed: Slippage tolerance exceeded. The output amount would be less than your minimum. Try increasing slippage tolerance.`
         );
       } else if (
         errorMessage.includes('Error Code: TooMuchInputPaid') ||
         errorMessage.includes('custom program error: 0x1787')
       ) {
         throw fastify.httpErrors.badRequest(
-          `Swap failed: Slippage tolerance exceeded. The input amount would be more than your maximum. Try increasing slippage tolerance.`,
+          `Swap failed: Slippage tolerance exceeded. The input amount would be more than your maximum. Try increasing slippage tolerance.`
         );
       } else if (errorMessage.includes('InsufficientFunds') || errorMessage.includes('insufficient')) {
         throw fastify.httpErrors.badRequest(`Swap failed: Insufficient funds. Please check your token balance.`);
       } else if (errorMessage.includes('AccountNotFound')) {
         throw fastify.httpErrors.badRequest(
-          `Swap failed: One or more required accounts not found. The pool or token accounts may not be initialized.`,
+          `Swap failed: One or more required accounts not found. The pool or token accounts may not be initialized.`
         );
       }
 
       // For other simulation errors, provide a cleaner message
       logger.error('Transaction simulation failed:', simulationError);
       throw fastify.httpErrors.badRequest(
-        `Transaction simulation failed. This usually means the swap parameters are invalid or market conditions have changed. Please try again.`,
+        `Transaction simulation failed. This usually means the swap parameters are invalid or market conditions have changed. Please try again.`
       );
     }
   }
@@ -1819,7 +1825,7 @@ export class Solana {
     tokenIn: string,
     tokenOut: string,
     walletAddress: string,
-    side?: 'BUY' | 'SELL',
+    side?: 'BUY' | 'SELL'
   ): Promise<{
     signature: string;
     status: number;

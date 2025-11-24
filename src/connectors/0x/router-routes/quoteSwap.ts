@@ -20,7 +20,7 @@ async function quoteSwap(
   side: 'BUY' | 'SELL',
   slippagePct: number,
   indicativePrice: boolean = true,
-  takerAddress?: string,
+  takerAddress?: string
 ): Promise<Static<typeof ZeroXQuoteSwapResponse>> {
   const ethereum = await Ethereum.getInstance(network);
   const zeroX = await ZeroX.getInstance(network);
@@ -31,7 +31,7 @@ async function quoteSwap(
 
   if (!baseTokenInfo || !quoteTokenInfo) {
     throw fastify.httpErrors.badRequest(
-      sanitizeErrorMessage('Token not found: {}', !baseTokenInfo ? baseToken : quoteToken),
+      sanitizeErrorMessage('Token not found: {}', !baseTokenInfo ? baseToken : quoteToken)
     );
   }
 
@@ -50,7 +50,9 @@ async function quoteSwap(
   const walletAddress = takerAddress || (await Ethereum.getWalletAddressExample());
 
   logger.info(
-    `Getting ${indicativePrice ? 'indicative price' : 'firm quote'} for ${amount} ${baseToken} ${side === 'SELL' ? '->' : '<-'} ${quoteToken}`,
+    `Getting ${indicativePrice ? 'indicative price' : 'firm quote'} for ${amount} ${baseToken} ${
+      side === 'SELL' ? '->' : '<-'
+    } ${quoteToken}`
   );
 
   // Get quote or price from 0x API based on indicativePrice flag
@@ -198,7 +200,7 @@ export const quoteSwapRoute: FastifyPluginAsync = async (fastify) => {
           side as 'BUY' | 'SELL',
           slippagePct,
           indicativePrice ?? true,
-          takerAddress,
+          takerAddress
         );
       } catch (e: any) {
         if (e.statusCode) throw e;
@@ -215,7 +217,7 @@ export const quoteSwapRoute: FastifyPluginAsync = async (fastify) => {
         // Return the actual error message instead of generic one
         throw fastify.httpErrors.internalServerError(e.message || 'Failed to get quote');
       }
-    },
+    }
   );
 };
 

@@ -63,7 +63,7 @@ export const fetchPoolsRoute: FastifyPluginAsync = async (fastify) => {
                 logger.error(`Failed to get pool info for ${pair.publicKey.toString()}: ${error.message}`);
                 throw fastify.httpErrors.notFound(`Pool not found: ${pair.publicKey.toString()}`);
               }
-            }),
+            })
         );
 
         return poolInfos.filter(Boolean);

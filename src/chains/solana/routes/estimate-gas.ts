@@ -63,7 +63,7 @@ export async function estimateGasSolana(fastify: FastifyInstance, network: strin
     } catch (instanceError) {
       logger.error(`Error getting Solana instance for network ${network}: ${instanceError.message}`);
       throw fastify.httpErrors.internalServerError(
-        `Failed to get Solana instance for network ${network}: ${instanceError.message}`,
+        `Failed to get Solana instance for network ${network}: ${instanceError.message}`
       );
     }
   }
@@ -88,7 +88,7 @@ export const estimateGasRoute: FastifyPluginAsync = async (fastify) => {
     async (request) => {
       const { network } = request.query;
       return await estimateGasSolana(fastify, network);
-    },
+    }
   );
 };
 

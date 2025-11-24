@@ -21,7 +21,7 @@ export async function getPancakeswapAmmLiquidityQuote(
   quoteToken?: string,
   baseTokenAmount?: number,
   quoteTokenAmount?: number,
-  _slippagePct?: number,
+  _slippagePct?: number
 ): Promise<{
   baseLimited: boolean;
   baseTokenAmount: number;
@@ -151,11 +151,11 @@ export async function getPancakeswapAmmLiquidityQuote(
 
   // Convert final amounts to raw values for execution
   const rawBaseTokenAmount = BigNumber.from(
-    Math.floor(baseTokenAmountOptimal * Math.pow(10, baseTokenObj.decimals)).toString(),
+    Math.floor(baseTokenAmountOptimal * Math.pow(10, baseTokenObj.decimals)).toString()
   );
 
   const rawQuoteTokenAmount = BigNumber.from(
-    Math.floor(quoteTokenAmountOptimal * Math.pow(10, quoteTokenObj.decimals)).toString(),
+    Math.floor(quoteTokenAmountOptimal * Math.pow(10, quoteTokenObj.decimals)).toString()
   );
 
   return {
@@ -229,7 +229,7 @@ export const quoteLiquidityRoute: FastifyPluginAsync = async (fastify) => {
           quoteToken,
           baseTokenAmount,
           quoteTokenAmount,
-          slippagePct,
+          slippagePct
         );
 
         // Use standard gas limit for liquidity operations
@@ -250,7 +250,7 @@ export const quoteLiquidityRoute: FastifyPluginAsync = async (fastify) => {
         }
         throw fastify.httpErrors.internalServerError('Failed to get liquidity quote');
       }
-    },
+    }
   );
 };
 

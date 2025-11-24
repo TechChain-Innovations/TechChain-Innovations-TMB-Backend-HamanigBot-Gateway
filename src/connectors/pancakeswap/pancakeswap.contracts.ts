@@ -122,7 +122,7 @@ export function getPancakeswapV2RouterAddress(network: string): string {
 
   if (address === null) {
     throw new Error(
-      `Pancakeswap V2 is not deployed on ${network} network. Please use Pancakeswap V3 for this network.`,
+      `Pancakeswap V2 is not deployed on ${network} network. Please use Pancakeswap V3 for this network.`
     );
   }
 
@@ -138,7 +138,7 @@ export function getPancakeswapV2FactoryAddress(network: string): Address {
 
   if (address === null) {
     throw new Error(
-      `Pancakeswap V2 is not deployed on ${network} network. Please use Pancakeswap V3 for this network.`,
+      `Pancakeswap V2 is not deployed on ${network} network. Please use Pancakeswap V3 for this network.`
     );
   }
 

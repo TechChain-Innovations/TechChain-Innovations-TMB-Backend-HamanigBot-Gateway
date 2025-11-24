@@ -131,11 +131,11 @@ export const closePositionRoute: FastifyPluginAsync = async (fastify) => {
         // Add any fees that have been collected to the expected amounts
         const totalAmount0 = CurrencyAmount.fromRawAmount(
           token0,
-          BigInt(amount0.quotient) + BigInt(feeAmount0.toString()),
+          BigInt(amount0.quotient) + BigInt(feeAmount0.toString())
         );
         const totalAmount1 = CurrencyAmount.fromRawAmount(
           token1,
-          BigInt(amount1.quotient) + BigInt(feeAmount1.toString()),
+          BigInt(amount1.quotient) + BigInt(feeAmount1.toString())
         );
 
         // Create parameters for removing all liquidity
@@ -167,7 +167,7 @@ export const closePositionRoute: FastifyPluginAsync = async (fastify) => {
               type: 'function',
             },
           ],
-          wallet,
+          wallet
         );
 
         // Execute the transaction to remove liquidity and burn the position
@@ -183,7 +183,7 @@ export const closePositionRoute: FastifyPluginAsync = async (fastify) => {
         // Calculate gas fee
         const gasFee = formatTokenAmount(
           receipt.gasUsed.mul(receipt.effectiveGasPrice).toString(),
-          18, // ETH has 18 decimals
+          18 // ETH has 18 decimals
         );
 
         // Calculate token amounts removed including fees
@@ -223,7 +223,7 @@ export const closePositionRoute: FastifyPluginAsync = async (fastify) => {
         }
         throw fastify.httpErrors.internalServerError('Failed to close position');
       }
-    },
+    }
   );
 };
 

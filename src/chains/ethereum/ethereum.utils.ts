@@ -39,7 +39,7 @@ export const getAvailableEthereumNetworks = (): string[] => {
  */
 export async function waitForTransactionWithTimeout(
   tx: TransactionResponse,
-  timeout: number = DEFAULT_TRANSACTION_TIMEOUT,
+  timeout: number = DEFAULT_TRANSACTION_TIMEOUT
 ): Promise<TransactionReceipt | null> {
   try {
     return await Promise.race([

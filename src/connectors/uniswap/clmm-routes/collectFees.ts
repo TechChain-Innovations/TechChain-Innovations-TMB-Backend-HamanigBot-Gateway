@@ -146,7 +146,7 @@ export const collectFeesRoute: FastifyPluginAsync = async (fastify) => {
               type: 'function',
             },
           ],
-          wallet,
+          wallet
         );
 
         // Execute the transaction to collect fees
@@ -162,7 +162,7 @@ export const collectFeesRoute: FastifyPluginAsync = async (fastify) => {
         // Calculate gas fee
         const gasFee = formatTokenAmount(
           receipt.gasUsed.mul(receipt.effectiveGasPrice).toString(),
-          18, // ETH has 18 decimals
+          18 // ETH has 18 decimals
         );
 
         // Calculate fee amounts collected
@@ -189,7 +189,7 @@ export const collectFeesRoute: FastifyPluginAsync = async (fastify) => {
         }
         throw fastify.httpErrors.internalServerError('Failed to collect fees');
       }
-    },
+    }
   );
 };
 

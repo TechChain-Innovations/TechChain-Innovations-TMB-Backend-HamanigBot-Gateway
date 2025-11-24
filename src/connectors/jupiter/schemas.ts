@@ -19,7 +19,7 @@ export const JupiterQuoteSwapRequest = Type.Object({
       description: 'Solana network to use',
       default: solanaChainConfig.defaultNetwork,
       enum: [...JupiterConfig.networks],
-    }),
+    })
   ),
   baseToken: Type.String({
     description: 'Solana token symbol or address to determine swap direction',
@@ -45,19 +45,19 @@ export const JupiterQuoteSwapRequest = Type.Object({
       maximum: 100,
       description: 'Maximum acceptable slippage percentage',
       default: JupiterConfig.config.slippagePct,
-    }),
+    })
   ),
   restrictIntermediateTokens: Type.Optional(
     Type.Boolean({
       description: 'Restrict routing through highly liquid intermediate tokens only for better price and stability',
       default: JupiterConfig.config.restrictIntermediateTokens,
-    }),
+    })
   ),
   onlyDirectRoutes: Type.Optional(
     Type.Boolean({
       description: 'Restrict routing to only go through 1 market',
       default: JupiterConfig.config.onlyDirectRoutes,
-    }),
+    })
   ),
 });
 
@@ -115,7 +115,7 @@ export const JupiterQuoteSwapResponse = Type.Object({
     platformFee: Type.Optional(
       Type.Any({
         description: 'Platform fee information if applicable',
-      }),
+      })
     ),
     priceImpactPct: Type.String({
       description: 'Estimated price impact percentage',
@@ -126,18 +126,18 @@ export const JupiterQuoteSwapResponse = Type.Object({
     contextSlot: Type.Optional(
       Type.Number({
         description: 'Solana slot used for quote calculation',
-      }),
+      })
     ),
     timeTaken: Type.Optional(
       Type.Number({
         description: 'Time taken to generate quote in milliseconds',
-      }),
+      })
     ),
   }),
   approximation: Type.Optional(
     Type.Boolean({
       description: 'Indicates if ExactIn approximation was used when ExactOut route was not available',
-    }),
+    })
   ),
 });
 
@@ -147,14 +147,14 @@ export const JupiterExecuteQuoteRequest = Type.Object({
     Type.String({
       description: 'Solana wallet address that will execute the swap',
       default: solanaChainConfig.defaultWallet,
-    }),
+    })
   ),
   network: Type.Optional(
     Type.String({
       description: 'Solana network to use',
       default: solanaChainConfig.defaultNetwork,
       enum: [...JupiterConfig.networks],
-    }),
+    })
   ),
   quoteId: Type.String({
     description: 'ID of the Jupiter quote to execute',
@@ -165,13 +165,13 @@ export const JupiterExecuteQuoteRequest = Type.Object({
       description: 'Priority level for Solana transaction processing',
       enum: ['medium', 'high', 'veryHigh'],
       default: JupiterConfig.config.priorityLevel,
-    }),
+    })
   ),
   maxLamports: Type.Optional(
     Type.Number({
       description: 'Maximum priority fee in lamports for Solana transaction',
       default: [JupiterConfig.config.maxLamports],
-    }),
+    })
   ),
 });
 
@@ -181,14 +181,14 @@ export const JupiterExecuteSwapRequest = Type.Object({
     Type.String({
       description: 'Solana wallet address that will execute the swap',
       default: solanaChainConfig.defaultWallet,
-    }),
+    })
   ),
   network: Type.Optional(
     Type.String({
       description: 'Solana network to use',
       default: solanaChainConfig.defaultNetwork,
       enum: [...JupiterConfig.networks],
-    }),
+    })
   ),
   baseToken: Type.String({
     description: 'Solana token symbol or address to determine swap direction',
@@ -214,31 +214,31 @@ export const JupiterExecuteSwapRequest = Type.Object({
       maximum: 100,
       description: 'Maximum acceptable slippage percentage',
       default: JupiterConfig.config.slippagePct,
-    }),
+    })
   ),
   restrictIntermediateTokens: Type.Optional(
     Type.Boolean({
       description: 'Restrict routing through highly liquid intermediate tokens only for better price and stability',
       default: JupiterConfig.config.restrictIntermediateTokens,
-    }),
+    })
   ),
   onlyDirectRoutes: Type.Optional(
     Type.Boolean({
       description: 'Restrict routing to only go through 1 market',
       default: JupiterConfig.config.onlyDirectRoutes,
-    }),
+    })
   ),
   priorityLevel: Type.Optional(
     Type.String({
       description: 'Priority level for Solana transaction processing',
       enum: ['medium', 'high', 'veryHigh'],
       default: JupiterConfig.config.priorityLevel,
-    }),
+    })
   ),
   maxLamports: Type.Optional(
     Type.Number({
       description: 'Maximum priority fee in lamports for Solana transaction',
       default: JupiterConfig.config.maxLamports,
-    }),
+    })
   ),
 });

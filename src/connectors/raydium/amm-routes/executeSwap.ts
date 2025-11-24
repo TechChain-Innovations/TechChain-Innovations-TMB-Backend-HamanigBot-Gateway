@@ -23,7 +23,7 @@ async function executeSwap(
   amount: number,
   side: 'BUY' | 'SELL',
   poolAddress: string,
-  slippagePct?: number,
+  slippagePct?: number
 ): Promise<ExecuteSwapResponseType> {
   const solana = await Solana.getInstance(network);
   const raydium = await Raydium.getInstance(network);
@@ -49,7 +49,7 @@ async function executeSwap(
     quoteToken,
     amount,
     side,
-    effectiveSlippage,
+    effectiveSlippage
   );
 
   const inputToken = quote.inputToken;
@@ -147,7 +147,7 @@ async function executeSwap(
     transaction,
     walletAddress,
     isHardwareWallet,
-    wallet,
+    wallet
   )) as VersionedTransaction;
 
   // Simulate transaction with proper error handling
@@ -163,12 +163,14 @@ async function executeSwap(
     inputToken.address,
     outputToken.address,
     walletAddress,
-    side,
+    side
   );
 
   if (result.status === 1) {
     logger.info(
-      `Swap executed successfully: ${result.data?.amountIn.toFixed(4)} ${inputToken.symbol} -> ${result.data?.amountOut.toFixed(4)} ${outputToken.symbol}`,
+      `Swap executed successfully: ${result.data?.amountIn.toFixed(4)} ${
+        inputToken.symbol
+      } -> ${result.data?.amountOut.toFixed(4)} ${outputToken.symbol}`
     );
   }
 
@@ -224,8 +226,7 @@ export const executeSwapRoute: FastifyPluginAsync = async (fastify) => {
           poolAddress,
           slippagePct,
           useNativeSolBalance,
-        } =
-          request.body as typeof RaydiumAmmExecuteSwapRequest._type;
+        } = request.body as typeof RaydiumAmmExecuteSwapRequest._type;
         const networkToUse = network;
 
         errContext = {
@@ -241,28 +242,30 @@ export const executeSwapRoute: FastifyPluginAsync = async (fastify) => {
         if (poolAddress) {
           const raydium = await Raydium.getInstance(networkToUse);
           try {
-          const [poolInfo] = await raydium.getPoolfromAPI(poolAddress);
-          if (poolInfo && isValidClmm(poolInfo.programId)) {
-            logger.info(`Detected CLMM pool ${poolAddress} on AMM execute-swap, routing to CLMM handler`);
-            return await executeClmmSwap(
-              fastify,
-              networkToUse,
-              walletAddress,
-              baseToken,
-              quoteToken,
-              amount,
-              side as 'BUY' | 'SELL',
-              poolAddress,
-              slippagePct,
-              useNativeSolBalance ?? false,
+            const [poolInfo] = await raydium.getPoolfromAPI(poolAddress);
+            if (poolInfo && isValidClmm(poolInfo.programId)) {
+              logger.info(`Detected CLMM pool ${poolAddress} on AMM execute-swap, routing to CLMM handler`);
+              return await executeClmmSwap(
+                fastify,
+                networkToUse,
+                walletAddress,
+                baseToken,
+                quoteToken,
+                amount,
+                side as 'BUY' | 'SELL',
+                poolAddress,
+                slippagePct,
+                useNativeSolBalance ?? false
+              );
+            }
+          } catch (e) {
+            // If we already have a structured HTTP error, bubble it up instead of misclassifying the pool
+            if ((e as any)?.statusCode) {
+              throw e;
+            }
+            logger.warn(
+              `Pool type detection failed for ${poolAddress}, falling back to AMM path: ${(e as Error)?.message}`
             );
-          }
-        } catch (e) {
-          // If we already have a structured HTTP error, bubble it up instead of misclassifying the pool
-          if ((e as any)?.statusCode) {
-            throw e;
-          }
-            logger.warn(`Pool type detection failed for ${poolAddress}, falling back to AMM path: ${ (e as Error)?.message }`);
           }
         }
 
@@ -277,7 +280,7 @@ export const executeSwapRoute: FastifyPluginAsync = async (fastify) => {
 
           if (!baseTokenInfo || !quoteTokenInfo) {
             throw fastify.httpErrors.badRequest(
-              sanitizeErrorMessage('Token not found: {}', !baseTokenInfo ? baseToken : quoteToken),
+              sanitizeErrorMessage('Token not found: {}', !baseTokenInfo ? baseToken : quoteToken)
             );
           }
 
@@ -290,12 +293,12 @@ export const executeSwapRoute: FastifyPluginAsync = async (fastify) => {
             networkToUse,
             'amm',
             baseTokenInfo.symbol,
-            quoteTokenInfo.symbol,
+            quoteTokenInfo.symbol
           );
 
           if (!pool) {
             throw fastify.httpErrors.notFound(
-              `No AMM pool found for ${baseTokenInfo.symbol}-${quoteTokenInfo.symbol} on Raydium`,
+              `No AMM pool found for ${baseTokenInfo.symbol}-${quoteTokenInfo.symbol} on Raydium`
             );
           }
 
@@ -313,12 +316,12 @@ export const executeSwapRoute: FastifyPluginAsync = async (fastify) => {
           amount,
           side as 'BUY' | 'SELL',
           poolAddressToUse,
-          slippagePct,
+          slippagePct
         );
       } catch (e) {
         throw mapSwapError(fastify, e, errContext);
       }
-    },
+    }
   );
 };
 

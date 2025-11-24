@@ -34,7 +34,7 @@ export const getConfigRoute: FastifyPluginAsync = async (fastify) => {
         // Otherwise, throw a generic internal server error
         throw fastify.httpErrors.internalServerError('Failed to retrieve configuration');
       }
-    },
+    }
   );
 };
 

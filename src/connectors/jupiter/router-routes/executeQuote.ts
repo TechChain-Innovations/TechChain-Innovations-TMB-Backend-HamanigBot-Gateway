@@ -15,7 +15,7 @@ export async function executeQuote(
   network: string,
   quoteId: string,
   priorityLevel?: string,
-  maxLamports?: number,
+  maxLamports?: number
 ): Promise<SwapExecuteResponseType> {
   // Retrieve cached quote
   const quote = quoteCache.get(quoteId);
@@ -74,14 +74,16 @@ export async function executeQuote(
     txData,
     inputToken.address,
     outputToken.address,
-    walletAddress,
+    walletAddress
   );
 
   // Remove quote from cache only after successful execution (confirmed)
   if (result.status === 1) {
     quoteCache.delete(quoteId);
     logger.info(
-      `Swap executed successfully: ${result.data?.amountIn.toFixed(4)} ${inputToken.symbol} -> ${result.data?.amountOut.toFixed(4)} ${outputToken.symbol}`,
+      `Swap executed successfully: ${result.data?.amountIn.toFixed(4)} ${
+        inputToken.symbol
+      } -> ${result.data?.amountOut.toFixed(4)} ${outputToken.symbol}`
     );
   }
 
@@ -113,7 +115,7 @@ export const executeQuoteRoute: FastifyPluginAsync = async (fastify) => {
         logger.error('Error executing quote:', e);
         throw fastify.httpErrors.internalServerError('Internal server error');
       }
-    },
+    }
   );
 };
 

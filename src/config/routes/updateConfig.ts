@@ -97,7 +97,7 @@ export const updateConfigRoute: FastifyPluginAsync = async (fastify) => {
         // Otherwise, throw a generic internal server error
         throw fastify.httpErrors.internalServerError('Failed to update configuration');
       }
-    },
+    }
   );
 };
 

@@ -16,7 +16,7 @@ async function executeSwap(
   quoteToken: string,
   amount: number,
   side: 'BUY' | 'SELL',
-  slippagePct: number,
+  slippagePct: number
 ): Promise<SwapExecuteResponseType> {
   logger.info(`Executing swap: ${amount} ${baseToken} ${side} for ${quoteToken}`);
 
@@ -29,7 +29,7 @@ async function executeSwap(
     quoteToken,
     amount,
     side,
-    slippagePct,
+    slippagePct
   );
 
   // Step 2: Execute the quote
@@ -65,14 +65,14 @@ export const executeSwapRoute: FastifyPluginAsync = async (fastify) => {
           quoteToken,
           amount,
           side as 'BUY' | 'SELL',
-          slippagePct,
+          slippagePct
         );
       } catch (e) {
         if (e.statusCode) throw e;
         logger.error('Error executing swap:', e);
         throw fastify.httpErrors.internalServerError(e.message || 'Internal server error');
       }
-    },
+    }
   );
 };
 

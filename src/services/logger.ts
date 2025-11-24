@@ -52,7 +52,7 @@ const logFileFormat = winston.format.combine(
     return info.stack
       ? `${localDate} | ${info.level} | ${output} | ${info.stack}`
       : `${localDate} | ${info.level} | ${output}`;
-  }),
+  })
 );
 
 const sdtoutFormat = winston.format.combine(
@@ -74,7 +74,7 @@ const sdtoutFormat = winston.format.combine(
     }
 
     return `${localDate} | ${info.level} | ${output}`;
-  }),
+  })
 );
 
 const getLogPath = () => {

@@ -61,10 +61,7 @@ export class ZeroX {
   private apiKey: string;
   private _slippagePct: number;
 
-  private constructor(
-    private network: string,
-    private chainId: number,
-  ) {
+  private constructor(private network: string, private chainId: number) {
     // Load configuration from ConfigManager
     this.apiKey = ZeroXConfig.config.apiKey;
     this._slippagePct = ZeroXConfig.config.slippagePct;
@@ -101,7 +98,7 @@ export class ZeroX {
         (error) => {
           logger.error(`0x API Error: ${error.message}`);
           return Promise.reject(error);
-        },
+        }
       );
     }
   }
@@ -154,7 +151,9 @@ export class ZeroX {
       if (error.response?.data) {
         logger.error(`0x API Error Response: ${JSON.stringify(error.response.data)}`);
         throw new Error(
-          `0x API Error: ${error.response.data.reason || error.response.data.message || JSON.stringify(error.response.data)}`,
+          `0x API Error: ${
+            error.response.data.reason || error.response.data.message || JSON.stringify(error.response.data)
+          }`
         );
       }
       throw error;
@@ -198,7 +197,9 @@ export class ZeroX {
       if (error.response?.data) {
         logger.error(`0x API Error Response: ${JSON.stringify(error.response.data)}`);
         throw new Error(
-          `0x API Error: ${error.response.data.reason || error.response.data.message || JSON.stringify(error.response.data)}`,
+          `0x API Error: ${
+            error.response.data.reason || error.response.data.message || JSON.stringify(error.response.data)
+          }`
         );
       }
       throw error;

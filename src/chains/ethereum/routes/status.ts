@@ -94,7 +94,7 @@ export const statusRoute: FastifyPluginAsync = async (fastify) => {
           nativeCurrency: 'ETH',
         };
       }
-    },
+    }
   );
 };
 

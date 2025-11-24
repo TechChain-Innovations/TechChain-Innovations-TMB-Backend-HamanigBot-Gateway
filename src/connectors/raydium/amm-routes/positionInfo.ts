@@ -17,7 +17,7 @@ async function calculateLpAmount(
   walletAddress: PublicKey,
   _ammPoolInfo: any,
   poolInfo: any,
-  poolAddress: string,
+  poolAddress: string
 ): Promise<{
   lpTokenAmount: number;
   baseTokenAmount: number;
@@ -127,7 +127,7 @@ export const positionInfoRoute: FastifyPluginAsync = async (fastify) => {
           walletPublicKey,
           ammPoolInfo,
           poolInfo,
-          poolAddress,
+          poolAddress
         );
 
         return {
@@ -147,7 +147,7 @@ export const positionInfoRoute: FastifyPluginAsync = async (fastify) => {
         }
         throw fastify.httpErrors.internalServerError('Failed to fetch position info');
       }
-    },
+    }
   );
 };
 

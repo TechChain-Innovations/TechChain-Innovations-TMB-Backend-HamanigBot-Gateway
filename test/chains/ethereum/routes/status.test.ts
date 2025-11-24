@@ -205,7 +205,7 @@ describe('Ethereum Status Route', () => {
 
       // Mock a timeout scenario
       mockEthereumInstance.provider.getBlockNumber.mockImplementation(
-        () => new Promise((_, reject) => setTimeout(() => reject(new Error('Request timed out')), 100)),
+        () => new Promise((_, reject) => setTimeout(() => reject(new Error('Request timed out')), 100))
       );
 
       // Mock logger.warn to avoid console output during tests

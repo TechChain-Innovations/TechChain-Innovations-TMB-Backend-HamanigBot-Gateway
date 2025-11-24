@@ -65,7 +65,7 @@ export class EthereumLedger {
         {
           timeout: 60000,
           displayMessage: `Please confirm the transaction on your Ledger device for address ${address}`,
-        },
+        }
       );
 
       // Apply signature to transaction

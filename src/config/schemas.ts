@@ -45,7 +45,7 @@ export const DefaultPoolRequestSchema = Type.Object({
         '3ucNos4NbumPLZNWztqGHNFFgkHeRMBQAVemeeomsUxv', // Solana example (raydium/meteora)
         '0xd0b53d9277642d899df5c87a3966a349a798f224', // Ethereum example (uniswap)
       ],
-    }),
+    })
   ),
 });
 
@@ -61,7 +61,7 @@ export const DefaultPoolListSchema = Type.Record(
   Type.String({
     pattern: '^[A-Z]+-[A-Z]+$',
   }),
-  Type.String(),
+  Type.String()
 );
 
 export type DefaultPoolListResponse = Static<typeof DefaultPoolListSchema>;
@@ -73,7 +73,7 @@ export const ConfigQuerySchema = Type.Object({
       description:
         'Optional configuration namespace (e.g., "server", "ethereum-mainnet", "solana-mainnet-beta", "uniswap")',
       examples: ['server', 'ethereum-mainnet', 'solana-mainnet-beta', 'uniswap'],
-    }),
+    })
   ),
 });
 

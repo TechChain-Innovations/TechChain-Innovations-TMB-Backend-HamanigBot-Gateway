@@ -29,7 +29,7 @@ async function addLiquidity(
   quoteTokenAmount: number,
   slippagePct?: number,
   gasPrice?: string,
-  maxGas?: number,
+  maxGas?: number
 ): Promise<AddLiquidityResponseType> {
   const networkToUse = network;
 
@@ -79,7 +79,7 @@ async function addLiquidity(
     actualQuoteToken,
     baseTokenAmount,
     quoteTokenAmount,
-    slippagePct,
+    slippagePct
   );
 
   // Get Ethereum instance
@@ -121,21 +121,30 @@ async function addLiquidity(
       tokenContract,
       wallet,
       quote.routerAddress,
-      quote.quoteTokenObj.decimals,
+      quote.quoteTokenObj.decimals
     );
 
     const currentAllowance = BigNumber.from(allowance.value);
     logger.info(
-      `Current allowance for ${quote.quoteTokenObj.symbol}: ${formatTokenAmount(currentAllowance.toString(), quote.quoteTokenObj.decimals)}`,
+      `Current allowance for ${quote.quoteTokenObj.symbol}: ${formatTokenAmount(
+        currentAllowance.toString(),
+        quote.quoteTokenObj.decimals
+      )}`
     );
     logger.info(
-      `Amount needed for ${quote.quoteTokenObj.symbol}: ${formatTokenAmount(quote.rawQuoteTokenAmount.toString(), quote.quoteTokenObj.decimals)}`,
+      `Amount needed for ${quote.quoteTokenObj.symbol}: ${formatTokenAmount(
+        quote.rawQuoteTokenAmount.toString(),
+        quote.quoteTokenObj.decimals
+      )}`
     );
 
     // Check if allowance is sufficient
     if (currentAllowance.lt(quote.rawQuoteTokenAmount)) {
       throw new Error(
-        `Insufficient allowance for ${quote.quoteTokenObj.symbol}. Please approve at least ${formatTokenAmount(quote.rawQuoteTokenAmount.toString(), quote.quoteTokenObj.decimals)} ${quote.quoteTokenObj.symbol} for the Pancakeswap router (${quote.routerAddress})`,
+        `Insufficient allowance for ${quote.quoteTokenObj.symbol}. Please approve at least ${formatTokenAmount(
+          quote.rawQuoteTokenAmount.toString(),
+          quote.quoteTokenObj.decimals
+        )} ${quote.quoteTokenObj.symbol} for the Pancakeswap router (${quote.routerAddress})`
       );
     }
 
@@ -150,7 +159,7 @@ async function addLiquidity(
       {
         value: quote.rawBaseTokenAmount,
         gasLimit: 300000,
-      },
+      }
     );
   } else if (quote.quoteTokenObj.symbol === 'WETH') {
     // Check allowance for base token
@@ -159,21 +168,30 @@ async function addLiquidity(
       tokenContract,
       wallet,
       quote.routerAddress,
-      quote.baseTokenObj.decimals,
+      quote.baseTokenObj.decimals
     );
 
     const currentAllowance = BigNumber.from(allowance.value);
     logger.info(
-      `Current allowance for ${quote.baseTokenObj.symbol}: ${formatTokenAmount(currentAllowance.toString(), quote.baseTokenObj.decimals)}`,
+      `Current allowance for ${quote.baseTokenObj.symbol}: ${formatTokenAmount(
+        currentAllowance.toString(),
+        quote.baseTokenObj.decimals
+      )}`
     );
     logger.info(
-      `Amount needed for ${quote.baseTokenObj.symbol}: ${formatTokenAmount(quote.rawBaseTokenAmount.toString(), quote.baseTokenObj.decimals)}`,
+      `Amount needed for ${quote.baseTokenObj.symbol}: ${formatTokenAmount(
+        quote.rawBaseTokenAmount.toString(),
+        quote.baseTokenObj.decimals
+      )}`
     );
 
     // Check if allowance is sufficient
     if (currentAllowance.lt(quote.rawBaseTokenAmount)) {
       throw new Error(
-        `Insufficient allowance for ${quote.baseTokenObj.symbol}. Please approve at least ${formatTokenAmount(quote.rawBaseTokenAmount.toString(), quote.baseTokenObj.decimals)} ${quote.baseTokenObj.symbol} for the Pancakeswap router (${quote.routerAddress})`,
+        `Insufficient allowance for ${quote.baseTokenObj.symbol}. Please approve at least ${formatTokenAmount(
+          quote.rawBaseTokenAmount.toString(),
+          quote.baseTokenObj.decimals
+        )} ${quote.baseTokenObj.symbol} for the Pancakeswap router (${quote.routerAddress})`
       );
     }
 
@@ -190,7 +208,7 @@ async function addLiquidity(
       quoteTokenMinAmount,
       walletAddress,
       deadline,
-      gasOptions,
+      gasOptions
     );
   } else {
     // Both tokens are ERC20 - check allowances for both
@@ -199,7 +217,7 @@ async function addLiquidity(
       baseTokenContract,
       wallet,
       quote.routerAddress,
-      quote.baseTokenObj.decimals,
+      quote.baseTokenObj.decimals
     );
 
     const quoteTokenContract = ethereum.getContract(quote.quoteTokenObj.address, wallet);
@@ -207,35 +225,53 @@ async function addLiquidity(
       quoteTokenContract,
       wallet,
       quote.routerAddress,
-      quote.quoteTokenObj.decimals,
+      quote.quoteTokenObj.decimals
     );
 
     const currentBaseAllowance = BigNumber.from(baseAllowance.value);
     const currentQuoteAllowance = BigNumber.from(quoteAllowance.value);
 
     logger.info(
-      `Current base allowance for ${quote.baseTokenObj.symbol}: ${formatTokenAmount(currentBaseAllowance.toString(), quote.baseTokenObj.decimals)}`,
+      `Current base allowance for ${quote.baseTokenObj.symbol}: ${formatTokenAmount(
+        currentBaseAllowance.toString(),
+        quote.baseTokenObj.decimals
+      )}`
     );
     logger.info(
-      `Amount needed for ${quote.baseTokenObj.symbol}: ${formatTokenAmount(quote.rawBaseTokenAmount.toString(), quote.baseTokenObj.decimals)}`,
+      `Amount needed for ${quote.baseTokenObj.symbol}: ${formatTokenAmount(
+        quote.rawBaseTokenAmount.toString(),
+        quote.baseTokenObj.decimals
+      )}`
     );
     logger.info(
-      `Current quote allowance for ${quote.quoteTokenObj.symbol}: ${formatTokenAmount(currentQuoteAllowance.toString(), quote.quoteTokenObj.decimals)}`,
+      `Current quote allowance for ${quote.quoteTokenObj.symbol}: ${formatTokenAmount(
+        currentQuoteAllowance.toString(),
+        quote.quoteTokenObj.decimals
+      )}`
     );
     logger.info(
-      `Amount needed for ${quote.quoteTokenObj.symbol}: ${formatTokenAmount(quote.rawQuoteTokenAmount.toString(), quote.quoteTokenObj.decimals)}`,
+      `Amount needed for ${quote.quoteTokenObj.symbol}: ${formatTokenAmount(
+        quote.rawQuoteTokenAmount.toString(),
+        quote.quoteTokenObj.decimals
+      )}`
     );
 
     // Check if both allowances are sufficient
     if (currentBaseAllowance.lt(quote.rawBaseTokenAmount)) {
       throw new Error(
-        `Insufficient allowance for ${quote.baseTokenObj.symbol}. Please approve at least ${formatTokenAmount(quote.rawBaseTokenAmount.toString(), quote.baseTokenObj.decimals)} ${quote.baseTokenObj.symbol} for the Pancakeswap router (${quote.routerAddress})`,
+        `Insufficient allowance for ${quote.baseTokenObj.symbol}. Please approve at least ${formatTokenAmount(
+          quote.rawBaseTokenAmount.toString(),
+          quote.baseTokenObj.decimals
+        )} ${quote.baseTokenObj.symbol} for the Pancakeswap router (${quote.routerAddress})`
       );
     }
 
     if (currentQuoteAllowance.lt(quote.rawQuoteTokenAmount)) {
       throw new Error(
-        `Insufficient allowance for ${quote.quoteTokenObj.symbol}. Please approve at least ${formatTokenAmount(quote.rawQuoteTokenAmount.toString(), quote.quoteTokenObj.decimals)} ${quote.quoteTokenObj.symbol} for the Pancakeswap router (${quote.routerAddress})`,
+        `Insufficient allowance for ${quote.quoteTokenObj.symbol}. Please approve at least ${formatTokenAmount(
+          quote.rawQuoteTokenAmount.toString(),
+          quote.quoteTokenObj.decimals
+        )} ${quote.quoteTokenObj.symbol} for the Pancakeswap router (${quote.routerAddress})`
       );
     }
 
@@ -253,7 +289,7 @@ async function addLiquidity(
       quoteTokenMinAmount,
       walletAddress,
       deadline,
-      gasOptions,
+      gasOptions
     );
   }
 
@@ -263,7 +299,7 @@ async function addLiquidity(
   // Calculate gas fee
   const gasFee = formatTokenAmount(
     receipt.gasUsed.mul(receipt.effectiveGasPrice).toString(),
-    18, // ETH has 18 decimals
+    18 // ETH has 18 decimals
   );
 
   return {
@@ -347,7 +383,7 @@ export const addLiquidityRoute: FastifyPluginAsync = async (fastify) => {
           quoteTokenAmount,
           slippagePct,
           gasPrice,
-          maxGas,
+          maxGas
         );
       } catch (e) {
         logger.error(e);
@@ -364,13 +400,13 @@ export const addLiquidityRoute: FastifyPluginAsync = async (fastify) => {
         // Handle insufficient funds errors
         if (e.code === 'INSUFFICIENT_FUNDS' || (e.message && e.message.includes('insufficient funds'))) {
           throw fastify.httpErrors.badRequest(
-            'Insufficient ETH balance to pay for gas fees. Please add more ETH to your wallet.',
+            'Insufficient ETH balance to pay for gas fees. Please add more ETH to your wallet.'
           );
         }
 
         throw fastify.httpErrors.internalServerError('Failed to add liquidity');
       }
-    },
+    }
   );
 };
 

@@ -86,7 +86,7 @@ export const getConnectorsRoute: FastifyPluginAsync = async (fastify) => {
       logger.info('Available connectors: ' + connectors.map((c) => c.name).join(', '));
 
       return { connectors };
-    },
+    }
   );
 };
 

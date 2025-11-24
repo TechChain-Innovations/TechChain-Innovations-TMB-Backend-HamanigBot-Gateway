@@ -166,7 +166,7 @@ describe('Hardware Wallet Routes', () => {
 
       // Mock wrong app being open (error code 0x6a83)
       mockHardwareWalletService.getEthereumAddress.mockRejectedValue(
-        new Error('Ledger device: UNKNOWN_ERROR (0x6a83)'),
+        new Error('Ledger device: UNKNOWN_ERROR (0x6a83)')
       );
 
       const response = await app.inject({

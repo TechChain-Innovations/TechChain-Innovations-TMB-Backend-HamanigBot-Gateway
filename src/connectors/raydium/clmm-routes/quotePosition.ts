@@ -21,7 +21,7 @@ export async function quotePosition(
   quoteTokenAmount?: number,
   slippagePct?: number,
   baseTokenSymbol?: string,
-  quoteTokenSymbol?: string,
+  quoteTokenSymbol?: string
 ): Promise<QuotePositionResponseType> {
   try {
     const solana = await Solana.getInstance(network);
@@ -196,13 +196,13 @@ export const quotePositionRoute: FastifyPluginAsync = async (fastify) => {
           quoteTokenAmount,
           slippagePct,
           undefined, // baseToken not needed anymore
-          undefined, // quoteToken not needed anymore
+          undefined // quoteToken not needed anymore
         );
       } catch (e) {
         logger.error(e);
         throw fastify.httpErrors.internalServerError('Failed to quote position');
       }
-    },
+    }
   );
 };
 

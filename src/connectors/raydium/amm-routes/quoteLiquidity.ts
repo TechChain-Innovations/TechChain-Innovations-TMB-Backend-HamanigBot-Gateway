@@ -59,7 +59,7 @@ export async function quoteLiquidity(
   poolAddress: string,
   baseTokenAmount?: number,
   quoteTokenAmount?: number,
-  slippagePct?: number,
+  slippagePct?: number
 ): Promise<QuoteLiquidityResponseType> {
   try {
     const solana = await Solana.getInstance(network);
@@ -241,7 +241,7 @@ export const quoteLiquidityRoute: FastifyPluginAsync = async (fastify) => {
         logger.error(e);
         throw fastify.httpErrors.internalServerError('Failed to quote position');
       }
-    },
+    }
   );
 };
 

@@ -33,7 +33,7 @@ export const removeAllWalletsDevRoute: FastifyPluginAsync = async (fastify) => {
     async (request) => {
       if (!isDevEnvironment()) {
         throw fastify.httpErrors.forbidden(
-          'Development endpoint disabled. Start Gateway with --dev or set GATEWAY_TEST_MODE=dev to enable it.',
+          'Development endpoint disabled. Start Gateway with --dev or set GATEWAY_TEST_MODE=dev to enable it.'
         );
       }
 
@@ -49,7 +49,7 @@ export const removeAllWalletsDevRoute: FastifyPluginAsync = async (fastify) => {
         removedWallets: result.removedWallets,
         hardwareCleared: result.hardwareCleared,
       };
-    },
+    }
   );
 };
 

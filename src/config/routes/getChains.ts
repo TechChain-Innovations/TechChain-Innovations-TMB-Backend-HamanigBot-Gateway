@@ -73,7 +73,7 @@ export const getChainsRoute: FastifyPluginAsync = async (fastify) => {
       logger.info('Available chains: ' + chains.map((c) => `${c.chain} (${c.networks.length} networks)`).join(', '));
 
       return { chains };
-    },
+    }
   );
 };
 

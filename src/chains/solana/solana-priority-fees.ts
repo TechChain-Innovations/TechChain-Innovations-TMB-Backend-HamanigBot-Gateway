@@ -85,7 +85,9 @@ export class SolanaPriorityFees {
       const finalFee = Math.max(priorityFeeLamports, minimumFee);
 
       logger.info(
-        `Priority fee estimate: ${priorityFeeLamports.toFixed(4)} lamports/CU -> using ${finalFee.toFixed(4)} lamports/CU (${finalFee === minimumFee ? 'minimum enforced' : 'recommended'})`,
+        `Priority fee estimate: ${priorityFeeLamports.toFixed(4)} lamports/CU -> using ${finalFee.toFixed(
+          4
+        )} lamports/CU (${finalFee === minimumFee ? 'minimum enforced' : 'recommended'})`
       );
 
       // Cache the result

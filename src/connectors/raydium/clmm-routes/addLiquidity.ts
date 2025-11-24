@@ -20,7 +20,7 @@ async function addLiquidity(
   positionAddress: string,
   baseTokenAmount: number,
   quoteTokenAmount: number,
-  slippagePct?: number,
+  slippagePct?: number
 ): Promise<AddLiquidityResponseType> {
   const solana = await Solana.getInstance(network);
   const raydium = await Raydium.getInstance(network);
@@ -46,7 +46,7 @@ async function addLiquidity(
     positionInfo.poolAddress,
     baseTokenAmount,
     quoteTokenAmount,
-    slippagePct,
+    slippagePct
   );
   console.log('quotePositionResponse', quotePositionResponse);
   logger.info('Adding liquidity to Raydium CLMM position...');
@@ -82,7 +82,7 @@ async function addLiquidity(
     transaction,
     walletAddress,
     isHardwareWallet,
-    wallet,
+    wallet
   )) as VersionedTransaction;
   await solana.simulateWithErrorHandling(transaction, _fastify);
 
@@ -164,13 +164,13 @@ export const addLiquidityRoute: FastifyPluginAsync = async (fastify) => {
           positionAddress,
           baseTokenAmount,
           quoteTokenAmount,
-          slippagePct,
+          slippagePct
         );
       } catch (e) {
         logger.error(e);
         throw fastify.httpErrors.internalServerError('Internal server error');
       }
-    },
+    }
   );
 };
 

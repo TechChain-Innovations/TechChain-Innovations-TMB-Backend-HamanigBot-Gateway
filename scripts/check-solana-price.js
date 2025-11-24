@@ -33,8 +33,11 @@ async function checkPrice() {
     // Using a larger amount for a more meaningful price quote, as KITE's value is low.
     const amountToSell = 100000;
 
-    log('info', `Getting price for ${config.baseToken}/${config.quoteToken} by quoting a sale of ${amountToSell} ${config.baseToken}...`);
-    
+    log(
+      'info',
+      `Getting price for ${config.baseToken}/${config.quoteToken} by quoting a sale of ${amountToSell} ${config.baseToken}...`
+    );
+
     const quoteParams = {
       network: config.network,
       baseToken: config.baseToken,
@@ -45,15 +48,19 @@ async function checkPrice() {
     };
 
     // Using the AMM endpoint, which can route to CLMM if needed.
-    const quoteResponse = await gatewayApi.get(`/connectors/${config.connector}/amm/quote-swap`, { params: quoteParams });
+    const quoteResponse = await gatewayApi.get(`/connectors/${config.connector}/amm/quote-swap`, {
+      params: quoteParams,
+    });
     const { price, amountOut } = quoteResponse.data;
 
     log('info', '----------------------------------------');
     log('success', `Price for ${config.baseToken}/${config.quoteToken}`);
     log('info', `1 ${config.baseToken} is approximately ${price.toExponential(6)} ${config.quoteToken}`);
-    log('info', `Selling ${amountToSell} ${config.baseToken} would get you approximately ${amountOut} ${config.quoteToken}`);
+    log(
+      'info',
+      `Selling ${amountToSell} ${config.baseToken} would get you approximately ${amountOut} ${config.quoteToken}`
+    );
     log('info', '----------------------------------------');
-
   } catch (error) {
     log('error', 'Failed to get price!');
     if (error.response) {

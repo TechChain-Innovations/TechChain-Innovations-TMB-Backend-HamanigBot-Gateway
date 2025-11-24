@@ -118,7 +118,7 @@ export class LedgerTransportManager {
    */
   public async withTransport<T>(
     operation: (transport: TransportNodeHidType) => Promise<T>,
-    descriptor?: string,
+    descriptor?: string
   ): Promise<T> {
     let transport: TransportNodeHidType | null = null;
 

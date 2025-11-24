@@ -112,7 +112,7 @@ export async function unwrapEthereum(fastify: FastifyInstance, network: string, 
       const balance = await wrappedContract.balanceOf(address);
       if (balance.lt(amountInWei)) {
         throw fastify.httpErrors.badRequest(
-          `Insufficient ${wrappedInfo.symbol} balance. Available: ${utils.formatEther(balance)}, Required: ${amount}`,
+          `Insufficient ${wrappedInfo.symbol} balance. Available: ${utils.formatEther(balance)}, Required: ${amount}`
         );
       }
 
@@ -167,7 +167,7 @@ export async function unwrapEthereum(fastify: FastifyInstance, network: string, 
       const balance = await wrappedContract.balanceOf(wallet.address);
       if (balance.lt(amountInWei)) {
         throw fastify.httpErrors.badRequest(
-          `Insufficient ${wrappedInfo.symbol} balance. Available: ${utils.formatEther(balance)}, Required: ${amount}`,
+          `Insufficient ${wrappedInfo.symbol} balance. Available: ${utils.formatEther(balance)}, Required: ${amount}`
         );
       }
 
@@ -217,13 +217,13 @@ export async function unwrapEthereum(fastify: FastifyInstance, network: string, 
     // Handle specific error cases
     if (error.message && error.message.includes('insufficient funds')) {
       throw fastify.httpErrors.badRequest(
-        `Insufficient funds for transaction. Please ensure you have enough ETH for gas costs.`,
+        `Insufficient funds for transaction. Please ensure you have enough ETH for gas costs.`
       );
     } else if (error.message && error.message.includes('Insufficient') && error.message.includes('balance')) {
       throw error; // Re-throw our custom balance error
     } else if (error.message && error.message.includes('timeout')) {
       throw fastify.httpErrors.requestTimeout(
-        `Transaction timeout. The transaction may still be pending. Hash: ${error.transactionHash || 'unknown'}`,
+        `Transaction timeout. The transaction may still be pending. Hash: ${error.transactionHash || 'unknown'}`
       );
     } else if (error.message.includes('rejected on Ledger')) {
       throw fastify.httpErrors.badRequest('Transaction rejected on Ledger device');
@@ -234,7 +234,7 @@ export async function unwrapEthereum(fastify: FastifyInstance, network: string, 
     }
 
     throw fastify.httpErrors.internalServerError(
-      `Failed to unwrap ${wrappedInfo.symbol} to ${wrappedInfo.nativeSymbol}: ${error.message}`,
+      `Failed to unwrap ${wrappedInfo.symbol} to ${wrappedInfo.nativeSymbol}: ${error.message}`
     );
   }
 }
@@ -259,7 +259,7 @@ export const unwrapRoute: FastifyPluginAsync = async (fastify) => {
       const { network, address, amount } = request.body;
 
       return await unwrapEthereum(fastify, network, address, amount);
-    },
+    }
   );
 };
 

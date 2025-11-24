@@ -212,7 +212,7 @@ describe('Meteora CLMM Tests (Solana Mainnet)', () => {
             network: NETWORK,
             poolAddress: TEST_POOL,
           }),
-        }),
+        })
       );
     });
 
@@ -237,7 +237,7 @@ describe('Meteora CLMM Tests (Solana Mainnet)', () => {
             baseToken: BASE_TOKEN,
             quoteToken: 'UNKNOWN',
           },
-        }),
+        })
       ).rejects.toMatchObject({
         response: {
           status: 404,
@@ -344,7 +344,7 @@ describe('Meteora CLMM Tests (Solana Mainnet)', () => {
             side: 'SELL',
             amount: 1000000.0, // Very large amount
           },
-        }),
+        })
       ).rejects.toMatchObject({
         response: {
           status: 400,
@@ -410,7 +410,7 @@ describe('Meteora CLMM Tests (Solana Mainnet)', () => {
           side: 'SELL',
           amount: 1000000.0,
           walletAddress: TEST_WALLET,
-        }),
+        })
       ).rejects.toMatchObject({
         response: {
           status: 500,
@@ -468,7 +468,7 @@ describe('Meteora CLMM Tests (Solana Mainnet)', () => {
             network: NETWORK,
             positionId: 'invalid-position',
           },
-        }),
+        })
       ).rejects.toMatchObject({
         response: {
           status: 404,
@@ -597,7 +597,7 @@ describe('Meteora CLMM Tests (Solana Mainnet)', () => {
             baseTokenAmount: 1.0,
             quoteTokenAmount: 167.5,
           },
-        }),
+        })
       ).rejects.toMatchObject({
         response: {
           status: 400,
@@ -633,7 +633,7 @@ describe('Meteora CLMM Tests (Solana Mainnet)', () => {
             baseTokenAmount: 1.0,
             quoteTokenAmount: 167.5,
           },
-        }),
+        })
       ).rejects.toMatchObject({
         response: {
           status: 400,
@@ -697,7 +697,7 @@ describe('Meteora CLMM Tests (Solana Mainnet)', () => {
           baseTokenAmount: 10000.0, // Large amount
           quoteTokenAmount: 1675000.0,
           walletAddress: TEST_WALLET,
-        }),
+        })
       ).rejects.toMatchObject({
         response: {
           status: 400,
@@ -757,7 +757,7 @@ describe('Meteora CLMM Tests (Solana Mainnet)', () => {
           baseTokenAmount: 0.5,
           quoteTokenAmount: 83.75,
           walletAddress: TEST_WALLET,
-        }),
+        })
       ).rejects.toMatchObject({
         response: {
           status: 404,
@@ -822,7 +822,7 @@ describe('Meteora CLMM Tests (Solana Mainnet)', () => {
           positionId: TEST_POSITION_ID,
           liquidity: '9999999999999999999', // Excessive amount
           walletAddress: TEST_WALLET,
-        }),
+        })
       ).rejects.toMatchObject({
         response: {
           status: 400,
@@ -886,7 +886,7 @@ describe('Meteora CLMM Tests (Solana Mainnet)', () => {
           network: NETWORK,
           positionId: TEST_POSITION_ID,
           walletAddress: TEST_WALLET,
-        }),
+        })
       ).rejects.toMatchObject({
         response: {
           status: 400,

@@ -24,7 +24,7 @@ async function openPosition(
   quoteTokenAmount?: number,
   baseTokenSymbol?: string,
   quoteTokenSymbol?: string,
-  slippagePct?: number,
+  slippagePct?: number
 ): Promise<OpenPositionResponseType> {
   const solana = await Solana.getInstance(network);
   const raydium = await Raydium.getInstance(network);
@@ -80,7 +80,7 @@ async function openPosition(
     poolAddressToUse,
     baseTokenAmount,
     quoteTokenAmount,
-    slippagePct,
+    slippagePct
   );
 
   logger.info('Opening Raydium CLMM position...');
@@ -118,7 +118,7 @@ async function openPosition(
     txn,
     walletAddress,
     isHardwareWallet,
-    wallet,
+    wallet
   )) as VersionedTransaction;
   await solana.simulateWithErrorHandling(transaction, _fastify);
 
@@ -135,7 +135,7 @@ async function openPosition(
       walletAddress,
       baseTokenInfo,
       quoteTokenInfo,
-      totalFee,
+      totalFee
     );
 
     return {
@@ -201,7 +201,7 @@ export const openPositionRoute: FastifyPluginAsync = async (fastify) => {
           quoteTokenAmount,
           undefined, // baseToken not needed anymore
           undefined, // quoteToken not needed anymore
-          slippagePct,
+          slippagePct
         );
       } catch (e) {
         logger.error(e);
@@ -210,7 +210,7 @@ export const openPositionRoute: FastifyPluginAsync = async (fastify) => {
         }
         throw fastify.httpErrors.internalServerError('Internal server error');
       }
-    },
+    }
   );
 };
 

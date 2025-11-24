@@ -19,7 +19,7 @@ export class SolanaLedger {
    */
   public async signTransaction(
     address: string,
-    transaction: Transaction | VersionedTransaction,
+    transaction: Transaction | VersionedTransaction
   ): Promise<Transaction | VersionedTransaction> {
     logger.info(`Signing transaction with Ledger for address: ${address}`);
 
@@ -38,7 +38,7 @@ export class SolanaLedger {
         {
           timeout: 60000,
           displayMessage: `Please confirm the transaction on your Ledger device for address ${address}`,
-        },
+        }
       );
 
       // Add signature to transaction

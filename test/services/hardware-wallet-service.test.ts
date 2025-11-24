@@ -143,7 +143,7 @@ describe('HardwareWalletService', () => {
       } as any;
 
       await expect(service.signSolanaTransaction("44'/501'/0'", mockTransaction)).rejects.toThrow(
-        'Transaction rejected by user on Ledger device',
+        'Transaction rejected by user on Ledger device'
       );
     });
 
@@ -160,7 +160,7 @@ describe('HardwareWalletService', () => {
       } as any;
 
       await expect(service.signSolanaTransaction("44'/501'/0'", mockTransaction)).rejects.toThrow(
-        'Transaction signing timed out. Please try again.',
+        'Transaction signing timed out. Please try again.'
       );
     });
   });

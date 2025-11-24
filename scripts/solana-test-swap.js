@@ -41,7 +41,7 @@ async function runSwap() {
     // For Raydium, we call `execute-swap` directly.
     // It gets a fresh quote and executes in one step.
     log('info', `Executing swap to sell ${config.amount} ${config.baseToken} for ${config.quoteToken}...`);
-    
+
     const executePayload = {
       network: config.network,
       walletAddress: config.walletAddress,
@@ -54,10 +54,10 @@ async function runSwap() {
     };
 
     const executeResponse = await gatewayApi.post(`/connectors/${config.connector}/amm/execute-swap`, executePayload);
-    
+
     const { signature } = executeResponse.data;
     if (!signature) {
-        throw new Error('Transaction execution did not return a signature.');
+      throw new Error('Transaction execution did not return a signature.');
     }
     log('info', `Swap transaction sent with signature: ${signature}`);
 
@@ -74,19 +74,24 @@ async function runSwap() {
         });
 
         const txStatus = pollResponse.data.txStatus;
-        log('info', `Current transaction status: ${txStatus === 1 ? 'CONFIRMED' : (txStatus === -1 ? 'FAILED' : 'PENDING')}`);
+        log(
+          'info',
+          `Current transaction status: ${txStatus === 1 ? 'CONFIRMED' : txStatus === -1 ? 'FAILED' : 'PENDING'}`
+        );
 
-        if (txStatus === 1) { // CONFIRMED
+        if (txStatus === 1) {
+          // CONFIRMED
           log('success', 'Transaction confirmed!');
           txData = pollResponse.data;
           break;
-        } else if (txStatus === -1) { // FAILED
+        } else if (txStatus === -1) {
+          // FAILED
           throw new Error('Transaction failed on-chain.');
         }
       } catch (e) {
         log('warn', `Polling error: ${e.message}. Retrying...`);
       }
-      await new Promise(resolve => setTimeout(resolve, config.pollingInterval));
+      await new Promise((resolve) => setTimeout(resolve, config.pollingInterval));
     }
 
     if (!txData) {
@@ -98,7 +103,6 @@ async function runSwap() {
       fee: txData.fee,
       block: txData.txBlock,
     });
-
   } catch (error) {
     log('error', 'Swap failed!');
     if (error.response) {

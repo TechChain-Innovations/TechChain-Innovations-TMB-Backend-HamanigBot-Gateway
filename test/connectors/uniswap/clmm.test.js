@@ -191,7 +191,7 @@ describe('Uniswap CLMM Tests (Base Network)', () => {
             baseToken: BASE_TOKEN,
             quoteToken: QUOTE_TOKEN,
           }),
-        }),
+        })
       );
     });
 
@@ -215,7 +215,7 @@ describe('Uniswap CLMM Tests (Base Network)', () => {
             baseToken: 'UNKNOWN',
             quoteToken: QUOTE_TOKEN,
           },
-        }),
+        })
       ).rejects.toMatchObject({
         response: {
           status: 404,
@@ -269,7 +269,7 @@ describe('Uniswap CLMM Tests (Base Network)', () => {
             side: 'SELL',
             amount: 1.0,
           }),
-        }),
+        })
       );
     });
 
@@ -410,7 +410,7 @@ describe('Uniswap CLMM Tests (Base Network)', () => {
             network: NETWORK,
             positionId: 'invalid-position',
           },
-        }),
+        })
       ).rejects.toMatchObject({
         response: {
           status: 404,
@@ -532,7 +532,7 @@ describe('Uniswap CLMM Tests (Base Network)', () => {
             baseTokenAmount: 1.0,
             quoteTokenAmount: 2340.5,
           },
-        }),
+        })
       ).rejects.toMatchObject({
         response: {
           status: 400,
@@ -606,7 +606,7 @@ describe('Uniswap CLMM Tests (Base Network)', () => {
           baseTokenAmount: 10000.0, // Large amount
           quoteTokenAmount: 23405000.0,
           wallet: TEST_WALLET,
-        }),
+        })
       ).rejects.toMatchObject({
         response: {
           status: 400,

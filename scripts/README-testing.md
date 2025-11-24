@@ -5,11 +5,13 @@ This directory contains comprehensive testing scripts for the Helius RPC provide
 ## Prerequisites
 
 1. **Gateway Server Running**
+
    ```bash
    pnpm start --passphrase=test123 --dev
    ```
 
 2. **Valid Helius API Key**
+
    - Ensure `conf/rpc/helius.yml` contains a valid API key
    - Get your API key from [helius.dev](https://helius.dev)
 
@@ -29,8 +31,9 @@ node scripts/test-helius-live.js
 ```
 
 **Tests:**
+
 - ✅ Helius RPC Connection
-- ✅ WebSocket Real-time Monitoring 
+- ✅ WebSocket Real-time Monitoring
 - ✅ Balance Fetching via Helius
 - ✅ Token List Loading
 - ✅ Priority Fee Estimation
@@ -39,6 +42,7 @@ node scripts/test-helius-live.js
 - ✅ Performance vs Standard RPC
 
 **Expected Output:**
+
 ```
 🚀 Helius Live Integration Tests
 
@@ -64,6 +68,7 @@ node scripts/test-provider-switching.js
 ```
 
 **Tests:**
+
 - ✅ Current Provider Configuration
 - ✅ Switch Devnet to Helius
 - ✅ Switch Mainnet to URL
@@ -73,6 +78,7 @@ node scripts/test-provider-switching.js
 - ✅ Configuration Schema Validation
 
 **Key Features:**
+
 - Temporarily modifies configs (auto-restores)
 - Tests error handling for invalid configs
 - Validates schema compliance
@@ -91,13 +97,15 @@ node scripts/test-helius-performance.js --iterations=20 --concurrent=5
 ```
 
 **Benchmarks:**
+
 - 🏁 Balance Fetching Performance
 - 🏁 Token List Loading
 - 🏁 Concurrent Request Handling
-- 🏁 Direct RPC Call Performance  
+- 🏁 Direct RPC Call Performance
 - 🏁 Priority Fee Estimation
 
 **Sample Output:**
+
 ```
 🏁 Helius Performance Benchmark Suite
 
@@ -120,6 +128,7 @@ node scripts/test-helius-performance.js --iterations=20 --concurrent=5
 ## Testing Scenarios
 
 ### Scenario 1: Fresh Setup Validation
+
 ```bash
 # 1. Clean install
 rm -rf conf/
@@ -131,6 +140,7 @@ node scripts/test-provider-switching.js
 ```
 
 ### Scenario 2: Performance Validation
+
 ```bash
 # 1. Run comprehensive performance tests
 node scripts/test-helius-performance.js --iterations=15
@@ -142,6 +152,7 @@ node scripts/test-helius-performance.js --iterations=15
 ```
 
 ### Scenario 3: Live Integration Testing
+
 ```bash
 # 1. Test all Helius features
 node scripts/test-helius-live.js
@@ -155,6 +166,7 @@ node scripts/test-helius-live.js
 ```
 
 ### Scenario 4: Error Handling Validation
+
 ```bash
 # 1. Test with invalid API key
 echo "apiKey: 'invalid-key'" > conf/rpc/helius.yml
@@ -170,29 +182,33 @@ rm conf/rpc/helius.yml
 
 When using Helius provider, expect:
 
-| Metric | Improvement | Notes |
-|--------|-------------|-------|
-| **Balance Fetching** | 30-50% faster | Optimized RPC endpoints |
-| **Token List Loading** | 15-25% faster | Cached responses |
-| **Concurrent Requests** | 40-60% better | Higher rate limits |
-| **Priority Fees** | Real-time data | More accurate estimation |
-| **WebSocket Monitoring** | Real-time | vs polling-based |
+| Metric                   | Improvement    | Notes                    |
+| ------------------------ | -------------- | ------------------------ |
+| **Balance Fetching**     | 30-50% faster  | Optimized RPC endpoints  |
+| **Token List Loading**   | 15-25% faster  | Cached responses         |
+| **Concurrent Requests**  | 40-60% better  | Higher rate limits       |
+| **Priority Fees**        | Real-time data | More accurate estimation |
+| **WebSocket Monitoring** | Real-time      | vs polling-based         |
 
 ## Troubleshooting
 
 ### Common Issues
 
 1. **WebSocket 401 Errors**
+
    ```
    Error: Unexpected server response: 401
    ```
+
    - Check API key in `conf/rpc/helius.yml`
    - Ensure key has WebSocket permissions
 
 2. **Config Not Loading**
+
    ```
    Error: Configuration paths must have at least two components
    ```
+
    - Restart Gateway server after config changes
    - Verify `conf/rpc/helius.yml` exists
 
@@ -204,6 +220,7 @@ When using Helius provider, expect:
 ### Debug Mode
 
 Enable debug logging:
+
 ```bash
 # Set log level to debug in server config
 # Check logs for detailed Helius service initialization
@@ -213,7 +230,7 @@ tail -f logs/logs_gateway_app.log | grep -i helius
 ## QA Checklist
 
 - [ ] All integration tests pass (`test-helius-live.js`)
-- [ ] Provider switching works (`test-provider-switching.js`) 
+- [ ] Provider switching works (`test-provider-switching.js`)
 - [ ] Performance improvements confirmed (`test-helius-performance.js`)
 - [ ] WebSocket connections establish successfully
 - [ ] No API keys logged in clear text
@@ -235,6 +252,7 @@ tail -f logs/logs_gateway_app.log | grep -i helius
 ## Support
 
 For issues with these testing scripts:
+
 1. Check Gateway server is running and accessible
 2. Verify Helius API key is valid and has sufficient quota
 3. Ensure all dependencies are installed

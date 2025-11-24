@@ -202,11 +202,11 @@ export async function wrapEthereum(fastify: FastifyInstance, network: string, ad
     // Handle specific error cases
     if (error.message && error.message.includes('insufficient funds')) {
       throw fastify.httpErrors.badRequest(
-        `Insufficient funds for transaction. Please ensure you have enough ${wrappedInfo.nativeSymbol} to wrap.`,
+        `Insufficient funds for transaction. Please ensure you have enough ${wrappedInfo.nativeSymbol} to wrap.`
       );
     } else if (error.message && error.message.includes('timeout')) {
       throw fastify.httpErrors.requestTimeout(
-        `Transaction timeout. The transaction may still be pending. Hash: ${error.transactionHash || 'unknown'}`,
+        `Transaction timeout. The transaction may still be pending. Hash: ${error.transactionHash || 'unknown'}`
       );
     } else if (error.message.includes('rejected on Ledger')) {
       throw fastify.httpErrors.badRequest('Transaction rejected on Ledger device');
@@ -217,7 +217,7 @@ export async function wrapEthereum(fastify: FastifyInstance, network: string, ad
     }
 
     throw fastify.httpErrors.internalServerError(
-      `Failed to wrap ${wrappedInfo.nativeSymbol} to ${wrappedInfo.symbol}: ${error.message}`,
+      `Failed to wrap ${wrappedInfo.nativeSymbol} to ${wrappedInfo.symbol}: ${error.message}`
     );
   }
 }
@@ -242,7 +242,7 @@ export const wrapRoute: FastifyPluginAsync = async (fastify) => {
       const { network, address, amount } = request.body;
 
       return await wrapEthereum(fastify, network, address, amount);
-    },
+    }
   );
 };
 

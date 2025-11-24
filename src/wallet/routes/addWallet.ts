@@ -29,7 +29,7 @@ export const addWalletRoute: FastifyPluginAsync = async (fastify) => {
     async (request) => {
       logger.info(`Adding new wallet for chain: ${request.body.chain}`);
       return await addWallet(fastify, request.body);
-    },
+    }
   );
 };
 

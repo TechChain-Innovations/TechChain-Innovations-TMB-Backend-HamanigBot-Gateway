@@ -28,7 +28,7 @@ export const RaydiumAmmGetPoolInfoRequest = Type.Object({
       description: 'Solana network to use',
       default: solanaChainConfig.defaultNetwork,
       enum: [...RaydiumConfig.networks],
-    }),
+    })
   ),
   poolAddress: Type.String({
     description: 'Raydium AMM pool address',
@@ -42,7 +42,7 @@ export const RaydiumAmmGetPositionInfoRequest = Type.Object({
       description: 'Solana network to use',
       default: solanaChainConfig.defaultNetwork,
       enum: [...RaydiumConfig.networks],
-    }),
+    })
   ),
   poolAddress: Type.String({
     description: 'Raydium AMM pool address',
@@ -52,7 +52,7 @@ export const RaydiumAmmGetPositionInfoRequest = Type.Object({
     Type.String({
       description: 'Solana wallet address',
       default: solanaChainConfig.defaultWallet,
-    }),
+    })
   ),
 });
 
@@ -62,13 +62,13 @@ export const RaydiumAmmQuoteSwapRequest = Type.Object({
       description: 'Solana network to use',
       default: solanaChainConfig.defaultNetwork,
       enum: [...RaydiumConfig.networks],
-    }),
+    })
   ),
   poolAddress: Type.Optional(
     Type.String({
       description: 'AMM pool address (optional - can be looked up from baseToken and quoteToken)',
       examples: [AMM_POOL_ADDRESS_EXAMPLE],
-    }),
+    })
   ),
   baseToken: Type.String({
     description: 'Token to determine swap direction',
@@ -78,7 +78,7 @@ export const RaydiumAmmQuoteSwapRequest = Type.Object({
     Type.String({
       description: 'The other token in the pair (optional - required if poolAddress not provided)',
       examples: [QUOTE_TOKEN],
-    }),
+    })
   ),
   amount: Type.Number({
     description: 'Amount to swap',
@@ -96,7 +96,7 @@ export const RaydiumAmmQuoteSwapRequest = Type.Object({
       description: 'Maximum acceptable slippage percentage',
       default: RaydiumConfig.config.slippagePct,
       examples: [RaydiumConfig.config.slippagePct],
-    }),
+    })
   ),
 });
 
@@ -108,20 +108,20 @@ export const RaydiumAmmExecuteSwapRequest = Type.Object({
     Type.String({
       description: 'Solana wallet address that will execute the swap',
       default: solanaChainConfig.defaultWallet,
-    }),
+    })
   ),
   network: Type.Optional(
     Type.String({
       description: 'Solana network to use',
       default: solanaChainConfig.defaultNetwork,
       enum: [...RaydiumConfig.networks],
-    }),
+    })
   ),
   poolAddress: Type.Optional(
     Type.String({
       description: 'AMM pool address (optional - can be looked up from baseToken and quoteToken)',
       examples: [AMM_POOL_ADDRESS_EXAMPLE],
-    }),
+    })
   ),
   baseToken: Type.String({
     description: 'Base token symbol or address',
@@ -131,7 +131,7 @@ export const RaydiumAmmExecuteSwapRequest = Type.Object({
     Type.String({
       description: 'Quote token symbol or address',
       examples: [QUOTE_TOKEN],
-    }),
+    })
   ),
   amount: Type.Number({
     description: 'Amount to swap',
@@ -150,14 +150,14 @@ export const RaydiumAmmExecuteSwapRequest = Type.Object({
       description: 'Maximum acceptable slippage percentage',
       default: RaydiumConfig.config.slippagePct,
       examples: [RaydiumConfig.config.slippagePct],
-    }),
+    })
   ),
   useNativeSolBalance: Type.Optional(
     Type.Boolean({
       description:
         'Set to true, якщо хочете дозволити автоматичне використання native SOL у CLMM-свопах (за замовчуванням false)',
       default: false,
-    }),
+    })
   ),
 });
 
@@ -167,7 +167,7 @@ export const RaydiumAmmQuoteLiquidityRequest = Type.Object({
       description: 'Solana network to use',
       default: solanaChainConfig.defaultNetwork,
       enum: [...RaydiumConfig.networks],
-    }),
+    })
   ),
   poolAddress: Type.String({
     description: 'Raydium AMM pool address',
@@ -188,7 +188,7 @@ export const RaydiumAmmQuoteLiquidityRequest = Type.Object({
       description: 'Maximum acceptable slippage percentage',
       default: RaydiumConfig.config.slippagePct,
       examples: [RaydiumConfig.config.slippagePct],
-    }),
+    })
   ),
 });
 
@@ -198,13 +198,13 @@ export const RaydiumAmmAddLiquidityRequest = Type.Object({
       description: 'Solana network to use',
       default: solanaChainConfig.defaultNetwork,
       enum: [...RaydiumConfig.networks],
-    }),
+    })
   ),
   walletAddress: Type.Optional(
     Type.String({
       description: 'Solana wallet address',
       default: solanaChainConfig.defaultWallet,
-    }),
+    })
   ),
   poolAddress: Type.String({
     description: 'Raydium AMM pool address',
@@ -225,7 +225,7 @@ export const RaydiumAmmAddLiquidityRequest = Type.Object({
       description: 'Maximum acceptable slippage percentage',
       default: RaydiumConfig.config.slippagePct,
       examples: [RaydiumConfig.config.slippagePct],
-    }),
+    })
   ),
 });
 
@@ -235,13 +235,13 @@ export const RaydiumAmmRemoveLiquidityRequest = Type.Object({
       description: 'Solana network to use',
       default: solanaChainConfig.defaultNetwork,
       enum: [...RaydiumConfig.networks],
-    }),
+    })
   ),
   walletAddress: Type.Optional(
     Type.String({
       description: 'Solana wallet address',
       default: solanaChainConfig.defaultWallet,
-    }),
+    })
   ),
   poolAddress: Type.String({
     description: 'Raydium AMM pool address',
@@ -265,7 +265,7 @@ export const RaydiumClmmGetPoolInfoRequest = Type.Object({
       description: 'Solana network to use',
       default: solanaChainConfig.defaultNetwork,
       enum: [...RaydiumConfig.networks],
-    }),
+    })
   ),
   poolAddress: Type.String({
     description: 'Raydium CLMM pool address',
@@ -279,7 +279,7 @@ export const RaydiumClmmGetPositionInfoRequest = Type.Object({
       description: 'Solana network to use',
       default: solanaChainConfig.defaultNetwork,
       enum: [...RaydiumConfig.networks],
-    }),
+    })
   ),
   positionAddress: Type.String({
     description: 'Position NFT address',
@@ -289,7 +289,7 @@ export const RaydiumClmmGetPositionInfoRequest = Type.Object({
     Type.String({
       description: 'Solana wallet address',
       default: solanaChainConfig.defaultWallet,
-    }),
+    })
   ),
 });
 
@@ -299,13 +299,13 @@ export const RaydiumClmmQuoteSwapRequest = Type.Object({
       description: 'Solana network to use',
       default: solanaChainConfig.defaultNetwork,
       enum: [...RaydiumConfig.networks],
-    }),
+    })
   ),
   poolAddress: Type.Optional(
     Type.String({
       description: 'CLMM pool address (optional - can be looked up from tokens)',
       examples: [CLMM_POOL_ADDRESS_EXAMPLE],
-    }),
+    })
   ),
   baseToken: Type.String({
     description: 'Token to determine swap direction',
@@ -315,7 +315,7 @@ export const RaydiumClmmQuoteSwapRequest = Type.Object({
     Type.String({
       description: 'The other token in the pair',
       examples: [QUOTE_TOKEN],
-    }),
+    })
   ),
   amount: Type.Number({
     description: 'Amount to swap',
@@ -333,7 +333,7 @@ export const RaydiumClmmQuoteSwapRequest = Type.Object({
       description: 'Maximum acceptable slippage percentage',
       default: RaydiumConfig.config.slippagePct,
       examples: [RaydiumConfig.config.slippagePct],
-    }),
+    })
   ),
 });
 
@@ -343,20 +343,20 @@ export const RaydiumClmmExecuteSwapRequest = Type.Object({
       description: 'Solana wallet address',
       default: solanaChainConfig.defaultWallet,
       examples: [solanaChainConfig.defaultWallet],
-    }),
+    })
   ),
   network: Type.Optional(
     Type.String({
       description: 'Solana network to use',
       default: solanaChainConfig.defaultNetwork,
       enum: [...RaydiumConfig.networks],
-    }),
+    })
   ),
   poolAddress: Type.Optional(
     Type.String({
       description: 'CLMM pool address (optional)',
       examples: [CLMM_POOL_ADDRESS_EXAMPLE],
-    }),
+    })
   ),
   baseToken: Type.String({
     description: 'Base token symbol or address',
@@ -366,7 +366,7 @@ export const RaydiumClmmExecuteSwapRequest = Type.Object({
     Type.String({
       description: 'Quote token symbol or address',
       examples: [QUOTE_TOKEN],
-    }),
+    })
   ),
   amount: Type.Number({
     description: 'Amount to swap',
@@ -385,14 +385,14 @@ export const RaydiumClmmExecuteSwapRequest = Type.Object({
       description: 'Maximum acceptable slippage percentage',
       default: RaydiumConfig.config.slippagePct,
       examples: [RaydiumConfig.config.slippagePct],
-    }),
+    })
   ),
   useNativeSolBalance: Type.Optional(
     Type.Boolean({
       description:
         'Якщо true, Raydium може автоматично обгортати native SOL; якщо false — буде використано лише наявний wSOL',
       default: false,
-    }),
+    })
   ),
 });
 
@@ -406,13 +406,13 @@ export const RaydiumClmmOpenPositionRequest = Type.Object({
       description: 'Solana network to use',
       default: solanaChainConfig.defaultNetwork,
       enum: [...RaydiumConfig.networks],
-    }),
+    })
   ),
   walletAddress: Type.Optional(
     Type.String({
       description: 'Solana wallet address',
       default: solanaChainConfig.defaultWallet,
-    }),
+    })
   ),
   lowerPrice: Type.Number({
     description: 'Lower price bound for the position',
@@ -430,13 +430,13 @@ export const RaydiumClmmOpenPositionRequest = Type.Object({
     Type.Number({
       description: 'Amount of base token to deposit',
       examples: [BASE_TOKEN_AMOUNT],
-    }),
+    })
   ),
   quoteTokenAmount: Type.Optional(
     Type.Number({
       description: 'Amount of quote token to deposit',
       examples: [QUOTE_TOKEN_AMOUNT],
-    }),
+    })
   ),
   slippagePct: Type.Optional(
     Type.Number({
@@ -445,7 +445,7 @@ export const RaydiumClmmOpenPositionRequest = Type.Object({
       description: 'Maximum acceptable slippage percentage',
       default: RaydiumConfig.config.slippagePct,
       examples: [RaydiumConfig.config.slippagePct],
-    }),
+    })
   ),
 });
 
@@ -455,13 +455,13 @@ export const RaydiumClmmAddLiquidityRequest = Type.Object({
       description: 'Solana network to use',
       default: solanaChainConfig.defaultNetwork,
       enum: [...RaydiumConfig.networks],
-    }),
+    })
   ),
   walletAddress: Type.Optional(
     Type.String({
       description: 'Solana wallet address',
       default: solanaChainConfig.defaultWallet,
-    }),
+    })
   ),
   positionAddress: Type.String({
     description: 'Position NFT address',
@@ -482,7 +482,7 @@ export const RaydiumClmmAddLiquidityRequest = Type.Object({
       description: 'Maximum acceptable slippage percentage',
       default: RaydiumConfig.config.slippagePct,
       examples: [RaydiumConfig.config.slippagePct],
-    }),
+    })
   ),
 });
 
@@ -492,13 +492,13 @@ export const RaydiumClmmRemoveLiquidityRequest = Type.Object({
       description: 'Solana network to use',
       default: solanaChainConfig.defaultNetwork,
       enum: [...RaydiumConfig.networks],
-    }),
+    })
   ),
   walletAddress: Type.Optional(
     Type.String({
       description: 'Solana wallet address',
       default: solanaChainConfig.defaultWallet,
-    }),
+    })
   ),
   positionAddress: Type.String({
     description: 'Position NFT address to remove liquidity from',
@@ -518,13 +518,13 @@ export const RaydiumClmmClosePositionRequest = Type.Object({
       description: 'Solana network to use',
       default: solanaChainConfig.defaultNetwork,
       enum: [...RaydiumConfig.networks],
-    }),
+    })
   ),
   walletAddress: Type.Optional(
     Type.String({
       description: 'Solana wallet address',
       default: solanaChainConfig.defaultWallet,
-    }),
+    })
   ),
   positionAddress: Type.String({
     description: 'Position NFT address to close',
@@ -538,13 +538,13 @@ export const RaydiumClmmGetPositionsOwnedRequest = Type.Object({
       description: 'Solana network to use',
       default: solanaChainConfig.defaultNetwork,
       enum: [...RaydiumConfig.networks],
-    }),
+    })
   ),
   walletAddress: Type.Optional(
     Type.String({
       description: 'Solana wallet address to check for positions',
       default: solanaChainConfig.defaultWallet,
-    }),
+    })
   ),
   poolAddress: Type.String({
     description: 'Raydium CLMM pool address (required for Raydium)',
@@ -558,7 +558,7 @@ export const RaydiumClmmQuotePositionRequest = Type.Object({
       description: 'Solana network to use',
       default: solanaChainConfig.defaultNetwork,
       enum: [...RaydiumConfig.networks],
-    }),
+    })
   ),
   lowerPrice: Type.Number({
     description: 'Lower price bound for the position',
@@ -576,13 +576,13 @@ export const RaydiumClmmQuotePositionRequest = Type.Object({
     Type.Number({
       description: 'Amount of base token to deposit',
       examples: [BASE_TOKEN_AMOUNT],
-    }),
+    })
   ),
   quoteTokenAmount: Type.Optional(
     Type.Number({
       description: 'Amount of quote token to deposit',
       examples: [QUOTE_TOKEN_AMOUNT],
-    }),
+    })
   ),
   slippagePct: Type.Optional(
     Type.Number({
@@ -591,6 +591,6 @@ export const RaydiumClmmQuotePositionRequest = Type.Object({
       description: 'Maximum acceptable slippage percentage',
       default: RaydiumConfig.config.slippagePct,
       examples: [RaydiumConfig.config.slippagePct],
-    }),
+    })
   ),
 });

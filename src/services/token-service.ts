@@ -156,7 +156,7 @@ export class TokenService {
         (token) =>
           token.symbol.toLowerCase().includes(searchLower) ||
           token.name.toLowerCase().includes(searchLower) ||
-          token.address.toLowerCase().includes(searchLower),
+          token.address.toLowerCase().includes(searchLower)
       );
     }
 
@@ -251,7 +251,7 @@ export class TokenService {
       // Check if new address conflicts with another token
       if (oldToken.address.toLowerCase() !== token.address.toLowerCase()) {
         const conflictingToken = tokens.find(
-          (t, idx) => idx !== existingSymbolIndex && t.address.toLowerCase() === token.address.toLowerCase(),
+          (t, idx) => idx !== existingSymbolIndex && t.address.toLowerCase() === token.address.toLowerCase()
         );
         if (conflictingToken) {
           throw new Error(`Token with address ${token.address} already exists with symbol ${conflictingToken.symbol}`);
@@ -266,7 +266,7 @@ export class TokenService {
       const existingAddressToken = tokens.find((t) => t.address.toLowerCase() === token.address.toLowerCase());
       if (existingAddressToken) {
         throw new Error(
-          `Token with address ${token.address} already exists with symbol ${existingAddressToken.symbol}`,
+          `Token with address ${token.address} already exists with symbol ${existingAddressToken.symbol}`
         );
       }
 

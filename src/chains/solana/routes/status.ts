@@ -63,7 +63,7 @@ export const statusRoute: FastifyPluginAsync = async (fastify) => {
     async (request) => {
       const { network } = request.query;
       return await getSolanaStatus(fastify, network);
-    },
+    }
   );
 };
 

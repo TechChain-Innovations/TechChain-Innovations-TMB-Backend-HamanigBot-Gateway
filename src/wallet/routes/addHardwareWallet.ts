@@ -19,7 +19,7 @@ const MAX_ACCOUNTS_TO_CHECK = 8;
 
 async function addHardwareWallet(
   fastify: FastifyInstance,
-  req: AddHardwareWalletRequest,
+  req: AddHardwareWalletRequest
 ): Promise<AddHardwareWalletResponse> {
   logger.info(`Adding hardware wallet for chain: ${req.chain}`);
 
@@ -82,7 +82,7 @@ async function addHardwareWallet(
         if (error.message?.includes('0x5515') || error.message?.includes('Locked device')) {
           const appName = req.chain.toLowerCase() === 'ethereum' ? 'Ethereum' : 'Solana';
           throw fastify.httpErrors.badRequest(
-            `Ledger device is locked. Please unlock your Ledger device and open the ${appName} app.`,
+            `Ledger device is locked. Please unlock your Ledger device and open the ${appName} app.`
           );
         }
 
@@ -90,7 +90,7 @@ async function addHardwareWallet(
         if (error.message?.includes('0x6a83') || error.message?.includes('UNKNOWN_ERROR')) {
           const appName = req.chain.toLowerCase() === 'ethereum' ? 'Ethereum' : 'Solana';
           throw fastify.httpErrors.badRequest(
-            `Wrong Ledger app is open. Please open the ${appName} app on your Ledger device.`,
+            `Wrong Ledger app is open. Please open the ${appName} app on your Ledger device.`
           );
         }
 
@@ -119,7 +119,7 @@ async function addHardwareWallet(
         if (error.message?.includes('0x5515') || error.message?.includes('Locked device')) {
           const appName = req.chain.toLowerCase() === 'ethereum' ? 'Ethereum' : 'Solana';
           throw fastify.httpErrors.badRequest(
-            `Ledger device is locked. Please unlock your Ledger device and open the ${appName} app.`,
+            `Ledger device is locked. Please unlock your Ledger device and open the ${appName} app.`
           );
         }
 
@@ -127,7 +127,7 @@ async function addHardwareWallet(
         if (error.message?.includes('0x6a83') || error.message?.includes('UNKNOWN_ERROR')) {
           const appName = req.chain.toLowerCase() === 'ethereum' ? 'Ethereum' : 'Solana';
           throw fastify.httpErrors.badRequest(
-            `Wrong Ledger app is open. Please open the ${appName} app on your Ledger device.`,
+            `Wrong Ledger app is open. Please open the ${appName} app on your Ledger device.`
           );
         }
       }
@@ -221,7 +221,7 @@ export const addHardwareWalletRoute: FastifyPluginAsync = async (fastify) => {
     },
     async (request) => {
       return await addHardwareWallet(fastify, request.body);
-    },
+    }
   );
 };
 

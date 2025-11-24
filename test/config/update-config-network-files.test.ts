@@ -84,13 +84,13 @@ describe('updateConfig - Configuration updates', () => {
       updateConfig(
         mockFastify as unknown as FastifyInstance,
         'ethereum-mainnet.nodeURL',
-        'https://eth-mainnet.alchemyapi.io',
+        'https://eth-mainnet.alchemyapi.io'
       );
 
       // Verify runtime config was updated
       expect(mockConfigManager.set).toHaveBeenCalledWith(
         'ethereum-mainnet.nodeURL',
-        'https://eth-mainnet.alchemyapi.io',
+        'https://eth-mainnet.alchemyapi.io'
       );
 
       // Verify no file operations occurred
@@ -114,13 +114,13 @@ describe('updateConfig - Configuration updates', () => {
       updateConfig(
         mockFastify as unknown as FastifyInstance,
         'solana-mainnet-beta.rpc.endpoints.primary',
-        'https://new-rpc.com',
+        'https://new-rpc.com'
       );
 
       // Verify runtime config was updated with nested path
       expect(mockConfigManager.set).toHaveBeenCalledWith(
         'solana-mainnet-beta.rpc.endpoints.primary',
-        'https://new-rpc.com',
+        'https://new-rpc.com'
       );
 
       // Verify no file operations occurred
@@ -170,7 +170,7 @@ describe('updateConfig - Configuration updates', () => {
 
       // Verify fastify error was called
       expect(mockFastify.httpErrors.internalServerError).toHaveBeenCalledWith(
-        'Failed to update configuration: Configuration error',
+        'Failed to update configuration: Configuration error'
       );
     });
   });

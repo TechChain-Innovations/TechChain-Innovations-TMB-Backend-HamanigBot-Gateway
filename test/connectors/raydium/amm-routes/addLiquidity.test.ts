@@ -168,7 +168,7 @@ describe('POST /add-liquidity', () => {
                 recentBlockhash: 'test-blockhash',
                 compiledInstructions: [],
                 addressTableLookups: [],
-              }),
+              })
             ),
           }),
         },
@@ -181,7 +181,7 @@ describe('POST /add-liquidity', () => {
                 recentBlockhash: 'test-blockhash',
                 compiledInstructions: [],
                 addressTableLookups: [],
-              }),
+              })
             ),
           }),
         },
@@ -275,7 +275,7 @@ describe('POST /add-liquidity', () => {
                 recentBlockhash: 'test-blockhash',
                 compiledInstructions: [],
                 addressTableLookups: [],
-              }),
+              })
             ),
           }),
         },
@@ -441,7 +441,7 @@ describe('POST /add-liquidity', () => {
           recentBlockhash: 'test-blockhash',
           compiledInstructions: [],
           addressTableLookups: [],
-        }),
+        })
       ),
     });
 
@@ -546,7 +546,7 @@ describe('POST /add-liquidity', () => {
                 recentBlockhash: 'test-blockhash',
                 compiledInstructions: [],
                 addressTableLookups: [],
-              }),
+              })
             ),
           }),
         },

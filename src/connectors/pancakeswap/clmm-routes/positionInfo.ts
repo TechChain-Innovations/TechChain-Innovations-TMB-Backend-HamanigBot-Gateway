@@ -175,7 +175,7 @@ export const positionInfoRoute: FastifyPluginAsync = async (fastify) => {
         }
         throw fastify.httpErrors.internalServerError('Failed to get position info');
       }
-    },
+    }
   );
 };
 

@@ -151,9 +151,9 @@ export const removeLiquidityRoute: FastifyPluginAsync = async (fastify) => {
           liquidity: JSBI.divide(
             JSBI.multiply(
               JSBI.BigInt(currentLiquidity.toString()),
-              JSBI.BigInt(liquidityPercentage.numerator.toString()),
+              JSBI.BigInt(liquidityPercentage.numerator.toString())
             ),
-            JSBI.BigInt(liquidityPercentage.denominator.toString()),
+            JSBI.BigInt(liquidityPercentage.denominator.toString())
           ),
         });
 
@@ -169,11 +169,11 @@ export const removeLiquidityRoute: FastifyPluginAsync = async (fastify) => {
         // Also add any fees that have been collected to the expected amounts
         const totalAmount0 = CurrencyAmount.fromRawAmount(
           token0,
-          JSBI.add(amount0.quotient, JSBI.BigInt(position.tokensOwed0.toString())),
+          JSBI.add(amount0.quotient, JSBI.BigInt(position.tokensOwed0.toString()))
         );
         const totalAmount1 = CurrencyAmount.fromRawAmount(
           token1,
-          JSBI.add(amount1.quotient, JSBI.BigInt(position.tokensOwed1.toString())),
+          JSBI.add(amount1.quotient, JSBI.BigInt(position.tokensOwed1.toString()))
         );
 
         // Create parameters for removing liquidity
@@ -205,7 +205,7 @@ export const removeLiquidityRoute: FastifyPluginAsync = async (fastify) => {
               type: 'function',
             },
           ],
-          wallet,
+          wallet
         );
 
         // Execute the transaction to remove liquidity
@@ -221,7 +221,7 @@ export const removeLiquidityRoute: FastifyPluginAsync = async (fastify) => {
         // Calculate gas fee
         const gasFee = formatTokenAmount(
           receipt.gasUsed.mul(receipt.effectiveGasPrice).toString(),
-          18, // ETH has 18 decimals
+          18 // ETH has 18 decimals
         );
 
         // Calculate token amounts removed including fees
@@ -248,7 +248,7 @@ export const removeLiquidityRoute: FastifyPluginAsync = async (fastify) => {
         }
         throw fastify.httpErrors.internalServerError('Failed to remove liquidity');
       }
-    },
+    }
   );
 };
 

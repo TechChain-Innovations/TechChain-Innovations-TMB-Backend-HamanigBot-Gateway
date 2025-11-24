@@ -63,7 +63,7 @@ export const getTokenRoute: FastifyPluginAsync = async (fastify) => {
 
         throw fastify.httpErrors.internalServerError('Failed to get token');
       }
-    },
+    }
   );
 };
 

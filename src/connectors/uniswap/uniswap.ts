@@ -83,20 +83,20 @@ export class Uniswap {
       this.v2Factory = new Contract(
         getUniswapV2FactoryAddress(this.networkName),
         IUniswapV2FactoryABI.abi,
-        this.ethereum.provider,
+        this.ethereum.provider
       );
 
       this.v2Router = new Contract(
         getUniswapV2RouterAddress(this.networkName),
         IUniswapV2Router02ABI.abi,
-        this.ethereum.provider,
+        this.ethereum.provider
       );
 
       // Initialize V3 (CLMM) contracts
       this.v3Factory = new Contract(
         getUniswapV3FactoryAddress(this.networkName),
         IUniswapV3FactoryABI,
-        this.ethereum.provider,
+        this.ethereum.provider
       );
 
       // Initialize NFT Manager with minimal ABI
@@ -111,7 +111,7 @@ export class Uniswap {
             type: 'function',
           },
         ],
-        this.ethereum.provider,
+        this.ethereum.provider
       );
 
       // Initialize Quoter with minimal ABI
@@ -129,7 +129,7 @@ export class Uniswap {
             type: 'function',
           },
         ],
-        this.ethereum.provider,
+        this.ethereum.provider
       );
 
       // Initialize Universal Router service
@@ -197,7 +197,7 @@ export class Uniswap {
     outputToken: Token,
     amount: number,
     side: 'BUY' | 'SELL',
-    walletAddress: string,
+    walletAddress: string
   ): Promise<any> {
     // Determine input/output based on side
     const exactIn = side === 'SELL';
@@ -225,7 +225,7 @@ export class Uniswap {
         deadline: Math.floor(Date.now() / 1000 + 1800), // 30 minutes
         recipient: walletAddress,
         protocols: protocolsToUse,
-      },
+      }
     );
 
     return quoteResult;
@@ -276,7 +276,7 @@ export class Uniswap {
 
       return new V2Pair(
         CurrencyAmount.fromRawAmount(token0, reserve0.toString()),
-        CurrencyAmount.fromRawAmount(token1, reserve1.toString()),
+        CurrencyAmount.fromRawAmount(token1, reserve1.toString())
       );
     } catch (error) {
       logger.error(`Error getting V2 pool: ${error.message}`);
@@ -291,7 +291,7 @@ export class Uniswap {
     tokenA: Token | string,
     tokenB: Token | string,
     fee?: FeeAmount,
-    poolAddress?: string,
+    poolAddress?: string
   ): Promise<V3Pool | null> {
     try {
       // Resolve pool address if provided
@@ -375,7 +375,7 @@ export class Uniswap {
             const nextTick = lte ? tick - tickSpacing : tick + tickSpacing;
             return [nextTick, false];
           },
-        },
+        }
       );
     } catch (error) {
       logger.error(`Error getting V3 pool: ${error.message}`);
@@ -389,7 +389,7 @@ export class Uniswap {
   public async findDefaultPool(
     baseToken: string,
     quoteToken: string,
-    poolType: 'amm' | 'clmm',
+    poolType: 'amm' | 'clmm'
   ): Promise<string | null> {
     try {
       logger.info(`Finding ${poolType} pool for ${baseToken}-${quoteToken} on ${this.networkName}`);
@@ -404,7 +404,7 @@ export class Uniswap {
       }
 
       logger.info(
-        `Resolved tokens: ${baseTokenInfo.symbol} (${baseTokenInfo.address}), ${quoteTokenInfo.symbol} (${quoteTokenInfo.address})`,
+        `Resolved tokens: ${baseTokenInfo.symbol} (${baseTokenInfo.address}), ${quoteTokenInfo.symbol} (${quoteTokenInfo.address})`
       );
 
       // Use PoolService to find pool by token pair
@@ -416,12 +416,12 @@ export class Uniswap {
         this.networkName,
         poolType,
         baseTokenInfo.symbol,
-        quoteTokenInfo.symbol,
+        quoteTokenInfo.symbol
       );
 
       if (!pool) {
         logger.warn(
-          `No ${poolType} pool found for ${baseTokenInfo.symbol}-${quoteTokenInfo.symbol} on Uniswap network ${this.networkName}`,
+          `No ${poolType} pool found for ${baseTokenInfo.symbol}-${quoteTokenInfo.symbol} on Uniswap network ${this.networkName}`
         );
         return null;
       }
@@ -467,7 +467,7 @@ export class Uniswap {
           type: 'function',
         },
       ],
-      this.ethereum.provider,
+      this.ethereum.provider
     );
 
     try {
@@ -512,7 +512,7 @@ export class Uniswap {
           type: 'function',
         },
       ],
-      this.ethereum.provider,
+      this.ethereum.provider
     );
 
     // Check if the position manager itself is approved (it should be the operator)
@@ -521,7 +521,7 @@ export class Uniswap {
 
     if (approvedAddress.toLowerCase() !== operatorAddress.toLowerCase() && !isApprovedForAll) {
       throw new Error(
-        `Insufficient NFT approval. Please approve the position NFT (${positionId}) for the Uniswap Position Manager (${operatorAddress})`,
+        `Insufficient NFT approval. Please approve the position NFT (${positionId}) for the Uniswap Position Manager (${operatorAddress})`
       );
     }
   }

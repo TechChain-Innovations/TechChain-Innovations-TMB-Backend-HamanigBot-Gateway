@@ -11,7 +11,7 @@ export async function collectFees(
   fastify: FastifyInstance,
   network: string,
   address: string,
-  positionAddress: string,
+  positionAddress: string
 ): Promise<CollectFeesResponseType> {
   const solana = await Solana.getInstance(network);
   const meteora = await Meteora.getInstance(network);
@@ -22,7 +22,7 @@ export async function collectFees(
 
   if (!positionResult || !positionResult.position) {
     throw fastify.httpErrors.notFound(
-      `Position not found: ${positionAddress}. Please provide a valid position address`,
+      `Position not found: ${positionAddress}. Please provide a valid position address`
     );
   }
 
@@ -75,7 +75,9 @@ export async function collectFees(
     const collectedFeeY = balanceChanges[1];
 
     logger.info(
-      `Fees collected from position ${positionAddress}: ${Math.abs(collectedFeeX).toFixed(4)} ${tokenXSymbol}, ${Math.abs(collectedFeeY).toFixed(4)} ${tokenYSymbol}`,
+      `Fees collected from position ${positionAddress}: ${Math.abs(collectedFeeX).toFixed(
+        4
+      )} ${tokenXSymbol}, ${Math.abs(collectedFeeY).toFixed(4)} ${tokenYSymbol}`
     );
 
     return {
@@ -126,7 +128,7 @@ export const collectFeesRoute: FastifyPluginAsync = async (fastify) => {
         }
         throw fastify.httpErrors.internalServerError('Internal server error');
       }
-    },
+    }
   );
 };
 

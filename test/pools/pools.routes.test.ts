@@ -328,7 +328,7 @@ describe('Pool Routes Tests', () => {
         'raydium',
         'mainnet-beta',
         'amm',
-        '58oQChx4yWmvKdwLLZzBi4ChoCc2fqCUWBkwMihLYQo2',
+        '58oQChx4yWmvKdwLLZzBi4ChoCc2fqCUWBkwMihLYQo2'
       );
     });
 

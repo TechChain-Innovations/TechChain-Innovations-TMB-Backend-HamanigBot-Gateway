@@ -24,7 +24,7 @@ export const positionInfoRoute: FastifyPluginAsync = async (fastify) => {
       const { network = 'mainnet-beta', positionAddress } = request.query;
       const raydium = await Raydium.getInstance(network);
       return raydium.getPositionInfo(positionAddress);
-    },
+    }
   );
 };
 

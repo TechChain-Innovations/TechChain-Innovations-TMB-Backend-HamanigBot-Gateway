@@ -19,7 +19,7 @@ export const AddWalletRequestSchema = Type.Object({
     Type.Boolean({
       description: 'Set this wallet as the default for the chain',
       default: false,
-    }),
+    })
   ),
 });
 
@@ -44,7 +44,7 @@ export const GetWalletResponseSchema = Type.Object({
   hardwareWalletAddresses: Type.Optional(
     Type.Array(WalletAddressSchema, {
       description: 'List of hardware wallet addresses (Ledger)',
-    }),
+    })
   ),
 });
 
@@ -115,7 +115,7 @@ export const AddHardwareWalletRequestSchema = Type.Object({
     Type.Boolean({
       description: 'Set this wallet as the default for the chain',
       default: false,
-    }),
+    })
   ),
 });
 

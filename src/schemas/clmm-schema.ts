@@ -9,7 +9,7 @@ export const FetchPoolsRequest = Type.Object(
     tokenA: Type.Optional(Type.String()), // First token symbol or address
     tokenB: Type.Optional(Type.String()), // Second token symbol or address
   },
-  { $id: 'FetchPoolsRequest' },
+  { $id: 'FetchPoolsRequest' }
 );
 
 export type FetchPoolsRequestType = Static<typeof FetchPoolsRequest>;
@@ -20,7 +20,7 @@ export const GetPositionsOwnedRequest = Type.Object(
     walletAddress: Type.String(),
     poolAddress: Type.Optional(Type.String()), // Optional for Meteora, required for others
   },
-  { $id: 'GetPositionsOwnedRequest' },
+  { $id: 'GetPositionsOwnedRequest' }
 );
 
 export type GetPositionsOwnedRequestType = Static<typeof GetPositionsOwnedRequest>;
@@ -32,7 +32,7 @@ export const BinLiquiditySchema = Type.Object(
     baseTokenAmount: Type.Number(),
     quoteTokenAmount: Type.Number(),
   },
-  { $id: 'BinLiquidity' },
+  { $id: 'BinLiquidity' }
 );
 export type BinLiquidity = Static<typeof BinLiquiditySchema>;
 
@@ -49,7 +49,7 @@ export const PoolInfoSchema = Type.Object(
     quoteTokenAmount: Type.Number(),
     activeBinId: Type.Number(),
   },
-  { $id: 'PoolInfo' },
+  { $id: 'PoolInfo' }
 );
 export type PoolInfo = Static<typeof PoolInfoSchema>;
 
@@ -64,7 +64,7 @@ export const MeteoraPoolInfoSchema = Type.Composite(
       bins: Type.Array(BinLiquiditySchema),
     }),
   ],
-  { $id: 'MeteoraPoolInfo' },
+  { $id: 'MeteoraPoolInfo' }
 );
 export type MeteoraPoolInfo = Static<typeof MeteoraPoolInfoSchema>;
 
@@ -73,7 +73,7 @@ export const GetPoolInfoRequest = Type.Object(
     network: Type.Optional(Type.String()),
     poolAddress: Type.String(),
   },
-  { $id: 'GetPoolInfoRequest' },
+  { $id: 'GetPoolInfoRequest' }
 );
 export type GetPoolInfoRequestType = Static<typeof GetPoolInfoRequest>;
 
@@ -93,7 +93,7 @@ export const PositionInfoSchema = Type.Object(
     upperPrice: Type.Number(),
     price: Type.Number(),
   },
-  { $id: 'PositionInfo' },
+  { $id: 'PositionInfo' }
 );
 export type PositionInfo = Static<typeof PositionInfoSchema>;
 
@@ -103,7 +103,7 @@ export const GetPositionInfoRequest = Type.Object(
     positionAddress: Type.String(),
     walletAddress: Type.Optional(Type.String()),
   },
-  { $id: 'GetPositionInfoRequest' },
+  { $id: 'GetPositionInfoRequest' }
 );
 export type GetPositionInfoRequestType = Static<typeof GetPositionInfoRequest>;
 
@@ -118,7 +118,7 @@ export const OpenPositionRequest = Type.Object(
     quoteTokenAmount: Type.Optional(Type.Number()),
     slippagePct: Type.Optional(Type.Number({ minimum: 0, maximum: 100 })),
   },
-  { $id: 'OpenPositionRequest' },
+  { $id: 'OpenPositionRequest' }
 );
 export type OpenPositionRequestType = Static<typeof OpenPositionRequest>;
 
@@ -135,10 +135,10 @@ export const OpenPositionResponse = Type.Object(
         positionRent: Type.Number(),
         baseTokenAmountAdded: Type.Number(),
         quoteTokenAmountAdded: Type.Number(),
-      }),
+      })
     ),
   },
-  { $id: 'OpenPositionResponse' },
+  { $id: 'OpenPositionResponse' }
 );
 export type OpenPositionResponseType = Static<typeof OpenPositionResponse>;
 
@@ -151,7 +151,7 @@ export const AddLiquidityRequest = Type.Object(
     quoteTokenAmount: Type.Number(),
     slippagePct: Type.Optional(Type.Number({ minimum: 0, maximum: 100 })),
   },
-  { $id: 'AddLiquidityRequest' },
+  { $id: 'AddLiquidityRequest' }
 );
 export type AddLiquidityRequestType = Static<typeof AddLiquidityRequest>;
 
@@ -166,10 +166,10 @@ export const AddLiquidityResponse = Type.Object(
         fee: Type.Number(),
         baseTokenAmountAdded: Type.Number(),
         quoteTokenAmountAdded: Type.Number(),
-      }),
+      })
     ),
   },
-  { $id: 'AddLiquidityResponse' },
+  { $id: 'AddLiquidityResponse' }
 );
 export type AddLiquidityResponseType = Static<typeof AddLiquidityResponse>;
 
@@ -180,7 +180,7 @@ export const RemoveLiquidityRequest = Type.Object(
     positionAddress: Type.String(),
     percentageToRemove: Type.Number({ minimum: 0, maximum: 100 }),
   },
-  { $id: 'RemoveLiquidityRequest' },
+  { $id: 'RemoveLiquidityRequest' }
 );
 export type RemoveLiquidityRequestType = Static<typeof RemoveLiquidityRequest>;
 
@@ -195,10 +195,10 @@ export const RemoveLiquidityResponse = Type.Object(
         fee: Type.Number(),
         baseTokenAmountRemoved: Type.Number(),
         quoteTokenAmountRemoved: Type.Number(),
-      }),
+      })
     ),
   },
-  { $id: 'RemoveLiquidityResponse' },
+  { $id: 'RemoveLiquidityResponse' }
 );
 export type RemoveLiquidityResponseType = Static<typeof RemoveLiquidityResponse>;
 
@@ -208,7 +208,7 @@ export const CollectFeesRequest = Type.Object(
     walletAddress: Type.Optional(Type.String()),
     positionAddress: Type.String(),
   },
-  { $id: 'CollectFeesRequest' },
+  { $id: 'CollectFeesRequest' }
 );
 export type CollectFeesRequestType = Static<typeof CollectFeesRequest>;
 
@@ -223,10 +223,10 @@ export const CollectFeesResponse = Type.Object(
         fee: Type.Number(),
         baseFeeAmountCollected: Type.Number(),
         quoteFeeAmountCollected: Type.Number(),
-      }),
+      })
     ),
   },
-  { $id: 'CollectFeesResponse' },
+  { $id: 'CollectFeesResponse' }
 );
 export type CollectFeesResponseType = Static<typeof CollectFeesResponse>;
 
@@ -236,7 +236,7 @@ export const ClosePositionRequest = Type.Object(
     walletAddress: Type.Optional(Type.String()),
     positionAddress: Type.String(),
   },
-  { $id: 'ClosePositionRequest' },
+  { $id: 'ClosePositionRequest' }
 );
 export type ClosePositionRequestType = Static<typeof ClosePositionRequest>;
 
@@ -254,10 +254,10 @@ export const ClosePositionResponse = Type.Object(
         quoteTokenAmountRemoved: Type.Number(),
         baseFeeAmountCollected: Type.Number(),
         quoteFeeAmountCollected: Type.Number(),
-      }),
+      })
     ),
   },
-  { $id: 'ClosePositionResponse' },
+  { $id: 'ClosePositionResponse' }
 );
 export type ClosePositionResponseType = Static<typeof ClosePositionResponse>;
 
@@ -273,7 +273,7 @@ export const QuotePositionResponse = Type.Object(
     quoteTokenAmountMax: Type.Number(),
     liquidity: Type.Optional(Type.Any()),
   },
-  { $id: 'QuotePositionResponse' },
+  { $id: 'QuotePositionResponse' }
 );
 export type QuotePositionResponseType = Static<typeof QuotePositionResponse>;
 
@@ -287,7 +287,7 @@ export const QuoteSwapRequest = Type.Object(
     poolAddress: Type.Optional(
       Type.String({
         description: 'Pool address (optional - can be looked up from baseToken and quoteToken)',
-      }),
+      })
     ),
     baseToken: Type.String({
       description: 'Token to determine swap direction',
@@ -295,7 +295,7 @@ export const QuoteSwapRequest = Type.Object(
     quoteToken: Type.Optional(
       Type.String({
         description: 'The other token in the pair (optional - required if poolAddress not provided)',
-      }),
+      })
     ),
     amount: Type.Number(),
     side: Type.String({
@@ -304,7 +304,7 @@ export const QuoteSwapRequest = Type.Object(
     }),
     slippagePct: Type.Optional(Type.Number({ minimum: 0, maximum: 100 })),
   },
-  { $id: 'ClmmQuoteSwapRequest' },
+  { $id: 'ClmmQuoteSwapRequest' }
 );
 export type QuoteSwapRequestType = Static<typeof QuoteSwapRequest>;
 
@@ -321,7 +321,7 @@ export const QuoteSwapResponse = Type.Object(
     maxAmountIn: Type.Number(),
     priceImpactPct: Type.Number(),
   },
-  { $id: 'ClmmQuoteSwapResponse' },
+  { $id: 'ClmmQuoteSwapResponse' }
 );
 export type QuoteSwapResponseType = Static<typeof QuoteSwapResponse>;
 
@@ -332,13 +332,13 @@ export const ExecuteSwapRequest = Type.Object(
     poolAddress: Type.Optional(
       Type.String({
         description: 'Pool address (optional - can be looked up from baseToken and quoteToken)',
-      }),
+      })
     ),
     baseToken: Type.String(),
     quoteToken: Type.Optional(
       Type.String({
         description: 'The other token in the pair (optional - required if poolAddress not provided)',
-      }),
+      })
     ),
     amount: Type.Number(),
     side: Type.String({
@@ -346,7 +346,7 @@ export const ExecuteSwapRequest = Type.Object(
     }),
     slippagePct: Type.Optional(Type.Number({ minimum: 0, maximum: 100 })),
   },
-  { $id: 'ClmmExecuteSwapRequest' },
+  { $id: 'ClmmExecuteSwapRequest' }
 );
 export type ExecuteSwapRequestType = Static<typeof ExecuteSwapRequest>;
 
@@ -365,9 +365,9 @@ export const ExecuteSwapResponse = Type.Object(
         fee: Type.Number(),
         baseTokenBalanceChange: Type.Number(),
         quoteTokenBalanceChange: Type.Number(),
-      }),
+      })
     ),
   },
-  { $id: 'ClmmExecuteSwapResponse' },
+  { $id: 'ClmmExecuteSwapResponse' }
 );
 export type ExecuteSwapResponseType = Static<typeof ExecuteSwapResponse>;

@@ -89,7 +89,7 @@ describe('Ethereum Wrap Native Token Tests (Base Network)', () => {
           network: NETWORK,
           address: TEST_WALLET,
           amount: '0.1',
-        }),
+        })
       );
     });
 
@@ -111,7 +111,7 @@ describe('Ethereum Wrap Native Token Tests (Base Network)', () => {
           network: NETWORK,
           address: 'invalidwallet',
           amount: '0.1',
-        }),
+        })
       ).rejects.toMatchObject({
         response: {
           status: 400,
@@ -140,7 +140,7 @@ describe('Ethereum Wrap Native Token Tests (Base Network)', () => {
           network: NETWORK,
           address: TEST_WALLET,
           amount: 'invalid',
-        }),
+        })
       ).rejects.toMatchObject({
         response: {
           status: 400,
@@ -169,7 +169,7 @@ describe('Ethereum Wrap Native Token Tests (Base Network)', () => {
           network: NETWORK,
           address: TEST_WALLET,
           amount: '1000000', // Very large amount
-        }),
+        })
       ).rejects.toMatchObject({
         response: {
           status: 400,

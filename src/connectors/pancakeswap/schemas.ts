@@ -11,14 +11,10 @@ const ethereumChainConfig = getEthereumChainConfig();
 const BASE_TOKEN = 'WETH';
 const QUOTE_TOKEN = 'USDC';
 const SWAP_AMOUNT = 0.001;
-const AMM_POOL_ADDRESS_EXAMPLE_BASE =
-  '0x88A43bbDF9D098eEC7bCEda4e2494615dfD9bB9C'; // Pancakeswap V2 WETH-USDC pool on Base
-const CLMM_POOL_ADDRESS_EXAMPLE_BASE =
-  '0xd0b53d9277642d899df5c87a3966a349a798f224'; // Pancakeswap V3 WETH-USDC pool on Base
-const AMM_POOL_ADDRESS_EXAMPLE_BSC_TESTNET =
-  '0x5F52Ad4bD4f519AE79999400ad8B83A3D002fD92'; // Pancakeswap V2 WBNB-USDT pool on BSC Testnet
-const CLMM_POOL_ADDRESS_EXAMPLE_BSC_TESTNET =
-  '0x29A37a042b71705F7231F6aa7022D5C30c52A588'; // Pancakeswap V3 WBNB-USDT pool on BSC Testnet
+const AMM_POOL_ADDRESS_EXAMPLE_BASE = '0x88A43bbDF9D098eEC7bCEda4e2494615dfD9bB9C'; // Pancakeswap V2 WETH-USDC pool on Base
+const CLMM_POOL_ADDRESS_EXAMPLE_BASE = '0xd0b53d9277642d899df5c87a3966a349a798f224'; // Pancakeswap V3 WETH-USDC pool on Base
+const AMM_POOL_ADDRESS_EXAMPLE_BSC_TESTNET = '0x5F52Ad4bD4f519AE79999400ad8B83A3D002fD92'; // Pancakeswap V2 WBNB-USDT pool on BSC Testnet
+const CLMM_POOL_ADDRESS_EXAMPLE_BSC_TESTNET = '0x29A37a042b71705F7231F6aa7022D5C30c52A588'; // Pancakeswap V3 WBNB-USDT pool on BSC Testnet
 
 // ========================================
 // AMM Request Schemas
@@ -31,14 +27,11 @@ export const PancakeswapAmmGetPoolInfoRequest = Type.Object({
       default: ethereumChainConfig.defaultNetwork,
       enum: [...PancakeswapConfig.networks],
       examples: ['bsc', 'mainnet', 'bsc-testnet'],
-    }),
+    })
   ),
   poolAddress: Type.String({
     description: 'Pancakeswap V2 pool address',
-    examples: [
-      AMM_POOL_ADDRESS_EXAMPLE_BASE,
-      AMM_POOL_ADDRESS_EXAMPLE_BSC_TESTNET,
-    ],
+    examples: [AMM_POOL_ADDRESS_EXAMPLE_BASE, AMM_POOL_ADDRESS_EXAMPLE_BSC_TESTNET],
   }),
 });
 
@@ -53,14 +46,11 @@ export const PancakeswapClmmGetPoolInfoRequest = Type.Object({
       default: ethereumChainConfig.defaultNetwork,
       enum: [...PancakeswapConfig.networks],
       examples: ['bsc', 'mainnet', 'bsc-testnet'],
-    }),
+    })
   ),
   poolAddress: Type.String({
     description: 'Pancakeswap V3 pool address',
-    examples: [
-      CLMM_POOL_ADDRESS_EXAMPLE_BASE,
-      CLMM_POOL_ADDRESS_EXAMPLE_BSC_TESTNET,
-    ],
+    examples: [CLMM_POOL_ADDRESS_EXAMPLE_BASE, CLMM_POOL_ADDRESS_EXAMPLE_BSC_TESTNET],
   }),
 });
 
@@ -76,7 +66,7 @@ export const PancakeswapQuoteSwapRequest = Type.Object({
       default: ethereumChainConfig.defaultNetwork,
       enum: [...PancakeswapConfig.networks],
       examples: ['bsc', 'mainnet', 'bsc-testnet'],
-    }),
+    })
   ),
   baseToken: Type.String({
     description: 'First token in the trading pair',
@@ -101,13 +91,13 @@ export const PancakeswapQuoteSwapRequest = Type.Object({
       maximum: 100,
       description: 'Maximum acceptable slippage percentage',
       default: PancakeswapConfig.config.slippagePct,
-    }),
+    })
   ),
   walletAddress: Type.Optional(
     Type.String({
       description: 'Wallet address for more accurate quotes (optional)',
       default: ethereumChainConfig.defaultWallet,
-    }),
+    })
   ),
 });
 
@@ -143,7 +133,7 @@ export const PancakeswapQuoteSwapResponse = Type.Object({
   routePath: Type.Optional(
     Type.String({
       description: 'Human-readable route path',
-    }),
+    })
   ),
 });
 
@@ -154,7 +144,7 @@ export const PancakeswapExecuteQuoteRequest = Type.Object({
       description: 'Wallet address that will execute the swap',
       default: ethereumChainConfig.defaultWallet,
       examples: [ethereumChainConfig.defaultWallet],
-    }),
+    })
   ),
   network: Type.Optional(
     Type.String({
@@ -162,7 +152,7 @@ export const PancakeswapExecuteQuoteRequest = Type.Object({
       default: ethereumChainConfig.defaultNetwork,
       enum: [...PancakeswapConfig.networks],
       examples: ['bsc', 'mainnet', 'bsc-testnet'],
-    }),
+    })
   ),
   quoteId: Type.String({
     description: 'ID of the quote to execute',
@@ -178,13 +168,13 @@ export const PancakeswapAmmAddLiquidityRequest = Type.Object({
       default: ethereumChainConfig.defaultNetwork,
       enum: [...PancakeswapConfig.networks],
       examples: ['bsc', 'mainnet', 'bsc-testnet'],
-    }),
+    })
   ),
   walletAddress: Type.Optional(
     Type.String({
       description: 'Wallet address that will add liquidity',
       default: ethereumChainConfig.defaultWallet,
-    }),
+    })
   ),
   poolAddress: Type.String({
     description: 'Address of the Pancakeswap V2 pool',
@@ -201,19 +191,19 @@ export const PancakeswapAmmAddLiquidityRequest = Type.Object({
       maximum: 100,
       description: 'Maximum acceptable slippage percentage',
       default: PancakeswapConfig.config.slippagePct,
-    }),
+    })
   ),
   gasPrice: Type.Optional(
     Type.String({
       description: 'Gas price in wei for the transaction',
       examples: ['10000000000'],
-    }),
+    })
   ),
   maxGas: Type.Optional(
     Type.Number({
       description: 'Maximum gas limit for the transaction',
       examples: [300000],
-    }),
+    })
   ),
 });
 
@@ -225,13 +215,13 @@ export const PancakeswapAmmRemoveLiquidityRequest = Type.Object({
       default: ethereumChainConfig.defaultNetwork,
       enum: [...PancakeswapConfig.networks],
       examples: ['bsc', 'mainnet', 'bsc-testnet'],
-    }),
+    })
   ),
   walletAddress: Type.Optional(
     Type.String({
       description: 'Wallet address that will remove liquidity',
       default: ethereumChainConfig.defaultWallet,
-    }),
+    })
   ),
   poolAddress: Type.String({
     description: 'Address of the Pancakeswap V2 pool',
@@ -245,13 +235,13 @@ export const PancakeswapAmmRemoveLiquidityRequest = Type.Object({
     Type.String({
       description: 'Gas price in wei for the transaction',
       examples: ['10000000000'],
-    }),
+    })
   ),
   maxGas: Type.Optional(
     Type.Number({
       description: 'Maximum gas limit for the transaction',
       examples: [300000],
-    }),
+    })
   ),
 });
 
@@ -261,7 +251,7 @@ export const PancakeswapAmmExecuteSwapRequest = Type.Object({
     Type.String({
       description: 'Wallet address that will execute the swap',
       default: ethereumChainConfig.defaultWallet,
-    }),
+    })
   ),
   network: Type.Optional(
     Type.String({
@@ -269,13 +259,13 @@ export const PancakeswapAmmExecuteSwapRequest = Type.Object({
       default: ethereumChainConfig.defaultNetwork,
       enum: [...PancakeswapConfig.networks],
       examples: ['bsc', 'mainnet', 'bsc-testnet'],
-    }),
+    })
   ),
   poolAddress: Type.Optional(
     Type.String({
       description: 'Pool address (optional - can be looked up from tokens)',
       default: '',
-    }),
+    })
   ),
   baseToken: Type.String({
     description: 'Base token symbol or address',
@@ -285,7 +275,7 @@ export const PancakeswapAmmExecuteSwapRequest = Type.Object({
     Type.String({
       description: 'Quote token symbol or address',
       examples: [QUOTE_TOKEN],
-    }),
+    })
   ),
   amount: Type.Number({
     description: 'Amount to swap',
@@ -301,7 +291,7 @@ export const PancakeswapAmmExecuteSwapRequest = Type.Object({
       maximum: 100,
       description: 'Maximum acceptable slippage percentage',
       default: PancakeswapConfig.config.slippagePct,
-    }),
+    })
   ),
 });
 
@@ -312,7 +302,7 @@ export const PancakeswapExecuteSwapRequest = Type.Object({
       description: 'Wallet address that will execute the swap',
       default: ethereumChainConfig.defaultWallet,
       examples: [ethereumChainConfig.defaultWallet],
-    }),
+    })
   ),
   network: Type.Optional(
     Type.String({
@@ -320,7 +310,7 @@ export const PancakeswapExecuteSwapRequest = Type.Object({
       default: ethereumChainConfig.defaultNetwork,
       enum: [...PancakeswapConfig.networks],
       examples: ['bsc', 'mainnet', 'bsc-testnet'],
-    }),
+    })
   ),
   baseToken: Type.String({
     description: 'Token to determine swap direction',
@@ -346,7 +336,7 @@ export const PancakeswapExecuteSwapRequest = Type.Object({
       description: 'Maximum acceptable slippage percentage',
       default: PancakeswapConfig.config.slippagePct,
       examples: [1],
-    }),
+    })
   ),
 });
 
@@ -358,13 +348,13 @@ export const PancakeswapClmmOpenPositionRequest = Type.Object({
       default: ethereumChainConfig.defaultNetwork,
       enum: [...PancakeswapConfig.networks],
       examples: ['bsc', 'mainnet', 'bsc-testnet'],
-    }),
+    })
   ),
   walletAddress: Type.Optional(
     Type.String({
       description: 'Wallet address that will open the position',
       default: ethereumChainConfig.defaultWallet,
-    }),
+    })
   ),
   lowerPrice: Type.Number({
     description: 'Lower price bound for the position',
@@ -378,12 +368,12 @@ export const PancakeswapClmmOpenPositionRequest = Type.Object({
   baseTokenAmount: Type.Optional(
     Type.Number({
       description: 'Amount of base token to deposit',
-    }),
+    })
   ),
   quoteTokenAmount: Type.Optional(
     Type.Number({
       description: 'Amount of quote token to deposit',
-    }),
+    })
   ),
   slippagePct: Type.Optional(
     Type.Number({
@@ -391,19 +381,19 @@ export const PancakeswapClmmOpenPositionRequest = Type.Object({
       maximum: 100,
       description: 'Maximum acceptable slippage percentage',
       default: PancakeswapConfig.config.slippagePct,
-    }),
+    })
   ),
   gasPrice: Type.Optional(
     Type.String({
       description: 'Gas price in wei for the transaction',
       examples: ['10000000000'],
-    }),
+    })
   ),
   maxGas: Type.Optional(
     Type.Number({
       description: 'Maximum gas limit for the transaction',
       examples: [300000],
-    }),
+    })
   ),
 });
 
@@ -415,13 +405,13 @@ export const PancakeswapClmmAddLiquidityRequest = Type.Object({
       default: ethereumChainConfig.defaultNetwork,
       enum: [...PancakeswapConfig.networks],
       examples: ['bsc', 'mainnet', 'bsc-testnet'],
-    }),
+    })
   ),
   walletAddress: Type.Optional(
     Type.String({
       description: 'Wallet address that will add liquidity',
       default: ethereumChainConfig.defaultWallet,
-    }),
+    })
   ),
   positionAddress: Type.String({
     description: 'NFT token ID of the position',
@@ -438,19 +428,19 @@ export const PancakeswapClmmAddLiquidityRequest = Type.Object({
       maximum: 100,
       description: 'Maximum acceptable slippage percentage',
       default: PancakeswapConfig.config.slippagePct,
-    }),
+    })
   ),
   gasPrice: Type.Optional(
     Type.String({
       description: 'Gas price in wei for the transaction',
       examples: ['10000000000'],
-    }),
+    })
   ),
   maxGas: Type.Optional(
     Type.Number({
       description: 'Maximum gas limit for the transaction',
       examples: [300000],
-    }),
+    })
   ),
 });
 
@@ -462,13 +452,13 @@ export const PancakeswapClmmRemoveLiquidityRequest = Type.Object({
       default: ethereumChainConfig.defaultNetwork,
       enum: [...PancakeswapConfig.networks],
       examples: ['bsc', 'mainnet', 'bsc-testnet'],
-    }),
+    })
   ),
   walletAddress: Type.Optional(
     Type.String({
       description: 'Wallet address that will remove liquidity',
       default: ethereumChainConfig.defaultWallet,
-    }),
+    })
   ),
   positionAddress: Type.String({
     description: 'NFT token ID of the position',
@@ -482,13 +472,13 @@ export const PancakeswapClmmRemoveLiquidityRequest = Type.Object({
     Type.String({
       description: 'Gas price in wei for the transaction',
       examples: ['10000000000'],
-    }),
+    })
   ),
   maxGas: Type.Optional(
     Type.Number({
       description: 'Maximum gas limit for the transaction',
       examples: [300000],
-    }),
+    })
   ),
 });
 
@@ -500,13 +490,13 @@ export const PancakeswapClmmClosePositionRequest = Type.Object({
       default: ethereumChainConfig.defaultNetwork,
       enum: [...PancakeswapConfig.networks],
       examples: ['bsc', 'mainnet', 'bsc-testnet'],
-    }),
+    })
   ),
   walletAddress: Type.Optional(
     Type.String({
       description: 'Wallet address that will close the position',
       default: ethereumChainConfig.defaultWallet,
-    }),
+    })
   ),
   positionAddress: Type.String({
     description: 'NFT token ID of the position to close',
@@ -515,13 +505,13 @@ export const PancakeswapClmmClosePositionRequest = Type.Object({
     Type.String({
       description: 'Gas price in wei for the transaction',
       examples: ['10000000000'],
-    }),
+    })
   ),
   maxGas: Type.Optional(
     Type.Number({
       description: 'Maximum gas limit for the transaction',
       examples: [300000],
-    }),
+    })
   ),
 });
 
@@ -533,13 +523,13 @@ export const PancakeswapClmmCollectFeesRequest = Type.Object({
       default: ethereumChainConfig.defaultNetwork,
       enum: [...PancakeswapConfig.networks],
       examples: ['bsc', 'mainnet', 'bsc-testnet'],
-    }),
+    })
   ),
   walletAddress: Type.Optional(
     Type.String({
       description: 'Wallet address that will collect fees',
       default: ethereumChainConfig.defaultWallet,
-    }),
+    })
   ),
   positionAddress: Type.String({
     description: 'NFT token ID of the position',
@@ -548,13 +538,13 @@ export const PancakeswapClmmCollectFeesRequest = Type.Object({
     Type.String({
       description: 'Gas price in wei for the transaction',
       examples: ['10000000000'],
-    }),
+    })
   ),
   maxGas: Type.Optional(
     Type.Number({
       description: 'Maximum gas limit for the transaction',
       examples: [300000],
-    }),
+    })
   ),
 });
 
@@ -564,7 +554,7 @@ export const PancakeswapClmmExecuteSwapRequest = Type.Object({
     Type.String({
       description: 'Wallet address that will execute the swap',
       default: ethereumChainConfig.defaultWallet,
-    }),
+    })
   ),
   network: Type.Optional(
     Type.String({
@@ -572,12 +562,12 @@ export const PancakeswapClmmExecuteSwapRequest = Type.Object({
       default: ethereumChainConfig.defaultNetwork,
       enum: [...PancakeswapConfig.networks],
       examples: ['bsc', 'mainnet', 'bsc-testnet'],
-    }),
+    })
   ),
   poolAddress: Type.Optional(
     Type.String({
       description: 'Pool address (optional - can be looked up from tokens)',
-    }),
+    })
   ),
   baseToken: Type.String({
     description: 'Base token symbol or address',
@@ -587,7 +577,7 @@ export const PancakeswapClmmExecuteSwapRequest = Type.Object({
     Type.String({
       description: 'Quote token symbol or address',
       examples: [QUOTE_TOKEN],
-    }),
+    })
   ),
   amount: Type.Number({
     description: 'Amount to swap',
@@ -603,18 +593,18 @@ export const PancakeswapClmmExecuteSwapRequest = Type.Object({
       maximum: 100,
       description: 'Maximum acceptable slippage percentage',
       default: PancakeswapConfig.config.slippagePct,
-    }),
+    })
   ),
   gasPrice: Type.Optional(
     Type.String({
       description: 'Gas price in wei for the transaction',
       examples: ['10000000000'],
-    }),
+    })
   ),
   maxGas: Type.Optional(
     Type.Number({
       description: 'Maximum gas limit for the transaction',
       examples: [300000],
-    }),
+    })
   ),
 });

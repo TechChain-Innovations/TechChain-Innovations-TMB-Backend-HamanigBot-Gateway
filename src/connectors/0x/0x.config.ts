@@ -7,7 +7,7 @@ export namespace ZeroXConfig {
   export const chain = 'ethereum';
   // Only include networks that are supported by 0x and available in Gateway
   export const networks = getAvailableEthereumNetworks().filter((network) =>
-    ['mainnet', 'arbitrum', 'avalanche', 'base', 'bsc', 'optimism', 'polygon', 'sepolia'].includes(network),
+    ['mainnet', 'arbitrum', 'avalanche', 'base', 'bsc', 'optimism', 'polygon', 'sepolia'].includes(network)
   );
   export type Network = string;
 
@@ -41,7 +41,7 @@ export namespace ZeroXConfig {
     const endpoint = networkMap[network];
     if (!endpoint) {
       throw new Error(
-        `0x API endpoint not found for network: ${network}. Supported networks: ${Object.keys(networkMap).join(', ')}`,
+        `0x API endpoint not found for network: ${network}. Supported networks: ${Object.keys(networkMap).join(', ')}`
       );
     }
 

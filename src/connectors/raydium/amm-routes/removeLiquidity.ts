@@ -57,7 +57,7 @@ async function createRemoveLiquidityTransaction(
   poolInfo: any,
   poolKeys: any,
   lpAmount: BN,
-  computeBudgetConfig: { units: number; microLamports: number },
+  computeBudgetConfig: { units: number; microLamports: number }
 ): Promise<VersionedTransaction | Transaction> {
   if (ammPoolInfo.poolType === 'amm') {
     // Use a small slippage for minimum amounts (1%)
@@ -103,7 +103,7 @@ async function calculateLpAmountToRemove(
   poolAddress: string,
   percentageToRemove: number,
   walletAddress: string,
-  isHardwareWallet: boolean,
+  isHardwareWallet: boolean
 ): Promise<BN> {
   let lpMint: string;
 
@@ -142,7 +142,7 @@ async function removeLiquidity(
   network: string,
   walletAddress: string,
   poolAddress: string,
-  percentageToRemove: number,
+  percentageToRemove: number
 ): Promise<RemoveLiquidityResponseType> {
   const solana = await Solana.getInstance(network);
   const raydium = await Raydium.getInstance(network);
@@ -166,7 +166,7 @@ async function removeLiquidity(
     poolAddress,
     percentageToRemove,
     walletAddress,
-    isHardwareWallet,
+    isHardwareWallet
   );
 
   logger.info(`Removing ${percentageToRemove.toFixed(4)}% liquidity from pool ${poolAddress}...`);
@@ -187,7 +187,7 @@ async function removeLiquidity(
     {
       units: COMPUTE_UNITS,
       microLamports: priorityFeePerCU,
-    },
+    }
   );
 
   // Sign transaction using helper
@@ -197,7 +197,7 @@ async function removeLiquidity(
       transaction,
       walletAddress,
       isHardwareWallet,
-      wallet,
+      wallet
     )) as VersionedTransaction;
   } else {
     const txAsTransaction = transaction as Transaction;
@@ -209,7 +209,7 @@ async function removeLiquidity(
       txAsTransaction,
       walletAddress,
       isHardwareWallet,
-      wallet,
+      wallet
     )) as Transaction;
   }
 
@@ -229,7 +229,9 @@ async function removeLiquidity(
     const quoteTokenBalanceChange = balanceChanges[1];
 
     logger.info(
-      `Liquidity removed from pool ${poolAddress}: ${Math.abs(baseTokenBalanceChange).toFixed(4)} ${poolInfo.mintA.symbol}, ${Math.abs(quoteTokenBalanceChange).toFixed(4)} ${poolInfo.mintB.symbol}`,
+      `Liquidity removed from pool ${poolAddress}: ${Math.abs(baseTokenBalanceChange).toFixed(4)} ${
+        poolInfo.mintA.symbol
+      }, ${Math.abs(quoteTokenBalanceChange).toFixed(4)} ${poolInfo.mintB.symbol}`
     );
 
     return {
@@ -276,7 +278,7 @@ export const removeLiquidityRoute: FastifyPluginAsync = async (fastify) => {
         logger.error(e);
         throw fastify.httpErrors.internalServerError('Internal server error');
       }
-    },
+    }
   );
 };
 

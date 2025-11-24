@@ -61,7 +61,7 @@ export const removeTokenRoute: FastifyPluginAsync = async (fastify) => {
 
         throw fastify.httpErrors.internalServerError('Failed to remove token');
       }
-    },
+    }
   );
 };
 

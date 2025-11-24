@@ -299,5 +299,12 @@
     "baseSymbol": "WMATIC",
     "quoteSymbol": "WETH",
     "address": "0x86f1d8390222a3691c28938ec7404a1661e618e0"
+  },
+  {
+    "type": "clmm",
+    "network": "sepolia",
+    "baseSymbol": "USDC",
+    "quoteSymbol": "WETH",
+    "address": "0x3289680dd4d6c10bb19b899729cda5eef58aeff1"
   }
 ]

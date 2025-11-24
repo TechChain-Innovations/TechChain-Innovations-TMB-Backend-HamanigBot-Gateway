@@ -61,7 +61,7 @@ async function tryBuildContext(network: string, poolAddress?: string): Promise<C
 export async function resolveClmmContext(
   fastify: FastifyInstance,
   requestedNetwork: string | undefined,
-  poolAddress?: string,
+  poolAddress?: string
 ): Promise<ClmmContext> {
   const defaultNetwork = getDefaultSolanaNetwork() || 'mainnet-beta';
   const initialNetwork = requestedNetwork || defaultNetwork;
@@ -77,7 +77,7 @@ export async function resolveClmmContext(
     const fallbackCtx = await tryBuildContext('mainnet-beta', poolAddress);
     if (fallbackCtx.poolFound) {
       logger.warn(
-        `Pool ${poolAddress} not found on ${initialNetwork}, falling back to mainnet-beta for Raydium CLMM request`,
+        `Pool ${poolAddress} not found on ${initialNetwork}, falling back to mainnet-beta for Raydium CLMM request`
       );
       return fallbackCtx;
     }
@@ -95,7 +95,7 @@ export async function getSwapQuote(
   side: 'BUY' | 'SELL',
   poolAddress: string,
   slippagePct?: number,
-  ctx?: ClmmContext,
+  ctx?: ClmmContext
 ) {
   const resolvedCtx = ctx ?? (await resolveClmmContext(fastify, network, poolAddress));
   const { solana, raydium, poolInfo: resolvedPoolInfo, poolKeys } = resolvedCtx;
@@ -128,9 +128,7 @@ export async function getSwapQuote(
     poolKeys: [clmmPoolInfo],
   });
   const slippagePctEffective =
-    slippagePct === undefined || slippagePct === null
-      ? RaydiumConfig.config.slippagePct
-      : Number(slippagePct);
+    slippagePct === undefined || slippagePct === null ? RaydiumConfig.config.slippagePct : Number(slippagePct);
   const effectiveSlippage = new BN(slippagePctEffective / 100);
 
   // Convert BN to number for slippage
@@ -184,7 +182,7 @@ export async function formatSwapQuote(
   amount: number,
   side: 'BUY' | 'SELL',
   poolAddress: string,
-  slippagePct?: number,
+  slippagePct?: number
 ): Promise<QuoteSwapResponseType> {
   const { inputToken, outputToken, response } = await getSwapQuote(
     fastify,
@@ -194,7 +192,7 @@ export async function formatSwapQuote(
     amount,
     side,
     poolAddress,
-    slippagePct,
+    slippagePct
   );
   logger.debug(
     `Raydium CLMM swap quote: ${side} ${amount} ${baseTokenSymbol}/${quoteTokenSymbol} in pool ${poolAddress}`,
@@ -247,7 +245,7 @@ export async function formatSwapQuote(
                 },
               },
             },
-    },
+    }
   );
 
   if (side === 'BUY') {
@@ -302,9 +300,7 @@ export async function formatSwapQuote(
 
     // Calculate minAmountOut using slippage
     const effectiveSlippage =
-      slippagePct === undefined || slippagePct === null
-        ? RaydiumConfig.config.slippagePct
-        : Number(slippagePct);
+      slippagePct === undefined || slippagePct === null ? RaydiumConfig.config.slippagePct : Number(slippagePct);
     const minAmountOut = estimatedAmountOut * (1 - effectiveSlippage / 100);
 
     const price = estimatedAmountIn > 0 ? estimatedAmountOut / estimatedAmountIn : 0;
@@ -375,7 +371,7 @@ export const quoteSwapRoute: FastifyPluginAsync = async (fastify) => {
 
           if (!baseTokenInfo || !quoteTokenInfo) {
             throw fastify.httpErrors.badRequest(
-              sanitizeErrorMessage('Token not found: {}', !baseTokenInfo ? baseToken : quoteToken),
+              sanitizeErrorMessage('Token not found: {}', !baseTokenInfo ? baseToken : quoteToken)
             );
           }
 
@@ -388,12 +384,12 @@ export const quoteSwapRoute: FastifyPluginAsync = async (fastify) => {
             networkToUse,
             'clmm',
             baseTokenInfo.symbol,
-            quoteTokenInfo.symbol,
+            quoteTokenInfo.symbol
           );
 
           if (!pool) {
             throw fastify.httpErrors.notFound(
-              `No CLMM pool found for ${baseTokenInfo.symbol}-${quoteTokenInfo.symbol} on Raydium`,
+              `No CLMM pool found for ${baseTokenInfo.symbol}-${quoteTokenInfo.symbol} on Raydium`
             );
           }
 
@@ -408,7 +404,7 @@ export const quoteSwapRoute: FastifyPluginAsync = async (fastify) => {
           amount,
           side as 'BUY' | 'SELL',
           poolAddressToUse,
-          slippagePct,
+          slippagePct
         );
 
         let gasEstimation = null;
@@ -430,7 +426,7 @@ export const quoteSwapRoute: FastifyPluginAsync = async (fastify) => {
         }
         throw fastify.httpErrors.internalServerError('Failed to get swap quote');
       }
-    },
+    }
   );
 };
 

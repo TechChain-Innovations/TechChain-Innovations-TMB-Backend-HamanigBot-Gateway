@@ -74,7 +74,7 @@ export class PoolService {
   private async validateConnector(connector: string): Promise<void> {
     if (!isSupportedConnector(connector)) {
       throw new Error(
-        `Unsupported connector: ${connector}. Supported connectors: ${Object.values(SupportedConnector).join(', ')}`,
+        `Unsupported connector: ${connector}. Supported connectors: ${Object.values(SupportedConnector).join(', ')}`
       );
     }
   }
@@ -88,7 +88,7 @@ export class PoolService {
 
     if (!connectorInfo) {
       throw new Error(
-        `Unknown connector: ${connector}. Available connectors: ${connectorsConfig.map((c) => c.name).join(', ')}`,
+        `Unknown connector: ${connector}. Available connectors: ${connectorsConfig.map((c) => c.name).join(', ')}`
       );
     }
 
@@ -212,7 +212,7 @@ export class PoolService {
         (pool) =>
           pool.baseSymbol.toLowerCase().includes(searchLower) ||
           pool.quoteSymbol.toLowerCase().includes(searchLower) ||
-          pool.address.toLowerCase().includes(searchLower),
+          pool.address.toLowerCase().includes(searchLower)
       );
     }
 
@@ -227,7 +227,7 @@ export class PoolService {
     network: string,
     type: 'amm' | 'clmm',
     baseSymbol: string,
-    quoteSymbol: string,
+    quoteSymbol: string
   ): Promise<Pool | null> {
     const pools = await this.listPools(connector, network, type);
 
@@ -235,7 +235,7 @@ export class PoolService {
     const pool = pools.find(
       (p) =>
         (p.baseSymbol === baseSymbol && p.quoteSymbol === quoteSymbol) ||
-        (p.baseSymbol === quoteSymbol && p.quoteSymbol === baseSymbol),
+        (p.baseSymbol === quoteSymbol && p.quoteSymbol === baseSymbol)
     );
 
     return pool || null;
@@ -331,7 +331,7 @@ export class PoolService {
           p.network === pool.network &&
           p.type === pool.type &&
           ((p.baseSymbol === pool.baseSymbol && p.quoteSymbol === pool.quoteSymbol) ||
-            (p.baseSymbol === pool.quoteSymbol && p.quoteSymbol === pool.baseSymbol)),
+            (p.baseSymbol === pool.quoteSymbol && p.quoteSymbol === pool.baseSymbol))
       )
     ) {
       throw new Error(`Pool for ${pool.baseSymbol}-${pool.quoteSymbol} already exists on ${pool.network} ${pool.type}`);
@@ -349,7 +349,7 @@ export class PoolService {
     const initialLength = pools.length;
 
     const filteredPools = pools.filter(
-      (p) => !(p.address.toLowerCase() === address.toLowerCase() && p.network === network && p.type === type),
+      (p) => !(p.address.toLowerCase() === address.toLowerCase() && p.network === network && p.type === type)
     );
 
     if (filteredPools.length === initialLength) {
@@ -381,7 +381,7 @@ export class PoolService {
         p.network === pool.network &&
         p.type === pool.type &&
         ((p.baseSymbol === pool.baseSymbol && p.quoteSymbol === pool.quoteSymbol) ||
-          (p.baseSymbol === pool.quoteSymbol && p.quoteSymbol === pool.baseSymbol)),
+          (p.baseSymbol === pool.quoteSymbol && p.quoteSymbol === pool.baseSymbol))
     );
 
     if (existingIndex === -1) {
@@ -390,7 +390,7 @@ export class PoolService {
 
     // Check if the new address is already used by another pool
     const addressConflict = pools.some(
-      (p, index) => index !== existingIndex && p.address.toLowerCase() === pool.address.toLowerCase(),
+      (p, index) => index !== existingIndex && p.address.toLowerCase() === pool.address.toLowerCase()
     );
 
     if (addressConflict) {
@@ -408,7 +408,7 @@ export class PoolService {
   public async getDefaultPools(
     connector: string,
     network: string,
-    type: 'amm' | 'clmm',
+    type: 'amm' | 'clmm'
   ): Promise<Record<string, string>> {
     try {
       const pools = await this.listPools(connector, network, type);

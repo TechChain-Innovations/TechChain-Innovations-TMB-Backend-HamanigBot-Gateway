@@ -20,7 +20,7 @@ async function closePosition(
   fastify: FastifyInstance,
   network: string,
   walletAddress: string,
-  positionAddress: string,
+  positionAddress: string
 ): Promise<ClosePositionResponseType> {
   try {
     const solana = await Solana.getInstance(network);
@@ -38,7 +38,7 @@ async function closePosition(
             network,
             walletAddress,
             positionAddress,
-            100,
+            100
           )) as RemoveLiquidityResponseType)
         : {
             signature: '',
@@ -70,7 +70,7 @@ async function closePosition(
 
       if (!positionResult || !positionResult.position) {
         throw fastify.httpErrors.notFound(
-          `Position not found: ${positionAddress}. Please provide a valid position address`,
+          `Position not found: ${positionAddress}. Please provide a valid position address`
         );
       }
 
@@ -94,7 +94,7 @@ async function closePosition(
       const { signature, fee } = await solana.sendAndConfirmTransaction(
         closePositionTx,
         [wallet],
-        400000, // Higher compute units for close position
+        400000 // Higher compute units for close position
       );
 
       // Get transaction data for confirmation
@@ -199,7 +199,7 @@ export const closePositionRoute: FastifyPluginAsync = async (fastify) => {
         }
         throw fastify.httpErrors.internalServerError('Internal server error');
       }
-    },
+    }
   );
 };
 

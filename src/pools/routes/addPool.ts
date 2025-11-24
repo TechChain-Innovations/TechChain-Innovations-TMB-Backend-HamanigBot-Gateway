@@ -71,6 +71,6 @@ export const addPoolRoute: FastifyPluginAsync = async (fastify) => {
       } catch (error) {
         throw fastify.httpErrors.badRequest(error.message);
       }
-    },
+    }
   );
 };

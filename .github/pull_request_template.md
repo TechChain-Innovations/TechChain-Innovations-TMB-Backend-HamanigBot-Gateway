@@ -5,11 +5,6 @@
 
 **A description of the changes proposed in the pull request**:
 
-
-
 **Tests performed by the developer**:
 
-
-
 **Tips for QA testing**:
-

@@ -22,7 +22,7 @@ export async function approveEthereumToken(
   address: string,
   spender: string,
   token: string,
-  amount?: string,
+  amount?: string
 ) {
   const ethereum = await Ethereum.getInstance(network);
   await ethereum.init();
@@ -45,7 +45,7 @@ export async function approveEthereumToken(
         // Get the actual Universal Router address for the second step
         universalRouterAddress = uniswapSpender(network, spender);
         logger.info(
-          `Will approve token to Permit2, then grant Universal Router (${universalRouterAddress}) permission via Permit2`,
+          `Will approve token to Permit2, then grant Universal Router (${universalRouterAddress}) permission via Permit2`
         );
       } else {
         logger.info(`Looking up spender address for connector: ${spender}`);
@@ -98,7 +98,7 @@ export async function approveEthereumToken(
           [
             'function allowance(address owner, address token, address spender) view returns (uint160 amount, uint48 expiration, uint48 nonce)',
           ],
-          ethereum.provider,
+          ethereum.provider
         );
 
         const allowanceData = await permit2Contract.allowance(address, fullToken.address, universalRouterAddress);
@@ -107,7 +107,7 @@ export async function approveEthereumToken(
         const currentTime = Math.floor(Date.now() / 1000);
 
         logger.info(
-          `Permit2 allowance: ${permit2Allowance.toString()}, expiration: ${expiration}, current time: ${currentTime}`,
+          `Permit2 allowance: ${permit2Allowance.toString()}, expiration: ${expiration}, current time: ${currentTime}`
         );
 
         if (permit2Allowance.gte(amountBigNumber) && expiration > currentTime) {
@@ -299,14 +299,16 @@ export async function approveEthereumToken(
         const permit2Contract = new ethers.Contract(PERMIT2_ADDRESS, permit2ApproveABI, wallet);
 
         logger.info(
-          `Calling Permit2.approve(${fullToken.address}, ${universalRouterAddress}, ${permit2Amount.toString()}, ${expiration})`,
+          `Calling Permit2.approve(${
+            fullToken.address
+          }, ${universalRouterAddress}, ${permit2Amount.toString()}, ${expiration})`
         );
 
         const permit2Tx = await permit2Contract.approve(
           fullToken.address,
           universalRouterAddress,
           permit2Amount,
-          expiration,
+          expiration
         );
 
         // Wait for confirmation with extended timeout
@@ -327,7 +329,7 @@ export async function approveEthereumToken(
       }
 
       logger.info(
-        `Universal Router V2 approval complete: Token approved to Permit2 and Permit2 approved to Universal Router`,
+        `Universal Router V2 approval complete: Token approved to Permit2 and Permit2 approved to Universal Router`
       );
     }
 
@@ -348,7 +350,7 @@ export async function approveEthereumToken(
     // Handle specific error cases
     if (error.message && error.message.includes('insufficient funds')) {
       throw fastify.httpErrors.badRequest(
-        'Insufficient funds for transaction. Please ensure you have enough ETH to cover gas costs.',
+        'Insufficient funds for transaction. Please ensure you have enough ETH to cover gas costs.'
       );
     } else if (error.message.includes('rejected on Ledger')) {
       throw fastify.httpErrors.badRequest('Transaction rejected on Ledger device');
@@ -382,7 +384,7 @@ export const approveRoute: FastifyPluginAsync = async (fastify) => {
       const { network, address, spender, token, amount } = request.body;
 
       return await approveEthereumToken(fastify, network, address, spender, token, amount);
-    },
+    }
   );
 };
 

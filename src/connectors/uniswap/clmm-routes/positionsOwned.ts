@@ -91,7 +91,7 @@ export const positionsOwnedRoute: FastifyPluginAsync = async (fastify) => {
         const positionManager = new Contract(
           positionManagerAddress,
           [...ENUMERABLE_ABI, ...POSITION_MANAGER_ABI],
-          ethereum.provider,
+          ethereum.provider
         );
 
         // Get number of positions owned by the wallet
@@ -211,7 +211,7 @@ export const positionsOwnedRoute: FastifyPluginAsync = async (fastify) => {
         }
         throw fastify.httpErrors.internalServerError('Failed to fetch positions');
       }
-    },
+    }
   );
 };
 

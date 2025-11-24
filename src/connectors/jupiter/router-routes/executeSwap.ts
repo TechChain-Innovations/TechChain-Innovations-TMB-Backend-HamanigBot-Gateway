@@ -18,7 +18,7 @@ async function executeSwap(
   side: 'BUY' | 'SELL',
   slippagePct: number,
   priorityLevel?: string,
-  maxLamports?: number,
+  maxLamports?: number
 ): Promise<SwapExecuteResponseType> {
   // Step 1: Get a fresh quote using the quoteSwap function
   const quoteResult = await quoteSwap(fastify, network, baseToken, quoteToken, amount, side, slippagePct);
@@ -30,7 +30,7 @@ async function executeSwap(
     network,
     quoteResult.quoteId,
     priorityLevel ?? JupiterConfig.config.priorityLevel,
-    maxLamports ?? JupiterConfig.config.maxLamports,
+    maxLamports ?? JupiterConfig.config.maxLamports
   );
 
   return executeResult;
@@ -65,14 +65,14 @@ export const executeSwapRoute: FastifyPluginAsync = async (fastify) => {
           side as 'BUY' | 'SELL',
           slippagePct ?? JupiterConfig.config.slippagePct,
           priorityLevel,
-          maxLamports,
+          maxLamports
         );
       } catch (e) {
         if (e.statusCode) throw e;
         logger.error('Error executing swap:', e);
         throw fastify.httpErrors.internalServerError('Internal server error');
       }
-    },
+    }
   );
 };
 

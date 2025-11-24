@@ -69,7 +69,7 @@ export const setDefaultRoute: FastifyPluginAsync = async (fastify) => {
 
         if (!exists) {
           throw fastify.httpErrors.notFound(
-            `Wallet ${validatedAddress} not found for chain ${chain}. Please add the wallet first.`,
+            `Wallet ${validatedAddress} not found for chain ${chain}. Please add the wallet first.`
           );
         }
       } catch (error) {
@@ -92,7 +92,7 @@ export const setDefaultRoute: FastifyPluginAsync = async (fastify) => {
         logger.error(`Failed to set default wallet: ${error.message}`);
         throw fastify.httpErrors.internalServerError(`Failed to set default wallet: ${error.message}`);
       }
-    },
+    }
   );
 };
 

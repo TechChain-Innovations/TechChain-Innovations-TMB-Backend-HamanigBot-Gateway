@@ -114,7 +114,7 @@ describe('Raydium setOwner Integration', () => {
       expect(RaydiumSDK.load).toHaveBeenCalledWith(
         expect.objectContaining({
           owner: undefined,
-        }),
+        })
       );
 
       // Set the owner
@@ -124,7 +124,7 @@ describe('Raydium setOwner Integration', () => {
       expect(RaydiumSDK.load).toHaveBeenCalledWith(
         expect.objectContaining({
           owner: mockOwner,
-        }),
+        })
       );
 
       // Now SDK operations that require owner should work
@@ -243,7 +243,7 @@ describe('Raydium setOwner Integration', () => {
       expect(RaydiumSDK.load).toHaveBeenCalledWith(
         expect.objectContaining({
           owner: mockOwner1,
-        }),
+        })
       );
 
       // Change to second owner
@@ -251,7 +251,7 @@ describe('Raydium setOwner Integration', () => {
       expect(RaydiumSDK.load).toHaveBeenCalledWith(
         expect.objectContaining({
           owner: mockOwner2,
-        }),
+        })
       );
 
       // Verify SDK was loaded 3 times: initial + 2 setOwner calls

@@ -30,7 +30,7 @@ export async function pollEthereumTransaction(
   fastify: FastifyInstance,
   network: string,
   signature: string,
-  connector?: string,
+  connector?: string
 ): Promise<PollResponseType> {
   try {
     const ethereum = await Ethereum.getInstance(network);
@@ -140,7 +140,7 @@ export const pollRoute: FastifyPluginAsync = async (fastify) => {
     async (request) => {
       const { network, signature } = request.body;
       return await pollEthereumTransaction(fastify, network, signature);
-    },
+    }
   );
 };
 

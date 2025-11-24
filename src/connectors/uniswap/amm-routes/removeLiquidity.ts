@@ -161,7 +161,7 @@ export const removeLiquidityRoute: FastifyPluginAsync = async (fastify) => {
             token0IsBase ? baseTokenMinAmount : quoteTokenMinAmount, // Min amount of WETH
             walletAddress,
             deadline,
-            gasOptions,
+            gasOptions
           );
         } else if (quoteTokenObj.symbol === 'WETH') {
           // Remove liquidity Token + WETH
@@ -172,7 +172,7 @@ export const removeLiquidityRoute: FastifyPluginAsync = async (fastify) => {
             token0IsBase ? quoteTokenMinAmount : baseTokenMinAmount, // Min amount of WETH
             walletAddress,
             deadline,
-            gasOptions,
+            gasOptions
           );
         } else {
           // Remove liquidity Token + Token
@@ -184,7 +184,7 @@ export const removeLiquidityRoute: FastifyPluginAsync = async (fastify) => {
             token0IsBase ? quoteTokenMinAmount : baseTokenMinAmount, // Min amount of token1
             walletAddress,
             deadline,
-            gasOptions,
+            gasOptions
           );
         }
 
@@ -199,7 +199,7 @@ export const removeLiquidityRoute: FastifyPluginAsync = async (fastify) => {
         // Calculate gas fee
         const gasFee = formatTokenAmount(
           receipt.gasUsed.mul(receipt.effectiveGasPrice).toString(),
-          18, // ETH has 18 decimals
+          18 // ETH has 18 decimals
         );
 
         return {
@@ -220,13 +220,13 @@ export const removeLiquidityRoute: FastifyPluginAsync = async (fastify) => {
         // Handle insufficient funds errors
         if (e.code === 'INSUFFICIENT_FUNDS' || (e.message && e.message.includes('insufficient funds'))) {
           throw fastify.httpErrors.badRequest(
-            'Insufficient ETH balance to pay for gas fees. Please add more ETH to your wallet.',
+            'Insufficient ETH balance to pay for gas fees. Please add more ETH to your wallet.'
           );
         }
 
         throw fastify.httpErrors.internalServerError('Failed to remove liquidity');
       }
-    },
+    }
   );
 };
 

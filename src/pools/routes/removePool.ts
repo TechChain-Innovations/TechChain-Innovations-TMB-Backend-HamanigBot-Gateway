@@ -69,6 +69,6 @@ export const removePoolRoute: FastifyPluginAsync = async (fastify) => {
         }
         throw fastify.httpErrors.badRequest(error.message);
       }
-    },
+    }
   );
 };

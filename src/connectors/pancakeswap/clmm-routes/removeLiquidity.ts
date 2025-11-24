@@ -150,9 +150,9 @@ export const removeLiquidityRoute: FastifyPluginAsync = async (fastify) => {
           liquidity: JSBI.divide(
             JSBI.multiply(
               JSBI.BigInt(currentLiquidity.toString()),
-              JSBI.BigInt(liquidityPercentage.numerator.toString()),
+              JSBI.BigInt(liquidityPercentage.numerator.toString())
             ),
-            JSBI.BigInt(liquidityPercentage.denominator.toString()),
+            JSBI.BigInt(liquidityPercentage.denominator.toString())
           ).toString(),
         });
 
@@ -166,11 +166,11 @@ export const removeLiquidityRoute: FastifyPluginAsync = async (fastify) => {
         // Also add any fees that have been collected to the expected amounts
         const totalAmount0 = CurrencyAmount.fromRawAmount(
           token0,
-          JSBI.add(JSBI.BigInt(amount0.quotient.toString()), JSBI.BigInt(position.tokensOwed0.toString())).toString(),
+          JSBI.add(JSBI.BigInt(amount0.quotient.toString()), JSBI.BigInt(position.tokensOwed0.toString())).toString()
         );
         const totalAmount1 = CurrencyAmount.fromRawAmount(
           token1,
-          JSBI.add(JSBI.BigInt(amount1.quotient.toString()), JSBI.BigInt(position.tokensOwed1.toString())).toString(),
+          JSBI.add(JSBI.BigInt(amount1.quotient.toString()), JSBI.BigInt(position.tokensOwed1.toString())).toString()
         );
 
         // Create parameters for removing liquidity
@@ -202,7 +202,7 @@ export const removeLiquidityRoute: FastifyPluginAsync = async (fastify) => {
               type: 'function',
             },
           ],
-          wallet,
+          wallet
         );
 
         // Execute the transaction to remove liquidity
@@ -218,7 +218,7 @@ export const removeLiquidityRoute: FastifyPluginAsync = async (fastify) => {
         // Calculate gas fee
         const gasFee = formatTokenAmount(
           receipt.gasUsed.mul(receipt.effectiveGasPrice).toString(),
-          18, // ETH has 18 decimals
+          18 // ETH has 18 decimals
         );
 
         // Calculate token amounts removed including fees
@@ -245,7 +245,7 @@ export const removeLiquidityRoute: FastifyPluginAsync = async (fastify) => {
         }
         throw fastify.httpErrors.internalServerError('Failed to remove liquidity');
       }
-    },
+    }
   );
 };
 

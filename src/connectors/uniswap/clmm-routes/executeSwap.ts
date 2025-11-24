@@ -24,7 +24,7 @@ export async function executeClmmSwap(
   quoteToken: string,
   amount: number,
   side: 'BUY' | 'SELL',
-  slippagePct: number,
+  slippagePct: number
 ): Promise<SwapExecuteResponseType> {
   const ethereum = await Ethereum.getInstance(network);
   await ethereum.init();
@@ -46,7 +46,7 @@ export async function executeClmmSwap(
     quoteToken,
     amount,
     side,
-    slippagePct,
+    slippagePct
   );
 
   // Check if this is a hardware wallet
@@ -72,22 +72,29 @@ export async function executeClmmSwap(
   const currentAllowance = BigNumber.from(allowance);
 
   logger.info(
-    `Current allowance: ${formatTokenAmount(currentAllowance.toString(), quote.inputToken.decimals)} ${quote.inputToken.symbol}`,
+    `Current allowance: ${formatTokenAmount(currentAllowance.toString(), quote.inputToken.decimals)} ${
+      quote.inputToken.symbol
+    }`
   );
   logger.info(
-    `Amount needed: ${formatTokenAmount(amountNeeded, quote.inputToken.decimals)} ${quote.inputToken.symbol}`,
+    `Amount needed: ${formatTokenAmount(amountNeeded, quote.inputToken.decimals)} ${quote.inputToken.symbol}`
   );
 
   // Check if allowance is sufficient
   if (currentAllowance.lt(amountNeeded)) {
     logger.error(`Insufficient allowance for ${quote.inputToken.symbol}`);
     throw fastify.httpErrors.badRequest(
-      `Insufficient allowance for ${quote.inputToken.symbol}. Please approve at least ${formatTokenAmount(amountNeeded, quote.inputToken.decimals)} ${quote.inputToken.symbol} (${quote.inputToken.address}) for the Uniswap SwapRouter02 (${routerAddress})`,
+      `Insufficient allowance for ${quote.inputToken.symbol}. Please approve at least ${formatTokenAmount(
+        amountNeeded,
+        quote.inputToken.decimals
+      )} ${quote.inputToken.symbol} (${quote.inputToken.address}) for the Uniswap SwapRouter02 (${routerAddress})`
     );
   }
 
   logger.info(
-    `Sufficient allowance exists: ${formatTokenAmount(currentAllowance.toString(), quote.inputToken.decimals)} ${quote.inputToken.symbol}`,
+    `Sufficient allowance exists: ${formatTokenAmount(currentAllowance.toString(), quote.inputToken.decimals)} ${
+      quote.inputToken.symbol
+    }`
   );
 
   // Build swap parameters
@@ -249,7 +256,7 @@ export async function executeClmmSwap(
     if (receipt.status === 0) {
       logger.error(`Transaction failed on-chain. Receipt: ${JSON.stringify(receipt)}`);
       throw fastify.httpErrors.internalServerError(
-        'Transaction reverted on-chain. This could be due to slippage, insufficient funds, or other blockchain issues.',
+        'Transaction reverted on-chain. This could be due to slippage, insufficient funds, or other blockchain issues.'
       );
     }
 
@@ -267,7 +274,7 @@ export async function executeClmmSwap(
     // Calculate gas fee (formatTokenAmount already returns a number)
     const gasFee = formatTokenAmount(
       receipt.gasUsed.mul(receipt.effectiveGasPrice).toString(),
-      18, // ETH has 18 decimals
+      18 // ETH has 18 decimals
     );
 
     // Determine token addresses for computed fields
@@ -299,7 +306,7 @@ export async function executeClmmSwap(
     // Handle specific error cases
     if (error.message && error.message.includes('insufficient funds')) {
       throw fastify.httpErrors.badRequest(
-        'Insufficient funds for transaction. Please ensure you have enough ETH to cover gas costs.',
+        'Insufficient funds for transaction. Please ensure you have enough ETH to cover gas costs.'
       );
     } else if (error.message.includes('rejected on Ledger')) {
       throw fastify.httpErrors.badRequest('Transaction rejected on Ledger device');
@@ -345,14 +352,14 @@ export const executeSwapRoute: FastifyPluginAsync = async (fastify) => {
           quoteToken,
           amount,
           side as 'BUY' | 'SELL',
-          slippagePct,
+          slippagePct
         );
       } catch (e) {
         if (e.statusCode) throw e;
         logger.error('Error executing swap:', e);
         throw fastify.httpErrors.internalServerError(e.message || 'Internal server error');
       }
-    },
+    }
   );
 };
 

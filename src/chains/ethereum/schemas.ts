@@ -18,7 +18,7 @@ export const EthereumNetworkParameter = Type.Optional(
     description: 'The Ethereum network to use',
     default: ethereumChainConfig.defaultNetwork,
     enum: EthereumNetworks,
-  }),
+  })
 );
 
 // Address parameter with proper defaults
@@ -26,7 +26,7 @@ export const EthereumAddressParameter = Type.Optional(
   Type.String({
     description: 'Ethereum wallet address',
     default: ethereumChainConfig.defaultWallet,
-  }),
+  })
 );
 
 // Status request schema
@@ -43,7 +43,7 @@ export const EthereumBalanceRequest = Type.Object({
       description:
         'A list of token symbols (ETH, USDC, WETH) or token addresses. Both formats are accepted and will be automatically detected. An empty array is treated the same as if the parameter was not provided, returning only non-zero balances (with the exception of ETH).',
       examples: [EXAMPLE_BALANCE_TOKENS],
-    }),
+    })
   ),
 });
 
@@ -97,7 +97,7 @@ export const ApproveRequestSchema = Type.Object({
     Type.String({
       description: 'The amount to approve. If not provided, defaults to maximum amount (unlimited approval).',
       default: '',
-    }),
+    })
   ),
 });
 
@@ -114,7 +114,7 @@ export const ApproveResponseSchema = Type.Object({
       amount: Type.String(),
       nonce: Type.Number(),
       fee: Type.String(),
-    }),
+    })
   ),
 });
 
@@ -142,7 +142,7 @@ export const WrapResponseSchema = Type.Object({
       wrappedAddress: Type.String(),
       nativeToken: Type.String(),
       wrappedToken: Type.String(),
-    }),
+    })
   ),
 });
 
@@ -170,7 +170,7 @@ export const UnwrapResponseSchema = Type.Object({
       wrappedAddress: Type.String(),
       nativeToken: Type.String(),
       wrappedToken: Type.String(),
-    }),
+    })
   ),
 });
 

@@ -256,7 +256,7 @@ describe('Raydium', () => {
       const mockExecuteFunc = jest.fn().mockRejectedValue(new Error('insufficient funds for rent'));
 
       await expect(raydiumInstance.executeTransaction(mockExecuteFunc)).rejects.toThrow(
-        'Insufficient SOL balance for transaction fees',
+        'Insufficient SOL balance for transaction fees'
       );
     });
 
@@ -264,7 +264,7 @@ describe('Raydium', () => {
       const mockExecuteFunc = jest.fn().mockRejectedValue(new Error('slippage tolerance exceeded'));
 
       await expect(raydiumInstance.executeTransaction(mockExecuteFunc)).rejects.toThrow(
-        'Transaction failed due to slippage. Try increasing slippage tolerance.',
+        'Transaction failed due to slippage. Try increasing slippage tolerance.'
       );
     });
 
@@ -272,7 +272,7 @@ describe('Raydium', () => {
       const mockExecuteFunc = jest.fn().mockRejectedValue(new Error('blockhash not found'));
 
       await expect(raydiumInstance.executeTransaction(mockExecuteFunc)).rejects.toThrow(
-        'Transaction expired. Please try again.',
+        'Transaction expired. Please try again.'
       );
     });
 

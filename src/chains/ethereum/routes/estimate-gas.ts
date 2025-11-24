@@ -56,7 +56,7 @@ export async function estimateGasEthereum(fastify: FastifyInstance, network: str
     } catch (instanceError) {
       logger.error(`Error getting Ethereum instance for network ${network}: ${instanceError.message}`);
       throw fastify.httpErrors.internalServerError(
-        `Failed to get Ethereum instance for network ${network}: ${instanceError.message}`,
+        `Failed to get Ethereum instance for network ${network}: ${instanceError.message}`
       );
     }
   }
@@ -81,7 +81,7 @@ export const estimateGasRoute: FastifyPluginAsync = async (fastify) => {
     async (request) => {
       const { network } = request.query;
       return await estimateGasEthereum(fastify, network);
-    },
+    }
   );
 };
 

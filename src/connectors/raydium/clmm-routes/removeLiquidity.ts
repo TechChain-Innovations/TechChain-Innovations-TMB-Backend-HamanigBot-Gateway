@@ -21,7 +21,7 @@ export async function removeLiquidity(
   walletAddress: string,
   positionAddress: string,
   percentageToRemove: number,
-  closePosition: boolean = false,
+  closePosition: boolean = false
 ): Promise<RemoveLiquidityResponseType> {
   const solana = await Solana.getInstance(network);
   const raydium = await Raydium.getInstance(network);
@@ -40,7 +40,7 @@ export async function removeLiquidity(
   }
 
   const liquidityToRemove = new BN(
-    new Decimal(positionInfo.liquidity.toString()).mul(percentageToRemove / 100).toFixed(0),
+    new Decimal(positionInfo.liquidity.toString()).mul(percentageToRemove / 100).toFixed(0)
   );
 
   logger.info(`Removing ${percentageToRemove.toFixed(4)}% liquidity from position ${positionAddress}`);
@@ -76,7 +76,7 @@ export async function removeLiquidity(
     transaction,
     walletAddress,
     isHardwareWallet,
-    wallet,
+    wallet
   )) as VersionedTransaction;
   await solana.simulateWithErrorHandling(transaction, _fastify);
 
@@ -97,7 +97,9 @@ export async function removeLiquidity(
     const quoteTokenBalanceChange = balanceChanges[1];
 
     logger.info(
-      `Liquidity removed from position ${positionAddress}: ${Math.abs(baseTokenBalanceChange).toFixed(4)} ${poolInfo.mintA.symbol}, ${Math.abs(quoteTokenBalanceChange).toFixed(4)} ${poolInfo.mintB.symbol}`,
+      `Liquidity removed from position ${positionAddress}: ${Math.abs(baseTokenBalanceChange).toFixed(4)} ${
+        poolInfo.mintA.symbol
+      }, ${Math.abs(quoteTokenBalanceChange).toFixed(4)} ${poolInfo.mintB.symbol}`
     );
 
     const totalFee = txData.meta.fee;
@@ -144,7 +146,7 @@ export const removeLiquidityRoute: FastifyPluginAsync = async (fastify) => {
         logger.error(e);
         throw fastify.httpErrors.internalServerError('Internal server error');
       }
-    },
+    }
   );
 };
 

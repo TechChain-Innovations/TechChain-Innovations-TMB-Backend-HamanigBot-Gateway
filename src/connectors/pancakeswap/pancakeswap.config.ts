@@ -7,7 +7,7 @@ export namespace PancakeswapConfig {
   // See https://developer.pancakeswap.finance/contracts/v3/addresses#smart-router
   export const chain = 'ethereum';
   export const networks = getAvailableEthereumNetworks().filter((network) =>
-    ['mainnet', 'arbitrum', 'base', 'bsc', 'sepolia', 'bsc-testnet'].includes(network),
+    ['mainnet', 'arbitrum', 'base', 'bsc', 'sepolia', 'bsc-testnet'].includes(network)
   );
   export type Network = string;
 

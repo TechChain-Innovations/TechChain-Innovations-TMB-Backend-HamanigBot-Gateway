@@ -15,7 +15,7 @@ async function executeQuote(
   network: string,
   quoteId: string,
   gasPrice?: string,
-  maxGas?: number,
+  maxGas?: number
 ): Promise<SwapExecuteResponseType> {
   // Retrieve cached quote from global cache
   const quote = quoteCache.get(quoteId);
@@ -41,13 +41,16 @@ async function executeQuote(
       tokenContract,
       wallet,
       quote.allowanceTarget,
-      sellTokenInfo.decimals,
+      sellTokenInfo.decimals
     );
 
     const requiredAllowance = BigNumber.from(quote.sellAmount);
     if (BigNumber.from(allowance.value).lt(requiredAllowance)) {
       throw fastify.httpErrors.badRequest(
-        `Insufficient allowance for ${sellTokenInfo.symbol}. Required: ${zeroX.formatTokenAmount(quote.sellAmount, sellTokenInfo.decimals)}, Current: ${zeroX.formatTokenAmount(allowance.value.toString(), sellTokenInfo.decimals)}`,
+        `Insufficient allowance for ${sellTokenInfo.symbol}. Required: ${zeroX.formatTokenAmount(
+          quote.sellAmount,
+          sellTokenInfo.decimals
+        )}, Current: ${zeroX.formatTokenAmount(allowance.value.toString(), sellTokenInfo.decimals)}`
       );
     }
   }
@@ -82,7 +85,7 @@ async function executeQuote(
     quote.sellTokenAddress,
     quote.buyTokenAddress,
     expectedAmountIn,
-    expectedAmountOut,
+    expectedAmountOut
   );
 
   // Handle different transaction states
@@ -99,7 +102,9 @@ async function executeQuote(
 
   // Transaction confirmed (status === 1)
   logger.info(
-    `Swap executed successfully: ${expectedAmountIn.toFixed(4)} ${sellTokenInfo.symbol} -> ${expectedAmountOut.toFixed(4)} ${buyTokenInfo.symbol}`,
+    `Swap executed successfully: ${expectedAmountIn.toFixed(4)} ${sellTokenInfo.symbol} -> ${expectedAmountOut.toFixed(
+      4
+    )} ${buyTokenInfo.symbol}`
   );
 
   // Remove quote from cache only after successful execution (confirmed)
@@ -135,7 +140,7 @@ export const executeQuoteRoute: FastifyPluginAsync = async (fastify) => {
         logger.error('Error executing 0x quote:', e);
         throw fastify.httpErrors.internalServerError(e.message || 'Internal server error');
       }
-    },
+    }
   );
 };
 

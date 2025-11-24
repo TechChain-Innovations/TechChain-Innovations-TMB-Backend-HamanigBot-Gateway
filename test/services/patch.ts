@@ -27,7 +27,7 @@ export const patch = (target: any, propertyName: string, mock: any): void => {
       // special case for getters and setters
       target['__original__' + propertyName] = Object.getOwnPropertyDescriptor(
         Object.getPrototypeOf(target),
-        propertyName,
+        propertyName
       );
     }
   }

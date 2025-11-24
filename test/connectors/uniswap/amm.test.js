@@ -105,7 +105,7 @@ describe('Uniswap AMM Tests (Base Network)', () => {
             baseToken: BASE_TOKEN,
             quoteToken: QUOTE_TOKEN,
           }),
-        }),
+        })
       );
     });
 
@@ -129,7 +129,7 @@ describe('Uniswap AMM Tests (Base Network)', () => {
             baseToken: 'UNKNOWN',
             quoteToken: QUOTE_TOKEN,
           },
-        }),
+        })
       ).rejects.toMatchObject({
         response: {
           status: 404,
@@ -183,7 +183,7 @@ describe('Uniswap AMM Tests (Base Network)', () => {
             side: 'SELL',
             amount: 1.0,
           }),
-        }),
+        })
       );
     });
 
@@ -289,7 +289,7 @@ describe('Uniswap AMM Tests (Base Network)', () => {
           side: 'SELL',
           amount: 1000000.0,
           wallet: TEST_WALLET,
-        }),
+        })
       ).rejects.toMatchObject({
         response: {
           status: 500,
@@ -356,7 +356,7 @@ describe('Uniswap AMM Tests (Base Network)', () => {
             baseTokenAmount: 1.0,
             quoteTokenAmount: 100.0, // Wrong ratio
           },
-        }),
+        })
       ).rejects.toMatchObject({
         response: {
           status: 400,
@@ -459,7 +459,7 @@ describe('Uniswap AMM Tests (Base Network)', () => {
           baseTokenAmount: 10000.0, // Large amount
           quoteTokenAmount: 23405000.0,
           wallet: TEST_WALLET,
-        }),
+        })
       ).rejects.toMatchObject({
         response: {
           status: 400,
@@ -525,7 +525,7 @@ describe('Uniswap AMM Tests (Base Network)', () => {
           poolAddress: TEST_POOL,
           lpTokenAmount: 10000.0, // Large amount
           wallet: TEST_WALLET,
-        }),
+        })
       ).rejects.toMatchObject({
         response: {
           status: 400,

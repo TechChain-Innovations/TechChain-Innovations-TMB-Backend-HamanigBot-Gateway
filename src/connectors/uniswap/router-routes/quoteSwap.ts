@@ -20,7 +20,7 @@ async function quoteSwap(
   quoteToken: string,
   amount: number,
   side: 'BUY' | 'SELL',
-  slippagePct: number,
+  slippagePct: number
 ): Promise<Static<typeof UniswapQuoteSwapResponse>> {
   logger.info(`[quoteSwap] Starting quote generation`);
   logger.info(`[quoteSwap] Network: ${network}, Wallet: ${walletAddress}`);
@@ -37,7 +37,7 @@ async function quoteSwap(
   if (!baseTokenInfo || !quoteTokenInfo) {
     logger.error(`[quoteSwap] Token not found: ${!baseTokenInfo ? baseToken : quoteToken}`);
     throw fastify.httpErrors.notFound(
-      sanitizeErrorMessage('Token not found: {}', !baseTokenInfo ? baseToken : quoteToken),
+      sanitizeErrorMessage('Token not found: {}', !baseTokenInfo ? baseToken : quoteToken)
     );
   }
 
@@ -116,7 +116,7 @@ async function quoteSwap(
   quoteCache.set(quoteId, cachedQuote);
 
   logger.info(
-    `[quoteSwap] Cached quote ${quoteId}: ${estimatedAmountIn} ${inputToken.symbol} -> ${estimatedAmountOut} ${outputToken.symbol}`,
+    `[quoteSwap] Cached quote ${quoteId}: ${estimatedAmountIn} ${inputToken.symbol} -> ${estimatedAmountOut} ${outputToken.symbol}`
   );
   logger.info(`[quoteSwap] Method parameters available: ${!!quoteResult.methodParameters}`);
   if (quoteResult.methodParameters) {
@@ -179,14 +179,14 @@ export const quoteSwapRoute: FastifyPluginAsync = async (fastify) => {
           quoteToken,
           amount,
           side as 'BUY' | 'SELL',
-          slippagePct,
+          slippagePct
         );
       } catch (e) {
         if (e.statusCode) throw e;
         logger.error('Error getting quote:', e);
         throw fastify.httpErrors.internalServerError(e.message || 'Internal server error');
       }
-    },
+    }
   );
 };
 

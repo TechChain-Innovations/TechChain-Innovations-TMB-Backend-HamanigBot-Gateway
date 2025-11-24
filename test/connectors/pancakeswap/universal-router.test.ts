@@ -55,7 +55,7 @@ describe('UniversalRouterService', () => {
       };
 
       await expect(universalRouter.getQuote(WBNB, USDC, amount, TradeType.EXACT_INPUT, options)).rejects.toThrow(
-        'No routes found for WBNB -> USDC',
+        'No routes found for WBNB -> USDC'
       );
     });
 

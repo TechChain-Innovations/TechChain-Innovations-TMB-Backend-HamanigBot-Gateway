@@ -18,7 +18,7 @@ async function executeSwap(
   side: 'BUY' | 'SELL',
   slippagePct: number,
   gasPrice?: string,
-  maxGas?: number,
+  maxGas?: number
 ): Promise<SwapExecuteResponseType> {
   // Step 1: Get a fresh firm quote using the quoteSwap function
   const quoteResult = await quoteSwap(
@@ -30,7 +30,7 @@ async function executeSwap(
     side,
     slippagePct,
     false, // indicativePrice = false for firm quote
-    walletAddress, // takerAddress
+    walletAddress // takerAddress
   );
 
   // Step 2: Execute the quote immediately using executeQuote function
@@ -68,14 +68,14 @@ export const executeSwapRoute: FastifyPluginAsync = async (fastify) => {
           side as 'BUY' | 'SELL',
           slippagePct,
           gasPrice,
-          maxGas,
+          maxGas
         );
       } catch (e) {
         if (e.statusCode) throw e;
         logger.error('Error executing 0x swap:', e);
         throw fastify.httpErrors.internalServerError(e.message || 'Internal server error');
       }
-    },
+    }
   );
 };
 

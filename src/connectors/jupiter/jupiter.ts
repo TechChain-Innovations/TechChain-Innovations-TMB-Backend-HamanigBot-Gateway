@@ -115,7 +115,7 @@ export class Jupiter {
     slippagePct?: number,
     onlyDirectRoutes: boolean = JupiterConfig.config.onlyDirectRoutes,
     restrictIntermediateTokens: boolean = JupiterConfig.config.restrictIntermediateTokens,
-    swapMode: 'ExactIn' | 'ExactOut' = 'ExactIn',
+    swapMode: 'ExactIn' | 'ExactOut' = 'ExactIn'
   ): Promise<QuoteResponse> {
     const inputToken = await this.solana.getToken(inputTokenIdentifier);
     const outputToken = await this.solana.getToken(outputTokenIdentifier);
@@ -143,7 +143,7 @@ export class Jupiter {
 
     logger.debug(
       `Getting Jupiter quote for ${inputToken.symbol} to ${outputToken.symbol} with params:`,
-      Object.fromEntries(params),
+      Object.fromEntries(params)
     );
 
     try {
@@ -199,7 +199,7 @@ export class Jupiter {
     wallet: Wallet,
     quote: QuoteResponse,
     maxLamports?: number,
-    priorityLevel?: string,
+    priorityLevel?: string
   ): Promise<VersionedTransaction> {
     // Use provided values or fall back to config
     const feeLamports = maxLamports ? Math.floor(maxLamports) : Math.floor(this.config.maxLamports);
@@ -243,7 +243,7 @@ export class Jupiter {
                 status: axiosError.response.status,
                 data: axiosError.response.data,
               }
-            : axiosError,
+            : axiosError
         );
 
         if (attempt < retryCount) {
@@ -279,14 +279,14 @@ export class Jupiter {
     walletAddress: string,
     quote: QuoteResponse,
     maxLamports?: number,
-    priorityLevel?: string,
+    priorityLevel?: string
   ): Promise<VersionedTransaction> {
     // Use provided values or fall back to config
     const feeLamports = maxLamports ? Math.floor(maxLamports) : Math.floor(this.config.maxLamports);
     const level = priorityLevel || this.config.priorityLevel;
 
     logger.info(
-      `Building unsigned swap transaction for hardware wallet ${walletAddress} with priority level ${level} and max ${feeLamports} lamports`,
+      `Building unsigned swap transaction for hardware wallet ${walletAddress} with priority level ${level} and max ${feeLamports} lamports`
     );
 
     // Get swap object from Jupiter API with retry logic
@@ -325,7 +325,7 @@ export class Jupiter {
                 status: axiosError.response.status,
                 data: axiosError.response.data,
               }
-            : axiosError,
+            : axiosError
         );
 
         if (attempt < retryCount) {

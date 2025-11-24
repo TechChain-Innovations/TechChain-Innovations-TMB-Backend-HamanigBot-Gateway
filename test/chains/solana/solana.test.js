@@ -36,7 +36,7 @@ function validateBalanceResponse(response) {
         typeof balance.address === 'string' &&
         typeof balance.decimals === 'number' &&
         typeof balance.name === 'string' &&
-        typeof balance.balance === 'string',
+        typeof balance.balance === 'string'
     )
   );
 }
@@ -52,7 +52,7 @@ function validateTokensResponse(response) {
         typeof token.symbol === 'string' &&
         typeof token.address === 'string' &&
         typeof token.decimals === 'number' &&
-        typeof token.name === 'string',
+        typeof token.name === 'string'
     )
   );
 }
@@ -118,7 +118,7 @@ describe('Solana Chain Tests (Mainnet Beta)', () => {
             wallet: TEST_WALLET,
             tokens: ['SOL', 'USDC', 'USDT'],
           }),
-        }),
+        })
       );
     });
 
@@ -162,7 +162,7 @@ describe('Solana Chain Tests (Mainnet Beta)', () => {
             wallet: TEST_WALLET,
             tokens: ['SOL', USDC_MINT, BONK_MINT],
           }),
-        }),
+        })
       );
     });
 
@@ -201,7 +201,7 @@ describe('Solana Chain Tests (Mainnet Beta)', () => {
             wallet: TEST_WALLET,
             tokens: ['SOL', 'BONK', USDC_MINT],
           }),
-        }),
+        })
       );
     });
 
@@ -225,7 +225,7 @@ describe('Solana Chain Tests (Mainnet Beta)', () => {
             wallet: 'invalidwallet',
             tokens: ['SOL'],
           },
-        }),
+        })
       ).rejects.toMatchObject({
         response: {
           status: 400,
@@ -256,7 +256,7 @@ describe('Solana Chain Tests (Mainnet Beta)', () => {
             wallet: TEST_WALLET,
             tokens: ['SOL', 'USDC', 'not-a-valid-address'],
           },
-        }),
+        })
       ).rejects.toMatchObject({
         response: {
           status: 400,
@@ -301,7 +301,7 @@ describe('Solana Chain Tests (Mainnet Beta)', () => {
           params: expect.objectContaining({
             network: NETWORK,
           }),
-        }),
+        })
       );
     });
   });
@@ -339,7 +339,7 @@ describe('Solana Chain Tests (Mainnet Beta)', () => {
           params: expect.objectContaining({
             network: NETWORK,
           }),
-        }),
+        })
       );
     });
   });

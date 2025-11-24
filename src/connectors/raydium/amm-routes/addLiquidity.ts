@@ -38,17 +38,17 @@ async function createAddLiquidityTransaction(
   slippage: Percent,
   computeBudgetConfig: { units: number; microLamports: number },
   userBaseAmount: number,
-  userQuoteAmount: number,
+  userQuoteAmount: number
 ): Promise<VersionedTransaction | Transaction> {
   if (ammPoolInfo.poolType === 'amm') {
     // Use user's provided amounts as the maximum they're willing to spend
     const amountInA = new TokenAmount(
       toToken(poolInfo.mintA),
-      new Decimal(userBaseAmount).mul(10 ** poolInfo.mintA.decimals).toFixed(0),
+      new Decimal(userBaseAmount).mul(10 ** poolInfo.mintA.decimals).toFixed(0)
     );
     const amountInB = new TokenAmount(
       toToken(poolInfo.mintB),
-      new Decimal(userQuoteAmount).mul(10 ** poolInfo.mintB.decimals).toFixed(0),
+      new Decimal(userQuoteAmount).mul(10 ** poolInfo.mintB.decimals).toFixed(0)
     );
 
     // Calculate otherAmountMin based on the quoted amounts and slippage
@@ -63,14 +63,14 @@ async function createAddLiquidityTransaction(
           new Decimal(quoteTokenAmountAdded)
             .mul(10 ** poolInfo.mintB.decimals)
             .mul(slippageMultiplier)
-            .toFixed(0),
+            .toFixed(0)
         )
       : new TokenAmount(
           toToken(poolInfo.mintA),
           new Decimal(baseTokenAmountAdded)
             .mul(10 ** poolInfo.mintA.decimals)
             .mul(slippageMultiplier)
-            .toFixed(0),
+            .toFixed(0)
         );
 
     const response = await raydium.raydiumSDK.liquidity.addLiquidity({
@@ -89,7 +89,7 @@ async function createAddLiquidityTransaction(
     const inputAmount = new BN(
       new Decimal(baseLimited ? baseTokenAmountAdded : quoteTokenAmountAdded)
         .mul(10 ** (baseLimited ? poolInfo.mintA.decimals : poolInfo.mintB.decimals))
-        .toFixed(0),
+        .toFixed(0)
     );
     const response = await raydium.raydiumSDK.cpmm.addLiquidity({
       poolInfo: poolInfo as ApiV3PoolInfoStandardItemCpmm,
@@ -112,7 +112,7 @@ async function addLiquidity(
   poolAddress: string,
   baseTokenAmount: number,
   quoteTokenAmount: number,
-  slippagePct?: number,
+  slippagePct?: number
 ): Promise<AddLiquidityResponseType> {
   const solana = await Solana.getInstance(network);
   const raydium = await Raydium.getInstance(network);
@@ -138,7 +138,7 @@ async function addLiquidity(
     poolAddress,
     baseTokenAmount,
     quoteTokenAmount,
-    slippagePct,
+    slippagePct
   )) as QuoteLiquidityResponseType;
 
   const {
@@ -154,7 +154,7 @@ async function addLiquidity(
 
   logger.info(`Adding liquidity to Raydium ${ammPoolInfo.poolType} position...`);
   logger.info(
-    `Quote response: baseLimited=${baseLimited}, quotedBase=${quotedBaseAmount}, quotedQuote=${quotedQuoteAmount}`,
+    `Quote response: baseLimited=${baseLimited}, quotedBase=${quotedBaseAmount}, quotedQuote=${quotedQuoteAmount}`
   );
   logger.info(`Amounts to add: base=${baseTokenAmountAdded}, quote=${quoteTokenAmountAdded}`);
   const slippageValue = slippagePct === 0 ? 0 : slippagePct || RaydiumConfig.config.slippagePct;
@@ -183,7 +183,7 @@ async function addLiquidity(
       microLamports: priorityFeePerCU,
     },
     baseTokenAmount,
-    quoteTokenAmount,
+    quoteTokenAmount
   );
 
   // Sign transaction using helper
@@ -193,7 +193,7 @@ async function addLiquidity(
       transaction,
       walletAddress,
       isHardwareWallet,
-      wallet,
+      wallet
     )) as VersionedTransaction;
   } else {
     const txAsTransaction = transaction as Transaction;
@@ -205,7 +205,7 @@ async function addLiquidity(
       txAsTransaction,
       walletAddress,
       isHardwareWallet,
-      wallet,
+      wallet
     )) as Transaction;
   }
 
@@ -269,7 +269,7 @@ export const addLiquidityRoute: FastifyPluginAsync = async (fastify) => {
           poolAddress,
           baseTokenAmount,
           quoteTokenAmount,
-          slippagePct,
+          slippagePct
         );
       } catch (e) {
         logger.error(e);
@@ -278,7 +278,7 @@ export const addLiquidityRoute: FastifyPluginAsync = async (fastify) => {
         }
         throw fastify.httpErrors.internalServerError('Internal server error');
       }
-    },
+    }
   );
 };
 

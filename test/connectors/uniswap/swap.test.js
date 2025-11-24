@@ -109,7 +109,7 @@ describe('Uniswap V3 Swap Router Tests (Base Network)', () => {
             side: 'SELL',
             amount: 1.0,
           }),
-        }),
+        })
       );
     });
 
@@ -271,7 +271,7 @@ describe('Uniswap V3 Swap Router Tests (Base Network)', () => {
           side: 'SELL',
           amount: 1.0,
           walletAddress: TEST_WALLET,
-        }),
+        })
       );
     });
 

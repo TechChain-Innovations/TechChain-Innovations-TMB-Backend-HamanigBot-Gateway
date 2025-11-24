@@ -138,7 +138,7 @@ describe('Config Routes V2 Tests', () => {
       expect(updateConfig).toHaveBeenCalledWith(
         expect.anything(),
         'ethereum-mainnet.nodeURL',
-        'https://eth-mainnet.g.alchemy.com/v2/your-api-key',
+        'https://eth-mainnet.g.alchemy.com/v2/your-api-key'
       );
     });
 
@@ -213,7 +213,7 @@ describe('Config Routes V2 Tests', () => {
       expect(updateConfig).toHaveBeenCalledWith(
         expect.anything(),
         'server.port',
-        16000, // Converted to number
+        16000 // Converted to number
       );
     });
 
@@ -237,7 +237,7 @@ describe('Config Routes V2 Tests', () => {
       expect(updateConfig).toHaveBeenCalledWith(
         expect.anything(),
         'server.logColors',
-        false, // Converted to boolean
+        false // Converted to boolean
       );
     });
 
@@ -379,7 +379,7 @@ describe('Config Routes V2 Tests', () => {
       expect(updateConfig).toHaveBeenCalledWith(
         expect.anything(),
         'solana-mainnet-beta.nodeURL',
-        'https://new-solana-rpc.com',
+        'https://new-solana-rpc.com'
       );
     });
   });

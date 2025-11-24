@@ -47,7 +47,7 @@ export const listTokensRoute: FastifyPluginAsync = async (fastify) => {
 
         throw fastify.httpErrors.internalServerError('Failed to list tokens');
       }
-    },
+    }
   );
 };
 

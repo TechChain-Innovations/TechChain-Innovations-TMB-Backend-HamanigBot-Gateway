@@ -54,7 +54,7 @@ export const addTokenRoute: FastifyPluginAsync = async (fastify) => {
 
         throw fastify.httpErrors.internalServerError('Failed to add token');
       }
-    },
+    }
   );
 };
 

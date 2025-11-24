@@ -21,7 +21,7 @@ export async function getEthereumAllowances(
   network: string,
   address: string,
   spender: string,
-  tokens: string[],
+  tokens: string[]
 ) {
   try {
     const ethereum = await Ethereum.getInstance(network);
@@ -124,20 +124,20 @@ export async function getEthereumAllowances(
                   tokenContract,
                   address,
                   PERMIT2_ADDRESS,
-                  tokenInfoMap[symbol].decimals,
+                  tokenInfoMap[symbol].decimals
                 )
               : await ethereum.getERC20Allowance(
                   tokenContract,
                   wallet!,
                   PERMIT2_ADDRESS,
-                  tokenInfoMap[symbol].decimals,
+                  tokenInfoMap[symbol].decimals
                 );
 
             // Then check Permit2's allowance to Universal Router
             const [amount, expiration, nonce] = await permit2Contract.allowance(
               address,
               tokenInfoMap[symbol].address,
-              universalRouterAddress,
+              universalRouterAddress
             );
 
             // Check if the Permit2 allowance is expired
@@ -165,13 +165,18 @@ export async function getEthereumAllowances(
             });
 
             logger.debug(
-              `${symbol} allowances - Token->Permit2: ${tokenValueToString(tokenToPermit2Allowance)}, Permit2->Router: ${tokenValueToString({ value: amount.toString(), decimals: tokenInfoMap[symbol].decimals })}, Effective: ${approvals[symbol]}`,
+              `${symbol} allowances - Token->Permit2: ${tokenValueToString(
+                tokenToPermit2Allowance
+              )}, Permit2->Router: ${tokenValueToString({
+                value: amount.toString(),
+                decimals: tokenInfoMap[symbol].decimals,
+              })}, Effective: ${approvals[symbol]}`
             );
           } catch (error) {
             logger.error(`Error checking allowance for ${symbol}: ${error.message}`);
             approvals[symbol] = '0';
           }
-        }),
+        })
       );
     } else {
       // Regular allowance check for other spenders
@@ -184,11 +189,11 @@ export async function getEthereumAllowances(
                   contract,
                   address,
                   spenderAddress,
-                  tokenInfoMap[symbol].decimals,
+                  tokenInfoMap[symbol].decimals
                 )
-              : await ethereum.getERC20Allowance(contract, wallet!, spenderAddress, tokenInfoMap[symbol].decimals),
+              : await ethereum.getERC20Allowance(contract, wallet!, spenderAddress, tokenInfoMap[symbol].decimals)
           );
-        }),
+        })
       );
     }
 
@@ -224,7 +229,7 @@ export const allowancesRoute: FastifyPluginAsync = async (fastify) => {
     async (request) => {
       const { network, address, spender, tokens } = request.body;
       return await getEthereumAllowances(fastify, network, address, spender, tokens);
-    },
+    }
   );
 };
 

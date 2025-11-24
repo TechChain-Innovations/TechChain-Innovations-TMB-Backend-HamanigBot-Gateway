@@ -230,20 +230,23 @@ export const openPositionRoute: FastifyPluginAsync = async (fastify) => {
             token0Contract,
             wallet,
             positionManagerAddress,
-            token0.decimals,
+            token0.decimals
           );
 
           const currentAllowance0 = BigNumber.from(allowance0.value);
           const requiredAmount0 = BigNumber.from(token0Amount.quotient.toString());
 
           logger.info(
-            `${token0.symbol} allowance: ${formatTokenAmount(currentAllowance0.toString(), token0.decimals)}`,
+            `${token0.symbol} allowance: ${formatTokenAmount(currentAllowance0.toString(), token0.decimals)}`
           );
           logger.info(`${token0.symbol} required: ${formatTokenAmount(requiredAmount0.toString(), token0.decimals)}`);
 
           if (currentAllowance0.lt(requiredAmount0)) {
             throw fastify.httpErrors.badRequest(
-              `Insufficient ${token0.symbol} allowance. Please approve at least ${formatTokenAmount(requiredAmount0.toString(), token0.decimals)} ${token0.symbol} (${token0.address}) for the Position Manager (${positionManagerAddress})`,
+              `Insufficient ${token0.symbol} allowance. Please approve at least ${formatTokenAmount(
+                requiredAmount0.toString(),
+                token0.decimals
+              )} ${token0.symbol} (${token0.address}) for the Position Manager (${positionManagerAddress})`
             );
           }
         }
@@ -255,20 +258,23 @@ export const openPositionRoute: FastifyPluginAsync = async (fastify) => {
             token1Contract,
             wallet,
             positionManagerAddress,
-            token1.decimals,
+            token1.decimals
           );
 
           const currentAllowance1 = BigNumber.from(allowance1.value);
           const requiredAmount1 = BigNumber.from(token1Amount.quotient.toString());
 
           logger.info(
-            `${token1.symbol} allowance: ${formatTokenAmount(currentAllowance1.toString(), token1.decimals)}`,
+            `${token1.symbol} allowance: ${formatTokenAmount(currentAllowance1.toString(), token1.decimals)}`
           );
           logger.info(`${token1.symbol} required: ${formatTokenAmount(requiredAmount1.toString(), token1.decimals)}`);
 
           if (currentAllowance1.lt(requiredAmount1)) {
             throw fastify.httpErrors.badRequest(
-              `Insufficient ${token1.symbol} allowance. Please approve at least ${formatTokenAmount(requiredAmount1.toString(), token1.decimals)} ${token1.symbol} (${token1.address}) for the Position Manager (${positionManagerAddress})`,
+              `Insufficient ${token1.symbol} allowance. Please approve at least ${formatTokenAmount(
+                requiredAmount1.toString(),
+                token1.decimals
+              )} ${token1.symbol} (${token1.address}) for the Position Manager (${positionManagerAddress})`
             );
           }
         }
@@ -285,7 +291,7 @@ export const openPositionRoute: FastifyPluginAsync = async (fastify) => {
               type: 'function',
             },
           ],
-          wallet,
+          wallet
         );
 
         // Create the position
@@ -326,7 +332,7 @@ export const openPositionRoute: FastifyPluginAsync = async (fastify) => {
         // Calculate gas fee
         const gasFee = formatTokenAmount(
           receipt.gasUsed.mul(receipt.effectiveGasPrice).toString(),
-          18, // ETH has 18 decimals
+          18 // ETH has 18 decimals
         );
 
         // For position rent, we're using the estimated gas cost since Ethereum doesn't have rent like Solana
@@ -376,7 +382,7 @@ export const openPositionRoute: FastifyPluginAsync = async (fastify) => {
           logger.error('- Slippage tolerance exceeded');
 
           throw fastify.httpErrors.badRequest(
-            'Transaction failed. Please check token balances, approvals, and position parameters.',
+            'Transaction failed. Please check token balances, approvals, and position parameters.'
           );
         }
 
@@ -395,7 +401,7 @@ export const openPositionRoute: FastifyPluginAsync = async (fastify) => {
         logger.error('Unexpected error opening position:', e);
         throw fastify.httpErrors.internalServerError('Failed to open position');
       }
-    },
+    }
   );
 };
 

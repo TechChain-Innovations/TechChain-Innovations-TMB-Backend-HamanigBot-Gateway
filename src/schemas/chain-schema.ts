@@ -11,7 +11,7 @@ export const EstimateGasRequestSchema = Type.Object(
   {
     network: Type.Optional(Type.String()),
   },
-  { $id: 'EstimateGasRequest' },
+  { $id: 'EstimateGasRequest' }
 );
 export type EstimateGasRequestType = Static<typeof EstimateGasRequestSchema>;
 
@@ -24,7 +24,7 @@ export const EstimateGasResponseSchema = Type.Object(
     fee: Type.Number(), // Total fee calculated using default gas/compute limits
     timestamp: Type.Number(), // Unix timestamp when estimate was made
   },
-  { $id: 'EstimateGasResponse' },
+  { $id: 'EstimateGasResponse' }
 );
 export type EstimateGasResponse = Static<typeof EstimateGasResponseSchema>;
 
@@ -35,15 +35,15 @@ export const BalanceRequestSchema = Type.Object(
     tokens: Type.Optional(
       Type.Array(Type.String(), {
         description: 'a list of token symbols or addresses',
-      }),
+      })
     ),
     fetchAll: Type.Optional(
       Type.Boolean({
         description: 'fetch all tokens in wallet, not just those in token list (default: false)',
-      }),
+      })
     ),
   },
-  { $id: 'BalanceRequest' },
+  { $id: 'BalanceRequest' }
 );
 export type BalanceRequestType = Static<typeof BalanceRequestSchema>;
 
@@ -51,7 +51,7 @@ export const BalanceResponseSchema = Type.Object(
   {
     balances: Type.Record(Type.String(), Type.Number()),
   },
-  { $id: 'BalanceResponse' },
+  { $id: 'BalanceResponse' }
 );
 export type BalanceResponseType = Static<typeof BalanceResponseSchema>;
 
@@ -60,7 +60,7 @@ export const TokensRequestSchema = Type.Object(
     network: Type.Optional(Type.String()),
     tokenSymbols: Type.Optional(Type.Union([Type.String(), Type.Array(Type.String())])),
   },
-  { $id: 'TokensRequest' },
+  { $id: 'TokensRequest' }
 );
 export type TokensRequestType = Static<typeof TokensRequestSchema>;
 
@@ -72,10 +72,10 @@ export const TokensResponseSchema = Type.Object(
         address: Type.String(),
         decimals: Type.Number(),
         name: Type.String(),
-      }),
+      })
     ),
   },
-  { $id: 'TokensResponse' },
+  { $id: 'TokensResponse' }
 );
 export type TokensResponseType = Static<typeof TokensResponseSchema>;
 
@@ -86,15 +86,15 @@ export const PollRequestSchema = Type.Object(
     tokens: Type.Optional(
       Type.Array(Type.String(), {
         description: 'Array of token symbols or addresses for balance change calculation',
-      }),
+      })
     ),
     walletAddress: Type.Optional(
       Type.String({
         description: 'Wallet address for balance change calculation (required if tokens provided)',
-      }),
+      })
     ),
   },
-  { $id: 'PollRequest' },
+  { $id: 'PollRequest' }
 );
 export type PollRequestType = Static<typeof PollRequestSchema>;
 
@@ -108,12 +108,12 @@ export const PollResponseSchema = Type.Object(
     tokenBalanceChanges: Type.Optional(
       Type.Record(Type.String(), Type.Number(), {
         description: 'Dictionary of token balance changes keyed by token input value (symbol or address)',
-      }),
+      })
     ),
     txData: Type.Union([Type.Record(Type.String(), Type.Any()), Type.Null()]),
     error: Type.Optional(Type.String()),
   },
-  { $id: 'PollResponse' },
+  { $id: 'PollResponse' }
 );
 export type PollResponseType = Static<typeof PollResponseSchema>;
 
@@ -121,7 +121,7 @@ export const StatusRequestSchema = Type.Object(
   {
     network: Type.Optional(Type.String()),
   },
-  { $id: 'StatusRequest' },
+  { $id: 'StatusRequest' }
 );
 export type StatusRequestType = Static<typeof StatusRequestSchema>;
 
@@ -134,6 +134,6 @@ export const StatusResponseSchema = Type.Object(
     currentBlockNumber: Type.Number(),
     nativeCurrency: Type.String(),
   },
-  { $id: 'StatusResponse' },
+  { $id: 'StatusResponse' }
 );
 export type StatusResponseType = Static<typeof StatusResponseSchema>;

@@ -159,7 +159,7 @@ export const quotePositionRoute: FastifyPluginAsync = async (fastify) => {
         console.log('DEBUG: Pool current price (decimal):', price);
         console.log(
           'DEBUG: Pool current price (token1/token0):',
-          price * Math.pow(10, token0.decimals - token1.decimals),
+          price * Math.pow(10, token0.decimals - token1.decimals)
         );
 
         // Use SDK to convert tick to price for verification
@@ -184,11 +184,11 @@ export const quotePositionRoute: FastifyPluginAsync = async (fastify) => {
             pool.tickCurrent,
             'is',
             pool.tickCurrent < lowerTick ? 'below' : 'above',
-            'the range',
+            'the range'
           );
           console.log(
             '  This means the position will only contain',
-            pool.tickCurrent < lowerTick ? baseTokenObj.symbol : quoteTokenObj.symbol,
+            pool.tickCurrent < lowerTick ? baseTokenObj.symbol : quoteTokenObj.symbol
           );
         }
 
@@ -204,10 +204,10 @@ export const quotePositionRoute: FastifyPluginAsync = async (fastify) => {
           console.log('DEBUG: Using fromAmounts (both amounts provided)');
           // Both amounts provided - use fromAmounts to calculate optimal position
           const baseAmountRaw = JSBI.BigInt(
-            Math.floor(baseTokenAmount * Math.pow(10, baseTokenObj.decimals)).toString(),
+            Math.floor(baseTokenAmount * Math.pow(10, baseTokenObj.decimals)).toString()
           );
           const quoteAmountRaw = JSBI.BigInt(
-            Math.floor(quoteTokenAmount * Math.pow(10, quoteTokenObj.decimals)).toString(),
+            Math.floor(quoteTokenAmount * Math.pow(10, quoteTokenObj.decimals)).toString()
           );
 
           console.log('DEBUG: Raw amounts:');
@@ -251,7 +251,7 @@ export const quotePositionRoute: FastifyPluginAsync = async (fastify) => {
           console.log('DEBUG: Using fromAmount (only base amount provided)');
           // Only base amount provided
           const baseAmountRaw = JSBI.BigInt(
-            Math.floor(baseTokenAmount * Math.pow(10, baseTokenObj.decimals)).toString(),
+            Math.floor(baseTokenAmount * Math.pow(10, baseTokenObj.decimals)).toString()
           );
 
           console.log('DEBUG: baseAmountRaw:', baseAmountRaw.toString());
@@ -279,7 +279,7 @@ export const quotePositionRoute: FastifyPluginAsync = async (fastify) => {
           console.log('DEBUG: Using fromAmount (only quote amount provided)');
           // Only quote amount provided
           const quoteAmountRaw = JSBI.BigInt(
-            Math.floor(quoteTokenAmount * Math.pow(10, quoteTokenObj.decimals)).toString(),
+            Math.floor(quoteTokenAmount * Math.pow(10, quoteTokenObj.decimals)).toString()
           );
 
           console.log('DEBUG: quoteAmountRaw:', quoteAmountRaw.toString());
@@ -364,7 +364,7 @@ export const quotePositionRoute: FastifyPluginAsync = async (fastify) => {
         }
         throw fastify.httpErrors.internalServerError('Failed to quote position');
       }
-    },
+    }
   );
 };
 

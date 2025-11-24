@@ -34,7 +34,7 @@ export const getNamespacesRoute: FastifyPluginAsync = async (fastify) => {
       logger.info(`Found ${namespaces.length} namespaces: ${namespaces.join(', ')}`);
 
       return { namespaces };
-    },
+    }
   );
 };
 

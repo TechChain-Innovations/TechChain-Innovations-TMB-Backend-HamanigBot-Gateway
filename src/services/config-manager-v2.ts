@@ -177,11 +177,11 @@ export class ConfigurationNamespace {
             for (const err of this.#validator.errors as DefinedError[]) {
               if (err.keyword === 'additionalProperties') {
                 throw new Error(
-                  `${this.id} config file seems to be outdated/broken due to additional property "${err.params.additionalProperty}". Kindly fix manually.`,
+                  `${this.id} config file seems to be outdated/broken due to additional property "${err.params.additionalProperty}". Kindly fix manually.`
                 );
               } else {
                 throw new Error(
-                  `${this.id} config file seems to be outdated/broken due to "${err.keyword}" in "${err.instancePath}" - ${err.message}. Kindly fix manually.`,
+                  `${this.id} config file seems to be outdated/broken due to "${err.keyword}" in "${err.instancePath}" - ${err.message}. Kindly fix manually.`
                 );
               }
             }
@@ -483,7 +483,7 @@ export class ConfigManagerV2 {
         namespaceId,
         namespaceDefinition.schemaPath,
         namespaceDefinition.configurationPath,
-        namespaceDefinition.templatePath,
+        namespaceDefinition.templatePath
       );
     }
   }

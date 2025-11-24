@@ -133,7 +133,9 @@ export class Ethereum {
 
       if (baseWithPriority.lt(minGasPriceWei)) {
         logger.info(
-          `Using configured minimum gas price. Current: ${baseWithPriority.toNumber() * 1e-9} GWEI, Minimum: ${this.minGasPrice} GWEI`,
+          `Using configured minimum gas price. Current: ${baseWithPriority.toNumber() * 1e-9} GWEI, Minimum: ${
+            this.minGasPrice
+          } GWEI`
         );
       }
 
@@ -196,7 +198,10 @@ export class Ethereum {
           gasOptions.maxPriorityFeePerGas = feeData.maxPriorityFeePerGas;
 
           logger.info(
-            `Using EIP-1559 pricing: baseFee=${utils.formatUnits(baseFee, 'gwei')} GWEI, maxFee=${utils.formatUnits(maxFeePerGas, 'gwei')} GWEI, priority=${utils.formatUnits(feeData.maxPriorityFeePerGas, 'gwei')} GWEI`,
+            `Using EIP-1559 pricing: baseFee=${utils.formatUnits(baseFee, 'gwei')} GWEI, maxFee=${utils.formatUnits(
+              maxFeePerGas,
+              'gwei'
+            )} GWEI, priority=${utils.formatUnits(feeData.maxPriorityFeePerGas, 'gwei')} GWEI`
           );
 
           return gasOptions;
@@ -323,7 +328,7 @@ export class Ethereum {
   public getToken(tokenSymbol: string): TokenInfo | undefined {
     // First try to find token by symbol
     const tokenBySymbol = this.tokenList.find(
-      (token: TokenInfo) => token.symbol.toUpperCase() === tokenSymbol.toUpperCase() && token.chainId === this.chainId,
+      (token: TokenInfo) => token.symbol.toUpperCase() === tokenSymbol.toUpperCase() && token.chainId === this.chainId
     );
 
     if (tokenBySymbol) {
@@ -336,7 +341,7 @@ export class Ethereum {
       // Try to find token by normalized address
       return this.tokenList.find(
         (token: TokenInfo) =>
-          token.address.toLowerCase() === normalizedAddress.toLowerCase() && token.chainId === this.chainId,
+          token.address.toLowerCase() === normalizedAddress.toLowerCase() && token.chainId === this.chainId
       );
     } catch {
       // If not a valid address format, return undefined
@@ -501,7 +506,7 @@ export class Ethereum {
     wallet: Wallet,
     decimals: number,
     timeoutMs: number = 5000, // Default 5 second timeout
-    tokenSymbol?: string, // Optional token symbol for logging
+    tokenSymbol?: string // Optional token symbol for logging
   ): Promise<TokenValue> {
     // Add timeout to prevent hanging on problematic tokens
     const balancePromise = contract.balanceOf(wallet.address);
@@ -530,7 +535,7 @@ export class Ethereum {
     address: string,
     decimals: number,
     timeoutMs: number = 5000, // Default 5 second timeout
-    tokenSymbol?: string, // Optional token symbol for logging
+    tokenSymbol?: string // Optional token symbol for logging
   ): Promise<TokenValue> {
     // Add timeout to prevent hanging on problematic tokens
     const balancePromise = contract.balanceOf(address);
@@ -558,7 +563,7 @@ export class Ethereum {
     contract: Contract,
     wallet: Wallet,
     spender: string,
-    decimals: number,
+    decimals: number
   ): Promise<TokenValue> {
     const allowance = await contract.allowance(wallet.address, spender);
     return { value: allowance, decimals: decimals };
@@ -571,7 +576,7 @@ export class Ethereum {
     contract: Contract,
     ownerAddress: string,
     spender: string,
-    decimals: number,
+    decimals: number
   ): Promise<TokenValue> {
     const allowance = await contract.allowance(ownerAddress, spender);
     return { value: allowance, decimals: decimals };
@@ -598,7 +603,7 @@ export class Ethereum {
     contract: Contract,
     wallet: Wallet,
     spender: string,
-    amount: BigNumber,
+    amount: BigNumber
   ): Promise<providers.TransactionResponse> {
     logger.info(`Approving ${amount.toString()} tokens for spender ${spender}`);
 
@@ -772,7 +777,7 @@ export class Ethereum {
     outputToken: string,
     expectedAmountIn: number,
     expectedAmountOut: number,
-    side?: 'BUY' | 'SELL',
+    side?: 'BUY' | 'SELL'
   ): {
     signature: string;
     status: number;
@@ -911,7 +916,7 @@ export class Ethereum {
     address: string,
     wallet: Wallet | null,
     isHardware: boolean,
-    balances: Record<string, number>,
+    balances: Record<string, number>
   ): Promise<void> {
     logger.info(`Checking balances for all ${this.storedTokenList.length} tokens in the token list`);
 
@@ -933,7 +938,7 @@ export class Ethereum {
         } catch (err) {
           logger.warn(`Error getting balance for ${token.symbol}: ${err.message}`);
         }
-      }),
+      })
     );
   }
 
@@ -945,7 +950,7 @@ export class Ethereum {
     address: string,
     wallet: Wallet | null,
     isHardware: boolean,
-    balances: Record<string, number>,
+    balances: Record<string, number>
   ): Promise<void> {
     await Promise.all(
       tokens.map(async (symbolOrAddress) => {
@@ -971,7 +976,7 @@ export class Ethereum {
           logger.warn(`Token not recognized: ${symbolOrAddress}`);
           balances[symbolOrAddress] = 0;
         }
-      }),
+      })
     );
   }
 }

@@ -64,7 +64,7 @@ describe('TokenService', () => {
       };
 
       await expect(tokenService.validateToken('ethereum', token)).rejects.toThrow(
-        'Token decimals must be a number between 0 and 255',
+        'Token decimals must be a number between 0 and 255'
       );
     });
 

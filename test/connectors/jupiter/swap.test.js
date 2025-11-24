@@ -114,7 +114,7 @@ describe('Jupiter Swap Tests (Solana Mainnet)', () => {
             side: 'SELL',
             amount: 1.0,
           }),
-        }),
+        })
       );
     });
 
@@ -171,7 +171,7 @@ describe('Jupiter Swap Tests (Solana Mainnet)', () => {
             side: 'SELL',
             amount: 1.0,
           },
-        }),
+        })
       ).rejects.toMatchObject({
         response: {
           status: 404,
@@ -205,7 +205,7 @@ describe('Jupiter Swap Tests (Solana Mainnet)', () => {
             side: 'SELL',
             // Missing amount
           },
-        }),
+        })
       ).rejects.toMatchObject({
         response: {
           status: 400,
@@ -253,7 +253,7 @@ describe('Jupiter Swap Tests (Solana Mainnet)', () => {
           params: expect.objectContaining({
             slippagePct: 2.5,
           }),
-        }),
+        })
       );
     });
   });
@@ -302,7 +302,7 @@ describe('Jupiter Swap Tests (Solana Mainnet)', () => {
       expect(response.data.status).toBe(1); // CONFIRMED
       expect(response.data.data.amountIn).toBeCloseTo(
         quoteResponse.estimatedAmountIn,
-        3, // Allow some difference due to fees
+        3 // Allow some difference due to fees
       );
       expect(response.data.data.amountOut).toBeCloseTo(quoteResponse.estimatedAmountOut, 3);
 
@@ -316,7 +316,7 @@ describe('Jupiter Swap Tests (Solana Mainnet)', () => {
           side: 'SELL',
           amount: 1.0,
           walletAddress: TEST_WALLET,
-        }),
+        })
       );
     });
 
@@ -366,7 +366,7 @@ describe('Jupiter Swap Tests (Solana Mainnet)', () => {
         expect.objectContaining({
           priorityLevel: 'veryHigh',
           maxLamports: 1000000,
-        }),
+        })
       );
     });
 
@@ -423,7 +423,7 @@ describe('Jupiter Swap Tests (Solana Mainnet)', () => {
           side: 'SELL',
           amount: 1000000.0, // Very large amount to cause error
           walletAddress: TEST_WALLET,
-        }),
+        })
       ).rejects.toMatchObject({
         response: {
           status: 500,

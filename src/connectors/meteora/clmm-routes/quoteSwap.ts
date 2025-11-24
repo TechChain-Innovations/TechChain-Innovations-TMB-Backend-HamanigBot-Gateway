@@ -21,7 +21,7 @@ export async function getRawSwapQuote(
   amount: number,
   side: 'BUY' | 'SELL',
   poolAddress: string,
-  slippagePct?: number,
+  slippagePct?: number
 ) {
   const solana = await Solana.getInstance(network);
   const meteora = await Meteora.getInstance(network);
@@ -72,7 +72,7 @@ async function formatSwapQuote(
   amount: number,
   side: 'BUY' | 'SELL',
   poolAddress: string,
-  slippagePct?: number,
+  slippagePct?: number
 ): Promise<QuoteSwapResponseType> {
   const { inputToken, outputToken, quote, dlmmPool } = await getRawSwapQuote(
     fastify,
@@ -82,7 +82,7 @@ async function formatSwapQuote(
     amount,
     side as 'BUY' | 'SELL',
     poolAddress,
-    slippagePct,
+    slippagePct
   );
 
   // Get tokens in pool order (X, Y) for consistent balance change calculation
@@ -185,7 +185,7 @@ export const quoteSwapRoute: FastifyPluginAsync = async (fastify) => {
 
           if (!baseTokenInfo || !quoteTokenInfo) {
             throw fastify.httpErrors.badRequest(
-              sanitizeErrorMessage('Token not found: {}', !baseTokenInfo ? baseToken : quoteToken),
+              sanitizeErrorMessage('Token not found: {}', !baseTokenInfo ? baseToken : quoteToken)
             );
           }
 
@@ -198,12 +198,12 @@ export const quoteSwapRoute: FastifyPluginAsync = async (fastify) => {
             networkUsed,
             'clmm',
             baseTokenInfo.symbol,
-            quoteTokenInfo.symbol,
+            quoteTokenInfo.symbol
           );
 
           if (!pool) {
             throw fastify.httpErrors.notFound(
-              `No CLMM pool found for ${baseTokenInfo.symbol}-${quoteTokenInfo.symbol} on Meteora`,
+              `No CLMM pool found for ${baseTokenInfo.symbol}-${quoteTokenInfo.symbol} on Meteora`
             );
           }
 
@@ -218,7 +218,7 @@ export const quoteSwapRoute: FastifyPluginAsync = async (fastify) => {
           amount,
           side as 'BUY' | 'SELL',
           poolAddressToUse,
-          slippagePct,
+          slippagePct
         );
 
         try {
@@ -236,7 +236,7 @@ export const quoteSwapRoute: FastifyPluginAsync = async (fastify) => {
         }
         throw fastify.httpErrors.internalServerError('Internal server error');
       }
-    },
+    }
   );
 };
 

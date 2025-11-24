@@ -10,7 +10,7 @@ export async function pollSolanaTransaction(
   network: string,
   signature: string,
   tokens?: string[],
-  walletAddress?: string,
+  walletAddress?: string
 ): Promise<PollResponseType> {
   const solana = await Solana.getInstance(network);
 
@@ -81,7 +81,9 @@ export async function pollSolanaTransaction(
           }
 
           logger.info(
-            `Transaction ${signature} - Status: ${txStatus}, Fee: ${fee} SOL, Balance Changes: ${JSON.stringify(tokenBalanceChanges)}`,
+            `Transaction ${signature} - Status: ${txStatus}, Fee: ${fee} SOL, Balance Changes: ${JSON.stringify(
+              tokenBalanceChanges
+            )}`
           );
         } else {
           logger.warn('No valid tokens found');
@@ -97,7 +99,7 @@ export async function pollSolanaTransaction(
       const feeResult = await solana.extractBalanceChangesAndFee(
         signature,
         walletAddress || '', // Use provided wallet address or empty string
-        [],
+        []
       );
       fee = feeResult.fee;
       logger.info(`Polling for transaction ${signature}, Status: ${txStatus}, Fee: ${fee} SOL`);
@@ -145,7 +147,7 @@ export const pollRoute: FastifyPluginAsync = async (fastify) => {
     async (request) => {
       const { network, signature, tokens, walletAddress } = request.body;
       return await pollSolanaTransaction(fastify, network, signature, tokens, walletAddress);
-    },
+    }
   );
 };
 

@@ -57,7 +57,7 @@ export interface Connector {
 export async function getConnector(
   _chain: string, // Parameter kept for compatibility but no longer used by Uniswap
   network: string,
-  connector: string | undefined,
+  connector: string | undefined
 ): Promise<Connector> {
   // Dynamically import connector classes only when needed
   if (connector === 'uniswap') {

@@ -196,7 +196,7 @@ describe('Raydium CLMM Tests (Solana Mainnet)', () => {
             baseToken: BASE_TOKEN,
             quoteToken: QUOTE_TOKEN,
           }),
-        }),
+        })
       );
     });
 
@@ -221,7 +221,7 @@ describe('Raydium CLMM Tests (Solana Mainnet)', () => {
             baseToken: BASE_TOKEN,
             quoteToken: 'UNKNOWN',
           },
-        }),
+        })
       ).rejects.toMatchObject({
         response: {
           status: 404,
@@ -380,7 +380,7 @@ describe('Raydium CLMM Tests (Solana Mainnet)', () => {
             network: NETWORK,
             positionId: 'invalid-position',
           },
-        }),
+        })
       ).rejects.toMatchObject({
         response: {
           status: 404,
@@ -487,7 +487,7 @@ describe('Raydium CLMM Tests (Solana Mainnet)', () => {
             baseTokenAmount: 1.0,
             quoteTokenAmount: 167.5,
           },
-        }),
+        })
       ).rejects.toMatchObject({
         response: {
           status: 400,
@@ -551,7 +551,7 @@ describe('Raydium CLMM Tests (Solana Mainnet)', () => {
           baseTokenAmount: 10000.0, // Large amount
           quoteTokenAmount: 1675000.0,
           walletAddress: TEST_WALLET,
-        }),
+        })
       ).rejects.toMatchObject({
         response: {
           status: 400,

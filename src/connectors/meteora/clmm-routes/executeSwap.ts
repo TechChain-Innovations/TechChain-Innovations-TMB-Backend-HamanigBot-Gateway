@@ -22,7 +22,7 @@ async function executeSwap(
   amount: number,
   side: 'BUY' | 'SELL',
   poolAddress: string,
-  slippagePct?: number,
+  slippagePct?: number
 ): Promise<ExecuteSwapResponseType> {
   const solana = await Solana.getInstance(network);
   const meteora = await Meteora.getInstance(network);
@@ -42,7 +42,7 @@ async function executeSwap(
     amount,
     side,
     poolAddress,
-    slippagePct || MeteoraConfig.config.slippagePct,
+    slippagePct || MeteoraConfig.config.slippagePct
   );
 
   logger.info(`Executing ${amount.toFixed(4)} ${side} swap in pool ${poolAddress}`);
@@ -108,7 +108,9 @@ async function executeSwap(
     const quoteTokenBalanceChange = side === 'SELL' ? outputTokenBalanceChange : inputTokenBalanceChange;
 
     logger.info(
-      `Swap executed successfully: ${amountIn.toFixed(4)} ${inputToken.symbol} -> ${amountOut.toFixed(4)} ${outputToken.symbol}`,
+      `Swap executed successfully: ${amountIn.toFixed(4)} ${inputToken.symbol} -> ${amountOut.toFixed(4)} ${
+        outputToken.symbol
+      }`
     );
 
     return {
@@ -167,7 +169,7 @@ export const executeSwapRoute: FastifyPluginAsync = async (fastify) => {
 
           if (!baseTokenInfo || !quoteTokenInfo) {
             throw fastify.httpErrors.badRequest(
-              sanitizeErrorMessage('Token not found: {}', !baseTokenInfo ? baseToken : quoteToken),
+              sanitizeErrorMessage('Token not found: {}', !baseTokenInfo ? baseToken : quoteToken)
             );
           }
 
@@ -180,12 +182,12 @@ export const executeSwapRoute: FastifyPluginAsync = async (fastify) => {
             networkUsed,
             'clmm',
             baseTokenInfo.symbol,
-            quoteTokenInfo.symbol,
+            quoteTokenInfo.symbol
           );
 
           if (!pool) {
             throw fastify.httpErrors.notFound(
-              `No CLMM pool found for ${baseTokenInfo.symbol}-${quoteTokenInfo.symbol} on Meteora`,
+              `No CLMM pool found for ${baseTokenInfo.symbol}-${quoteTokenInfo.symbol} on Meteora`
             );
           }
 
@@ -202,7 +204,7 @@ export const executeSwapRoute: FastifyPluginAsync = async (fastify) => {
           amount,
           side as 'BUY' | 'SELL',
           poolAddressUsed,
-          slippagePct,
+          slippagePct
         );
       } catch (e: any) {
         logger.error('Error executing swap:', e.message || e);
@@ -221,7 +223,7 @@ export const executeSwapRoute: FastifyPluginAsync = async (fastify) => {
 
         throw fastify.httpErrors.internalServerError(`Swap execution failed: ${errorMessage}`);
       }
-    },
+    }
   );
 };
 

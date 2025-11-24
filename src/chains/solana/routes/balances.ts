@@ -13,7 +13,7 @@ export async function getSolanaBalances(
   network: string,
   address: string,
   tokens?: string[],
-  fetchAll?: boolean,
+  fetchAll?: boolean
 ): Promise<BalanceResponseType> {
   try {
     const solana = await Solana.getInstance(network);
@@ -64,7 +64,7 @@ export const balancesRoute: FastifyPluginAsync = async (fastify) => {
     async (request) => {
       const { network, address, tokens, fetchAll } = request.body;
       return await getSolanaBalances(fastify, network, address, tokens, fetchAll);
-    },
+    }
   );
 };
 

@@ -20,7 +20,7 @@ export async function quoteSwap(
   side: 'BUY' | 'SELL',
   slippagePct: number,
   onlyDirectRoutes?: boolean,
-  restrictIntermediateTokens?: boolean,
+  restrictIntermediateTokens?: boolean
 ): Promise<Static<typeof JupiterQuoteSwapResponse>> {
   const solana = await Solana.getInstance(network);
   const jupiter = await Jupiter.getInstance(network);
@@ -31,7 +31,7 @@ export async function quoteSwap(
 
   if (!baseTokenInfo || !quoteTokenInfo) {
     throw fastify.httpErrors.badRequest(
-      sanitizeErrorMessage('Token not found: {}', !baseTokenInfo ? baseToken : quoteToken),
+      sanitizeErrorMessage('Token not found: {}', !baseTokenInfo ? baseToken : quoteToken)
     );
   }
 
@@ -55,7 +55,7 @@ export async function quoteSwap(
       slippagePct,
       onlyDirectRoutes ?? JupiterConfig.config.onlyDirectRoutes,
       restrictIntermediateTokens ?? JupiterConfig.config.restrictIntermediateTokens,
-      side === 'BUY' ? 'ExactOut' : 'ExactIn',
+      side === 'BUY' ? 'ExactOut' : 'ExactIn'
     );
   } catch (error) {
     // If BUY side (ExactOut) fails, try approximation with ExactIn
@@ -89,7 +89,7 @@ export async function quoteSwap(
             slippagePct,
             onlyDirectRoutes ?? JupiterConfig.config.onlyDirectRoutes,
             restrictIntermediateTokens ?? JupiterConfig.config.restrictIntermediateTokens,
-            'ExactIn',
+            'ExactIn'
           );
 
           if (!lastQuote) break;
@@ -100,7 +100,7 @@ export async function quoteSwap(
           const difference = Math.abs(actualOutput - targetOutput) / targetOutput;
 
           logger.debug(
-            `Approximation attempt ${attempts}: input=${estimatedInputAmount}, output=${actualOutput}, target=${targetOutput}, diff=${difference}`,
+            `Approximation attempt ${attempts}: input=${estimatedInputAmount}, output=${actualOutput}, target=${targetOutput}, diff=${difference}`
           );
 
           if (difference < tolerance) {
@@ -226,14 +226,14 @@ export const quoteSwapRoute: FastifyPluginAsync = async (fastify) => {
           side as 'BUY' | 'SELL',
           slippagePct ?? JupiterConfig.config.slippagePct,
           onlyDirectRoutes,
-          restrictIntermediateTokens,
+          restrictIntermediateTokens
         );
       } catch (e) {
         if (e.statusCode) throw e;
         logger.error('Error getting quote:', e);
         throw fastify.httpErrors.internalServerError('Internal server error');
       }
-    },
+    }
   );
 };
 

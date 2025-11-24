@@ -20,7 +20,7 @@ export const ZeroXQuoteSwapRequest = Type.Object({
       description: 'The EVM network to use',
       default: ethereumChainConfig.defaultNetwork,
       enum: [...ZeroXConfig.networks],
-    }),
+    })
   ),
   baseToken: Type.String({
     description: 'First token in the trading pair',
@@ -45,19 +45,19 @@ export const ZeroXQuoteSwapRequest = Type.Object({
       maximum: 100,
       description: 'Maximum acceptable slippage percentage',
       examples: [1],
-    }),
+    })
   ),
   indicativePrice: Type.Optional(
     Type.Boolean({
       description:
         'If true, returns indicative pricing only (no commitment). If false, returns firm quote ready for execution',
       default: true,
-    }),
+    })
   ),
   takerAddress: Type.Optional(
     Type.String({
       description: 'Ethereum wallet address that will execute the swap (optional for quotes)',
-    }),
+    })
   ),
 });
 
@@ -93,7 +93,7 @@ export const ZeroXQuoteSwapResponse = Type.Object({
   expirationTime: Type.Optional(
     Type.Number({
       description: 'Unix timestamp when this quote expires (only for firm quotes)',
-    }),
+    })
   ),
   gasEstimate: Type.String({
     description: 'Estimated gas required for the swap',
@@ -101,27 +101,27 @@ export const ZeroXQuoteSwapResponse = Type.Object({
   sources: Type.Optional(
     Type.Array(Type.Any(), {
       description: 'Liquidity sources used for this quote',
-    }),
+    })
   ),
   allowanceTarget: Type.Optional(
     Type.String({
       description: 'Contract address that needs token approval',
-    }),
+    })
   ),
   to: Type.Optional(
     Type.String({
       description: 'Contract address to send transaction to',
-    }),
+    })
   ),
   data: Type.Optional(
     Type.String({
       description: 'Encoded transaction data',
-    }),
+    })
   ),
   value: Type.Optional(
     Type.String({
       description: 'ETH value to send with transaction',
-    }),
+    })
   ),
 });
 
@@ -131,7 +131,7 @@ export const ZeroXExecuteQuoteRequest = Type.Object({
     Type.String({
       description: 'Wallet address that will execute the swap',
       default: ethereumChainConfig.defaultWallet,
-    }),
+    })
   ),
   network: Type.Optional(
     Type.String({
@@ -139,7 +139,7 @@ export const ZeroXExecuteQuoteRequest = Type.Object({
       default: ethereumChainConfig.defaultNetwork,
       enum: [...ZeroXConfig.networks],
       examples: [...ZeroXConfig.networks],
-    }),
+    })
   ),
   quoteId: Type.String({
     description: 'ID of the quote to execute',
@@ -148,13 +148,13 @@ export const ZeroXExecuteQuoteRequest = Type.Object({
   gasPrice: Type.Optional(
     Type.String({
       description: 'Gas price in wei for the transaction',
-    }),
+    })
   ),
   maxGas: Type.Optional(
     Type.Number({
       description: 'Maximum gas limit for the transaction',
       examples: [1000000],
-    }),
+    })
   ),
 });
 
@@ -165,7 +165,7 @@ export const ZeroXExecuteSwapRequest = Type.Object({
       description: 'Wallet address that will execute the swap',
       default: ethereumChainConfig.defaultWallet,
       examples: [ethereumChainConfig.defaultWallet],
-    }),
+    })
   ),
   network: Type.Optional(
     Type.String({
@@ -173,7 +173,7 @@ export const ZeroXExecuteSwapRequest = Type.Object({
       default: ethereumChainConfig.defaultNetwork,
       enum: [...ZeroXConfig.networks],
       examples: [...ZeroXConfig.networks],
-    }),
+    })
   ),
   baseToken: Type.String({
     description: 'Token to determine swap direction',
@@ -198,17 +198,17 @@ export const ZeroXExecuteSwapRequest = Type.Object({
       maximum: 100,
       description: 'Maximum acceptable slippage percentage',
       examples: [1],
-    }),
+    })
   ),
   gasPrice: Type.Optional(
     Type.String({
       description: 'Gas price in wei for the transaction',
-    }),
+    })
   ),
   maxGas: Type.Optional(
     Type.Number({
       description: 'Maximum gas limit for the transaction',
       examples: [300000],
-    }),
+    })
   ),
 });

@@ -143,7 +143,7 @@ describe('POST /open-position', () => {
         recentBlockhash: 'test-blockhash',
         compiledInstructions: [],
         addressTableLookups: [],
-      }),
+      })
     );
 
     const mockRaydiumInstance = {
@@ -265,7 +265,7 @@ describe('POST /open-position', () => {
                 recentBlockhash: 'test-blockhash',
                 compiledInstructions: [],
                 addressTableLookups: [],
-              }),
+              })
             ),
             extInfo: { nftMint: { toBase58: () => 'mock-position-nft' } },
           }),
@@ -446,7 +446,7 @@ describe('POST /open-position', () => {
                 recentBlockhash: 'test-blockhash',
                 compiledInstructions: [],
                 addressTableLookups: [],
-              }),
+              })
             ),
             extInfo: { nftMint: { toBase58: () => 'mock-position-nft' } },
           }),
@@ -508,7 +508,7 @@ describe('POST /open-position', () => {
           recentBlockhash: 'test-blockhash',
           compiledInstructions: [],
           addressTableLookups: [],
-        }),
+        })
       ),
       extInfo: { nftMint: { toBase58: () => 'mock-position-nft' } },
     });

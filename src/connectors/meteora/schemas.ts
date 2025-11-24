@@ -25,7 +25,7 @@ export const MeteoraQuoteSwapRequest = Type.Object({
       description: 'Solana network to use',
       default: solanaChainConfig.defaultNetwork,
       enum: [...MeteoraConfig.networks],
-    }),
+    })
   ),
   baseToken: Type.String({
     description: 'Base token symbol or address',
@@ -52,7 +52,7 @@ export const MeteoraQuoteSwapRequest = Type.Object({
       description: 'Maximum acceptable slippage percentage',
       default: MeteoraConfig.config.slippagePct,
       examples: [MeteoraConfig.config.slippagePct],
-    }),
+    })
   ),
   poolAddress: Type.Optional(Type.String()),
 });
@@ -76,13 +76,13 @@ export const MeteoraClmmQuoteSwapRequest = Type.Object({
       description: 'Solana network to use',
       default: solanaChainConfig.defaultNetwork,
       enum: [...MeteoraConfig.networks],
-    }),
+    })
   ),
   poolAddress: Type.Optional(
     Type.String({
       description: 'Meteora DLMM pool address (optional - can be looked up from baseToken and quoteToken)',
       examples: [CLMM_POOL_ADDRESS_EXAMPLE],
-    }),
+    })
   ),
   baseToken: Type.String({
     description: 'Token to determine swap direction',
@@ -92,7 +92,7 @@ export const MeteoraClmmQuoteSwapRequest = Type.Object({
     Type.String({
       description: 'The other token in the pair (optional - required if poolAddress not provided)',
       examples: [QUOTE_TOKEN],
-    }),
+    })
   ),
   amount: Type.Number({
     description: 'Amount to swap',
@@ -111,7 +111,7 @@ export const MeteoraClmmQuoteSwapRequest = Type.Object({
       description: 'Maximum acceptable slippage percentage',
       default: MeteoraConfig.config.slippagePct,
       examples: [MeteoraConfig.config.slippagePct],
-    }),
+    })
   ),
 });
 
@@ -124,20 +124,20 @@ export const MeteoraClmmExecuteSwapRequest = Type.Object({
       description: 'Solana network to use',
       default: solanaChainConfig.defaultNetwork,
       enum: [...MeteoraConfig.networks],
-    }),
+    })
   ),
   walletAddress: Type.Optional(
     Type.String({
       description: 'Solana wallet address that will execute the swap',
       default: solanaChainConfig.defaultWallet,
       examples: [solanaChainConfig.defaultWallet],
-    }),
+    })
   ),
   poolAddress: Type.Optional(
     Type.String({
       description: 'Meteora DLMM pool address (optional - can be looked up from baseToken and quoteToken)',
       examples: [CLMM_POOL_ADDRESS_EXAMPLE],
-    }),
+    })
   ),
   baseToken: Type.String({
     description: 'Base token symbol or address',
@@ -147,7 +147,7 @@ export const MeteoraClmmExecuteSwapRequest = Type.Object({
     Type.String({
       description: 'Quote token symbol or address (optional - required if poolAddress not provided)',
       examples: [QUOTE_TOKEN],
-    }),
+    })
   ),
   amount: Type.Number({
     description: 'Amount to swap',
@@ -166,7 +166,7 @@ export const MeteoraClmmExecuteSwapRequest = Type.Object({
       description: 'Maximum acceptable slippage percentage',
       default: MeteoraConfig.config.slippagePct,
       examples: [MeteoraConfig.config.slippagePct],
-    }),
+    })
   ),
 });
 
@@ -180,14 +180,14 @@ export const MeteoraClmmOpenPositionRequest = Type.Object({
       description: 'Solana network to use',
       default: solanaChainConfig.defaultNetwork,
       enum: [...MeteoraConfig.networks],
-    }),
+    })
   ),
   walletAddress: Type.Optional(
     Type.String({
       description: 'Solana wallet address that will open the position',
       default: solanaChainConfig.defaultWallet,
       examples: [solanaChainConfig.defaultWallet],
-    }),
+    })
   ),
   lowerPrice: Type.Number({
     description: 'Lower price bound for the position',
@@ -205,13 +205,13 @@ export const MeteoraClmmOpenPositionRequest = Type.Object({
     Type.Number({
       description: 'Amount of base token to deposit',
       examples: [BASE_TOKEN_AMOUNT],
-    }),
+    })
   ),
   quoteTokenAmount: Type.Optional(
     Type.Number({
       description: 'Amount of quote token to deposit',
       examples: [QUOTE_TOKEN_AMOUNT],
-    }),
+    })
   ),
   slippagePct: Type.Optional(
     Type.Number({
@@ -220,14 +220,14 @@ export const MeteoraClmmOpenPositionRequest = Type.Object({
       description: 'Maximum acceptable slippage percentage',
       default: MeteoraConfig.config.slippagePct,
       examples: [MeteoraConfig.config.slippagePct],
-    }),
+    })
   ),
   strategyType: Type.Optional(
     Type.Number({
       description: 'Strategy type for the position',
       examples: [StrategyType.SpotImBalanced],
       enum: Object.values(StrategyType).filter((x) => typeof x === 'number'),
-    }),
+    })
   ),
 });
 
@@ -238,14 +238,14 @@ export const MeteoraClmmAddLiquidityRequest = Type.Object({
       description: 'Solana network to use',
       default: solanaChainConfig.defaultNetwork,
       enum: [...MeteoraConfig.networks],
-    }),
+    })
   ),
   walletAddress: Type.Optional(
     Type.String({
       description: 'Solana wallet address that will add liquidity',
       default: solanaChainConfig.defaultWallet,
       examples: [solanaChainConfig.defaultWallet],
-    }),
+    })
   ),
   positionAddress: Type.String({
     description: 'Position NFT address',
@@ -255,13 +255,13 @@ export const MeteoraClmmAddLiquidityRequest = Type.Object({
     Type.Number({
       description: 'Amount of base token to deposit',
       examples: [BASE_TOKEN_AMOUNT],
-    }),
+    })
   ),
   quoteTokenAmount: Type.Optional(
     Type.Number({
       description: 'Amount of quote token to deposit',
       examples: [QUOTE_TOKEN_AMOUNT],
-    }),
+    })
   ),
   slippagePct: Type.Optional(
     Type.Number({
@@ -270,14 +270,14 @@ export const MeteoraClmmAddLiquidityRequest = Type.Object({
       description: 'Maximum acceptable slippage percentage',
       default: MeteoraConfig.config.slippagePct,
       examples: [MeteoraConfig.config.slippagePct],
-    }),
+    })
   ),
   strategyType: Type.Optional(
     Type.Number({
       description: 'Strategy type for the position',
       examples: [StrategyType.SpotImBalanced],
       enum: Object.values(StrategyType).filter((x) => typeof x === 'number'),
-    }),
+    })
   ),
 });
 
@@ -288,14 +288,14 @@ export const MeteoraClmmRemoveLiquidityRequest = Type.Object({
       description: 'Solana network to use',
       default: solanaChainConfig.defaultNetwork,
       enum: [...MeteoraConfig.networks],
-    }),
+    })
   ),
   walletAddress: Type.Optional(
     Type.String({
       description: 'Solana wallet address that will remove liquidity',
       default: solanaChainConfig.defaultWallet,
       examples: [solanaChainConfig.defaultWallet],
-    }),
+    })
   ),
   positionAddress: Type.String({
     description: 'Position NFT address',
@@ -308,7 +308,7 @@ export const MeteoraClmmRemoveLiquidityRequest = Type.Object({
       description: 'Percentage of liquidity to remove',
       default: 100,
       examples: [100],
-    }),
+    })
   ),
 });
 
@@ -319,14 +319,14 @@ export const MeteoraClmmClosePositionRequest = Type.Object({
       description: 'Solana network to use',
       default: solanaChainConfig.defaultNetwork,
       enum: [...MeteoraConfig.networks],
-    }),
+    })
   ),
   walletAddress: Type.Optional(
     Type.String({
       description: 'Solana wallet address that will close the position',
       default: solanaChainConfig.defaultWallet,
       examples: [solanaChainConfig.defaultWallet],
-    }),
+    })
   ),
   positionAddress: Type.String({
     description: 'Position NFT address',
@@ -341,14 +341,14 @@ export const MeteoraClmmCollectFeesRequest = Type.Object({
       description: 'Solana network to use',
       default: solanaChainConfig.defaultNetwork,
       enum: [...MeteoraConfig.networks],
-    }),
+    })
   ),
   walletAddress: Type.Optional(
     Type.String({
       description: 'Solana wallet address that will collect fees',
       default: solanaChainConfig.defaultWallet,
       examples: [solanaChainConfig.defaultWallet],
-    }),
+    })
   ),
   positionAddress: Type.String({
     description: 'Position NFT address',
@@ -363,7 +363,7 @@ export const MeteoraClmmFetchPoolsRequest = Type.Object({
       description: 'Solana network to use',
       default: solanaChainConfig.defaultNetwork,
       enum: [...MeteoraConfig.networks],
-    }),
+    })
   ),
   limit: Type.Optional(
     Type.Number({
@@ -371,19 +371,19 @@ export const MeteoraClmmFetchPoolsRequest = Type.Object({
       default: 10,
       description: 'Maximum number of pools to return',
       examples: [10],
-    }),
+    })
   ),
   tokenA: Type.Optional(
     Type.String({
       description: 'First token symbol or address',
       examples: [BASE_TOKEN],
-    }),
+    })
   ),
   tokenB: Type.Optional(
     Type.String({
       description: 'Second token symbol or address',
       examples: [QUOTE_TOKEN],
-    }),
+    })
   ),
 });
 
@@ -394,7 +394,7 @@ export const MeteoraClmmGetPoolInfoRequest = Type.Object({
       description: 'Solana network to use',
       default: solanaChainConfig.defaultNetwork,
       enum: [...MeteoraConfig.networks],
-    }),
+    })
   ),
   poolAddress: Type.String({
     description: 'Meteora DLMM pool address',
@@ -409,7 +409,7 @@ export const MeteoraClmmGetPositionInfoRequest = Type.Object({
       description: 'Solana network to use',
       default: solanaChainConfig.defaultNetwork,
       enum: [...MeteoraConfig.networks],
-    }),
+    })
   ),
   positionAddress: Type.String({
     description: 'Position NFT address',
@@ -420,7 +420,7 @@ export const MeteoraClmmGetPositionInfoRequest = Type.Object({
       description: 'Solana wallet address',
       default: solanaChainConfig.defaultWallet,
       examples: [solanaChainConfig.defaultWallet],
-    }),
+    })
   ),
 });
 
@@ -431,14 +431,14 @@ export const MeteoraClmmGetPositionsOwnedRequest = Type.Object({
       description: 'Solana network to use',
       default: solanaChainConfig.defaultNetwork,
       enum: [...MeteoraConfig.networks],
-    }),
+    })
   ),
   walletAddress: Type.Optional(
     Type.String({
       description: 'Solana wallet address to check for positions',
       default: solanaChainConfig.defaultWallet,
       examples: [solanaChainConfig.defaultWallet],
-    }),
+    })
   ),
   poolAddress: Type.String({
     description: 'Meteora DLMM pool address',
@@ -453,7 +453,7 @@ export const MeteoraClmmQuotePositionRequest = Type.Object({
       description: 'Solana network to use',
       default: solanaChainConfig.defaultNetwork,
       enum: [...MeteoraConfig.networks],
-    }),
+    })
   ),
   lowerPrice: Type.Number({
     description: 'Lower price bound for the position',
@@ -471,13 +471,13 @@ export const MeteoraClmmQuotePositionRequest = Type.Object({
     Type.Number({
       description: 'Amount of base token to deposit',
       examples: [BASE_TOKEN_AMOUNT],
-    }),
+    })
   ),
   quoteTokenAmount: Type.Optional(
     Type.Number({
       description: 'Amount of quote token to deposit',
       examples: [QUOTE_TOKEN_AMOUNT],
-    }),
+    })
   ),
   slippagePct: Type.Optional(
     Type.Number({
@@ -486,13 +486,13 @@ export const MeteoraClmmQuotePositionRequest = Type.Object({
       description: 'Maximum acceptable slippage percentage',
       default: MeteoraConfig.config.slippagePct,
       examples: [MeteoraConfig.config.slippagePct],
-    }),
+    })
   ),
   strategyType: Type.Optional(
     Type.Number({
       description: 'Strategy type for the position',
       examples: [StrategyType.SpotImBalanced],
       enum: Object.values(StrategyType).filter((x) => typeof x === 'number'),
-    }),
+    })
   ),
 });
