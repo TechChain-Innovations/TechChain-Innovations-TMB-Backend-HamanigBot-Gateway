@@ -3,6 +3,11 @@ import {
   PoolUtils,
   ReturnTypeComputeAmountOutFormat,
   ReturnTypeComputeAmountOutBaseOut,
+  TickQuery,
+  TickUtils,
+  TickArrayLayout,
+  getPdaTickArrayAddress,
+  getMultipleAccountsInfoWithCustomFlags,
 } from '@raydium-io/raydium-sdk-v2';
 import { PublicKey } from '@solana/web3.js';
 import BN from 'bn.js';
@@ -123,10 +128,16 @@ export async function getSwapQuote(
     connection: solana.connection,
     poolInfo,
   });
-  const tickCache = await PoolUtils.fetchMultiplePoolTickArrays({
-    connection: solana.connection,
-    poolKeys: [clmmPoolInfo],
-  });
+  // Fetch a wider set of tick arrays than the default (which only grabs ~7 around current tick).
+  // Large exactOut BUY quotes can span many ticks and fail with "No enough initialized tickArray"
+  // if the cache is too small. TickQuery.getTickArrays pulls ~15 around current by default.
+  const tickCache: { [key: string]: any } = {};
+  tickCache[poolAddress] = await fetchWideTickArrays(
+    solana.connection,
+    clmmPoolInfo,
+    // widen the window substantially so exactOut BUY doesn't miss distant arrays
+    120
+  );
   const slippagePctEffective =
     slippagePct === undefined || slippagePct === null ? RaydiumConfig.config.slippagePct : Number(slippagePct);
   const effectiveSlippage = new BN(slippagePctEffective / 100);
@@ -172,6 +183,86 @@ export async function getSwapQuote(
     clmmPoolInfo,
     tickArrayCache: tickCache[poolAddress],
   };
+}
+
+/**
+ * Fetches a wide window of initialized tick arrays around current tick to avoid
+ * "No enough initialized tickArray" on large exact-out quotes.
+ */
+async function fetchWideTickArrays(
+  connection: any,
+  poolInfo: any,
+  window: number
+): Promise<Record<string, any>> {
+  const programId = new PublicKey(poolInfo.programId);
+  const poolId = new PublicKey(poolInfo.id);
+
+  const currentStartIndex = TickUtils.getTickArrayStartIndexByTick(poolInfo.tickCurrent, poolInfo.tickSpacing);
+
+  // 1) Try initialized indexes around current tick (bitmap-based)
+  const startIndexArray = TickUtils.getInitializedTickArrayInRange(
+    poolInfo.tickArrayBitmap,
+    poolInfo.exBitmapInfo,
+    poolInfo.tickSpacing,
+    currentStartIndex,
+    window
+  );
+  const cache: Record<string, any> = {};
+  await fetchIntoCache(connection, programId, poolId, startIndexArray, cache);
+
+  // 2) If still empty, brute-force ±window around current start index
+  if (Object.keys(cache).length === 0) {
+    const brute: number[] = [];
+    // Use TickQuery.tickCount to step across arrays; if missing, default to 60 ticks per array.
+    const ticksPerArray = (TickQuery as any).tickCount ? (TickQuery as any).tickCount(poolInfo.tickSpacing) : 60;
+    const step = poolInfo.tickSpacing * ticksPerArray;
+    for (let i = currentStartIndex - window; i <= currentStartIndex + window; i += step) {
+      brute.push(i);
+    }
+    await fetchIntoCache(connection, programId, poolId, brute, cache);
+  }
+
+  // 3) If still empty, last resort: TickQuery default
+  if (Object.keys(cache).length === 0) {
+    const fallback = await TickQuery.getTickArrays(
+      connection,
+      programId,
+      poolId,
+      poolInfo.tickCurrent,
+      poolInfo.tickSpacing,
+      poolInfo.tickArrayBitmap,
+      poolInfo.exBitmapInfo
+    );
+    Object.assign(cache, fallback);
+  }
+
+  if (Object.keys(cache).length === 0) {
+    throw new Error('Not enough tick data for quote');
+  }
+
+  return cache;
+}
+
+async function fetchIntoCache(
+  connection: any,
+  programId: PublicKey,
+  poolId: PublicKey,
+  startIndexArray: number[],
+  cache: Record<string, any>
+) {
+  if (!startIndexArray.length) return;
+  const tickArrays = startIndexArray.map((idx: number) => {
+    const { publicKey } = getPdaTickArrayAddress(programId, poolId, idx);
+    return { pubkey: publicKey };
+  });
+
+  const fetched = await getMultipleAccountsInfoWithCustomFlags(connection, tickArrays, { batchRequest: true });
+  for (let i = 0; i < fetched.length; i++) {
+    const account = fetched[i];
+    if (!account?.accountInfo) continue;
+    const layout = TickArrayLayout.decode(account.accountInfo.data);
+    cache[layout.startTickIndex] = { ...layout, address: tickArrays[i].pubkey };
+  }
 }
 
 export async function formatSwapQuote(

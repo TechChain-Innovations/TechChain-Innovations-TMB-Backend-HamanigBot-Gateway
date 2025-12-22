@@ -203,9 +203,23 @@ export class Uniswap {
     const exactIn = side === 'SELL';
     const tokenForAmount = exactIn ? inputToken : outputToken;
 
+    // Helper to truncate amount to max decimals (avoids parseUnits underflow error)
+    // Also handles scientific notation (e.g., 1.5e-9)
+    const truncateToDecimals = (value: number, decimals: number): string => {
+      // Convert to fixed-point string to avoid scientific notation
+      // toFixed(20) handles very small numbers properly
+      const str = value.toFixed(20);
+      const [intPart, decPart = ''] = str.split('.');
+      const truncatedDec = decPart.slice(0, decimals);
+      // Remove trailing zeros for cleaner output
+      const cleanDec = truncatedDec.replace(/0+$/, '');
+      return cleanDec ? `${intPart}.${cleanDec}` : intPart;
+    };
+
     // Convert amount to token units using ethers parseUnits for proper decimal handling
     const { parseUnits } = await import('ethers/lib/utils');
-    const rawAmount = parseUnits(amount.toString(), tokenForAmount.decimals);
+    const truncatedAmount = truncateToDecimals(amount, tokenForAmount.decimals);
+    const rawAmount = parseUnits(truncatedAmount, tokenForAmount.decimals);
     const tradeAmount = CurrencyAmount.fromRawAmount(tokenForAmount, rawAmount.toString());
 
     // Use default protocols (V2 and V3)

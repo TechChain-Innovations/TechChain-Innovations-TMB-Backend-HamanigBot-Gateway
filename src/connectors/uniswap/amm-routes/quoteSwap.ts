@@ -1,6 +1,6 @@
 import { Token, CurrencyAmount, Percent, TradeType } from '@uniswap/sdk-core';
 import { Pair as V2Pair, Route as V2Route, Trade as V2Trade } from '@uniswap/v2-sdk';
-import { BigNumber } from 'ethers';
+import { BigNumber, utils } from 'ethers';
 import { FastifyPluginAsync, FastifyInstance } from 'fastify';
 
 import { Ethereum } from '../../../chains/ethereum/ethereum';
@@ -37,21 +37,30 @@ async function quoteAmmSwap(
     // Create a route for the trade
     const route = new V2Route([pair], inputToken, outputToken);
 
+    // Helper to truncate amount to max decimals (avoids parseUnits underflow error)
+    // Also handles scientific notation (e.g., 1.5e-9)
+    const truncateToDecimals = (value: number, decimals: number): string => {
+      // Convert to fixed-point string to avoid scientific notation
+      // toFixed(20) handles very small numbers properly
+      const str = value.toFixed(20);
+      const [intPart, decPart = ''] = str.split('.');
+      const truncatedDec = decPart.slice(0, decimals);
+      // Remove trailing zeros for cleaner output
+      const cleanDec = truncatedDec.replace(/0+$/, '');
+      return cleanDec ? `${intPart}.${cleanDec}` : intPart;
+    };
+
     // Create the V2 trade
     let trade;
     if (exactIn) {
-      // For SELL (exactIn), we use the input amount and EXACT_INPUT trade type
-      const inputAmount = CurrencyAmount.fromRawAmount(
-        inputToken,
-        Math.floor(amount * Math.pow(10, inputToken.decimals)).toString()
-      );
+      const truncatedAmount = truncateToDecimals(amount, inputToken.decimals);
+      const rawIn = utils.parseUnits(truncatedAmount, inputToken.decimals).toString();
+      const inputAmount = CurrencyAmount.fromRawAmount(inputToken, rawIn);
       trade = new V2Trade(route, inputAmount, TradeType.EXACT_INPUT);
     } else {
-      // For BUY (exactOut), we use the output amount and EXACT_OUTPUT trade type
-      const outputAmount = CurrencyAmount.fromRawAmount(
-        outputToken,
-        Math.floor(amount * Math.pow(10, outputToken.decimals)).toString()
-      );
+      const truncatedAmount = truncateToDecimals(amount, outputToken.decimals);
+      const rawOut = utils.parseUnits(truncatedAmount, outputToken.decimals).toString();
+      const outputAmount = CurrencyAmount.fromRawAmount(outputToken, rawOut);
       trade = new V2Trade(route, outputAmount, TradeType.EXACT_OUTPUT);
     }
 

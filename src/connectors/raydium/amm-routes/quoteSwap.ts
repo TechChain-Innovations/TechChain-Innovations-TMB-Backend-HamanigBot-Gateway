@@ -575,6 +575,10 @@ export const quoteSwapRoute: FastifyPluginAsync = async (fastify) => {
           const raydium = await Raydium.getInstance(networkToUse);
           try {
             const [poolInfo] = await raydium.getPoolfromAPI(poolAddress);
+
+            // For CLMM pools we must not fall back to the AMM path because it cannot price CLMM pools.
+            // Previously any CLMM error (e.g. missing tick arrays) triggered a fallback that always 404s
+            // with "Pool not found".  Instead, surface the original CLMM error to the caller.
             if (poolInfo && isValidClmm(poolInfo.programId)) {
               logger.info(`Detected CLMM pool ${poolAddress} on AMM quote-swap, routing to CLMM handler`);
               const ctx = await resolveClmmContext(fastify, networkToUse, poolAddress);
@@ -590,7 +594,10 @@ export const quoteSwapRoute: FastifyPluginAsync = async (fastify) => {
               );
             }
           } catch (e) {
-            logger.warn(`Pool type detection failed for ${poolAddress}, falling back to AMM quote path: ${e.message}`);
+            // If pool lookup fails (API timeout/RPC issue), proceed with AMM path instead of aborting.
+            logger.warn(
+              `Pool type detection failed for ${poolAddress}, continuing with AMM path: ${(e as Error).message}`
+            );
           }
         }
 

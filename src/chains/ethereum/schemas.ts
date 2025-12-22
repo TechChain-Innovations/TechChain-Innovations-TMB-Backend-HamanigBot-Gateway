@@ -65,6 +65,11 @@ export const EthereumPollRequest = Type.Object({
 export const AllowancesRequestSchema = Type.Object({
   network: EthereumNetworkParameter,
   address: EthereumAddressParameter,
+  walletAddress: Type.Optional(
+    Type.String({
+      description: 'Alias for address; if provided, this wallet will be used',
+    })
+  ),
   spender: Type.String({
     description: 'Connector name (e.g., uniswap/clmm, uniswap/amm, 0x/router) or contract address',
     examples: [EXAMPLE_SPENDER],
@@ -85,6 +90,11 @@ export const AllowancesResponseSchema = Type.Object({
 export const ApproveRequestSchema = Type.Object({
   network: EthereumNetworkParameter,
   address: EthereumAddressParameter,
+  walletAddress: Type.Optional(
+    Type.String({
+      description: 'Alias for address; if provided, this wallet will be used',
+    })
+  ),
   spender: Type.String({
     description: 'Connector name (e.g., uniswap/clmm, uniswap/amm, 0x/router) contract address',
     examples: [EXAMPLE_SPENDER],
@@ -122,6 +132,11 @@ export const ApproveResponseSchema = Type.Object({
 export const WrapRequestSchema = Type.Object({
   network: EthereumNetworkParameter,
   address: EthereumAddressParameter,
+  walletAddress: Type.Optional(
+    Type.String({
+      description: 'Alias for address; if provided, this wallet will be used',
+    })
+  ),
   amount: Type.String({
     description: 'The amount of native token to wrap (e.g., ETH, BNB, AVAX)',
     examples: [EXAMPLE_AMOUNT],
@@ -150,6 +165,11 @@ export const WrapResponseSchema = Type.Object({
 export const UnwrapRequestSchema = Type.Object({
   network: EthereumNetworkParameter,
   address: EthereumAddressParameter,
+  walletAddress: Type.Optional(
+    Type.String({
+      description: 'Alias for address; if provided, this wallet will be used',
+    })
+  ),
   amount: Type.String({
     description: 'The amount of wrapped token to unwrap (e.g., WETH, WBNB, WAVAX)',
     examples: [EXAMPLE_AMOUNT],

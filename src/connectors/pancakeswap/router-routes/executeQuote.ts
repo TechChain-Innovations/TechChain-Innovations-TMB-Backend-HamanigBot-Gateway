@@ -8,6 +8,7 @@ import { waitForTransactionWithTimeout } from '../../../chains/ethereum/ethereum
 import { ExecuteQuoteRequestType, SwapExecuteResponseType, SwapExecuteResponse } from '../../../schemas/router-schema';
 import { logger } from '../../../services/logger';
 import { quoteCache } from '../../../services/quote-cache';
+import { getPancakeswapPermit2Address } from '../pancakeswap.contracts';
 import { PancakeswapExecuteQuoteRequest } from '../schemas';
 
 async function executeQuote(
@@ -40,28 +41,61 @@ async function executeQuote(
   if (inputToken.address !== ethereum.nativeTokenSymbol) {
     const requiredAllowance = BigNumber.from(quote.trade.inputAmount.quotient.toString());
     const universalRouterAddress = quote.methodParameters.to;
+    const permit2Address = getPancakeswapPermit2Address(network);
 
-    // Step 1: Check token allowance
-    logger.info(`Checking ${inputToken.symbol} allowance`);
-    const tokenContract = ethereum.getContract(inputToken.address, ethereum.provider);
-    const tokenAllowance = await tokenContract.allowance(walletAddress, universalRouterAddress);
+    // Step 1: Check Permit2 allowance (owner -> Permit2 -> UniversalRouter)
+    logger.info(`Checking Permit2 allowance for ${inputToken.symbol}`);
+    const permit2Abi = [
+      'function allowance(address owner, address token, address spender) view returns (uint160 amount, uint48 expiration, uint48 nonce)',
+      'function approve(address token, address spender, uint160 amount, uint48 expiration)',
+    ];
+    const permit2Contract = new (await import('ethers')).Contract(permit2Address, permit2Abi, ethereum.provider);
+    const allowanceStruct = await permit2Contract.allowance(walletAddress, inputToken.address, universalRouterAddress);
+    const currentPermitAllowance = BigNumber.from(allowanceStruct.amount.toString());
+    const expiration = Number(allowanceStruct.expiration);
+    const now = Math.floor(Date.now() / 1000);
 
-    if (BigNumber.from(tokenAllowance).lt(requiredAllowance)) {
-      const inputAmount = utils.formatUnits(requiredAllowance, inputToken.decimals);
-      const currentAllowance = utils.formatUnits(tokenAllowance, inputToken.decimals);
-
-      throw fastify.httpErrors.badRequest(
-        `Insufficient ${inputToken.symbol} allowance to ${universalRouterAddress}. ` +
-          `Required: ${inputAmount}, Current: ${currentAllowance}. ` +
-          `Please approve ${inputToken.symbol} using spender: "pancakeswap/router"`
+    if (currentPermitAllowance.gte(requiredAllowance) && (expiration === 0 || expiration > now)) {
+      logger.info(`Permit2 allowance is sufficient and not expired`);
+    } else {
+      logger.info(
+        `Insufficient Permit2 allowance. Current: ${utils.formatUnits(
+          currentPermitAllowance,
+          inputToken.decimals
+        )}, required: ${utils.formatUnits(requiredAllowance, inputToken.decimals)}`
       );
-    }
 
-    logger.info(`Allowance confirmed: Token->UniversalRouter`);
+      // If hardware wallet, ask user to pre-approve via API to avoid STF
+      if (isHardwareWallet) {
+        throw fastify.httpErrors.badRequest(
+          `Permit2 allowance missing/expired for ${inputToken.symbol}. ` +
+            `Please call /chains/ethereum/approve with spender "${permit2Address}" and token "${inputToken.symbol}", ` +
+            `or connect a software wallet.`
+        );
+      }
+
+      // Auto-approve via Permit2.approve (owner -> Permit2 -> UniversalRouter)
+      const wallet = await ethereum.getWallet(walletAddress);
+      const signerPermit2 = permit2Contract.connect(wallet);
+      const MAX_UINT160 = BigNumber.from(2).pow(160).sub(1);
+      const amountToApprove = requiredAllowance.gt(MAX_UINT160) ? MAX_UINT160 : requiredAllowance;
+      const newExpiration = now + 60 * 60 * 24 * 30; // 30 days
+
+      logger.info(
+        `Sending Permit2.approve for ${inputToken.symbol} -> UniversalRouter (amount=${amountToApprove.toString()}, exp=${newExpiration})`
+      );
+      const approveTx = await signerPermit2.approve(inputToken.address, universalRouterAddress, amountToApprove, newExpiration);
+      const approveReceipt = await waitForTransactionWithTimeout(approveTx, 30000);
+      if (!approveReceipt || approveReceipt.status !== 1) {
+        throw fastify.httpErrors.internalServerError('Permit2 approval transaction failed or timed out');
+      }
+      logger.info(`Permit2 approval confirmed: ${approveTx.hash}`);
+    }
   }
 
   // Execute the swap transaction
   let txReceipt;
+  let txHash: string | undefined;
 
   try {
     if (isHardwareWallet) {
@@ -90,6 +124,8 @@ async function executeQuote(
 
       // Send the signed transaction
       const txResponse = await ethereum.provider.sendTransaction(signedTx);
+      txHash = txResponse.hash;
+      logger.info(`Transaction sent: ${txHash}`);
 
       // Wait for confirmation with timeout (30 seconds for hardware wallets)
       txReceipt = await waitForTransactionWithTimeout(txResponse, 30000);
@@ -122,7 +158,8 @@ async function executeQuote(
 
       // Send transaction directly without relying on ethers' automatic gas estimation
       const txResponse = await wallet.sendTransaction(txData);
-      logger.info(`Transaction sent: ${txResponse.hash}`);
+      txHash = txResponse.hash;
+      logger.info(`Transaction sent: ${txHash}`);
 
       // Wait for transaction confirmation with timeout
       txReceipt = await waitForTransactionWithTimeout(txResponse);
@@ -179,13 +216,15 @@ async function executeQuote(
   const expectedAmountOut = parseFloat(quote.trade.outputAmount.toExact());
 
   // Use the new handleTransactionConfirmation helper
+  // Pass txHash so it's returned even when receipt is not yet available (pending transactions)
   const result = ethereum.handleTransactionConfirmation(
     txReceipt,
     inputToken.address,
     outputToken.address,
     expectedAmountIn,
     expectedAmountOut,
-    side
+    side,
+    txHash
   );
 
   // Handle different transaction states

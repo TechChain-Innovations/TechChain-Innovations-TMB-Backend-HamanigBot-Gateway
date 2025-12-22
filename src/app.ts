@@ -30,6 +30,8 @@ import { quoteCache } from './services/quote-cache';
 import { tokensRoutes } from './tokens/tokens.routes';
 import { GATEWAY_VERSION } from './version';
 import { walletRoutes } from './wallet/wallet.routes';
+import { getEthereumChainConfig, getEthereumNetworkConfig } from './chains/ethereum/ethereum.config';
+import { getSolanaChainConfig, getSolanaNetworkConfig } from './chains/solana/solana.config';
 
 import { asciiLogo } from './index';
 
@@ -406,9 +408,81 @@ const configureGatewayServer = () => {
     reply.status(500).send(responseBody);
   });
 
-  // Health check route (outside registerRoutes, only on main server)
-  server.get('/', async () => {
-    return { status: 'ok' };
+  server.get('/health', async () => {
+    return {
+      serviceName: 'hummingbot-gateway',
+      status: 'ok',
+      uptimeSeconds: Math.round(process.uptime()),
+      timestamp: new Date().toISOString(),
+    };
+  });
+
+  server.get('/readiness', async () => {
+    const details: Record<string, unknown> = {};
+    let ready = true;
+
+    const checkWithTimeout = async (url: string, method: string, params: unknown[] = [], timeoutMs = 2000) => {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+      try {
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ jsonrpc: '2.0', id: 1, method, params }),
+          signal: controller.signal,
+        });
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+        const data = await response.json();
+        if (data?.error) {
+          throw new Error(data.error?.message || 'RPC error');
+        }
+        return true;
+      } finally {
+        clearTimeout(timeoutId);
+      }
+    };
+
+    try {
+      const ethChain = getEthereumChainConfig();
+      const ethNetwork = getEthereumNetworkConfig(ethChain.defaultNetwork);
+      if (!ethNetwork.nodeURL) {
+        throw new Error('Ethereum nodeURL is not configured');
+      }
+      await checkWithTimeout(ethNetwork.nodeURL, 'eth_blockNumber');
+      details.ethereum = { status: 'UP', network: ethChain.defaultNetwork };
+    } catch (error) {
+      ready = false;
+      details.ethereum = { status: 'DOWN', error: error instanceof Error ? error.message : String(error) };
+    }
+
+    try {
+      const bscNetwork = getEthereumNetworkConfig('bsc');
+      if (!bscNetwork.nodeURL) {
+        throw new Error('BSC nodeURL is not configured');
+      }
+      await checkWithTimeout(bscNetwork.nodeURL, 'eth_blockNumber');
+      details.bsc = { status: 'UP', network: 'bsc' };
+    } catch (error) {
+      ready = false;
+      details.bsc = { status: 'DOWN', error: error instanceof Error ? error.message : String(error) };
+    }
+
+    try {
+      const solanaChain = getSolanaChainConfig();
+      const solanaNetwork = getSolanaNetworkConfig(solanaChain.defaultNetwork);
+      if (!solanaNetwork.nodeURL) {
+        throw new Error('Solana nodeURL is not configured');
+      }
+      await checkWithTimeout(solanaNetwork.nodeURL, 'getLatestBlockhash');
+      details.solana = { status: 'UP', network: solanaChain.defaultNetwork };
+    } catch (error) {
+      ready = false;
+      details.solana = { status: 'DOWN', error: error instanceof Error ? error.message : String(error) };
+    }
+
+    return { status: ready ? 'ready' : 'not_ready', details };
   });
 
   // Restart endpoint (outside registerRoutes, only on main server)

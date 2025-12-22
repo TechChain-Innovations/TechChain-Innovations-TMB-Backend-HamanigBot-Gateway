@@ -375,26 +375,52 @@ export class UniversalRouterService {
       logger.info(`[UniversalRouter] Gas estimation successful: ${gasEstimate.toString()}`);
       return gasEstimate;
     } catch (error) {
-      // Check if this is a Permit2 AllowanceExpired error (0xd81b2f2e)
-      const isPermit2Error = error.error && error.error.data && error.error.data.startsWith('0xd81b2f2e');
+      logger.error(`[UniversalRouter] Gas estimation failed:`, error);
+      logger.error(`[UniversalRouter] Error message: ${error.message}`);
 
-      if (isPermit2Error) {
-        // This is expected if user hasn't approved tokens to Permit2 yet
-        logger.info(`[UniversalRouter] Gas estimation skipped - Permit2 approval needed`);
-        logger.debug(`[UniversalRouter] User needs to approve tokens to Permit2 before executing swap`);
-      } else {
-        // Log other errors as actual errors
-        logger.error(`[UniversalRouter] Gas estimation failed:`, error);
-        logger.error(`[UniversalRouter] Error message: ${error.message}`);
-        if (error.error && error.error.data) {
-          logger.error(`[UniversalRouter] Error data: ${error.error.data}`);
-        }
-        if (error.reason) {
-          logger.error(`[UniversalRouter] Error reason: ${error.reason}`);
-        }
+      // Extract error details for better error messages
+      const errorData = error.error?.data || '';
+      const errorReason = error.reason || '';
+
+      if (error.error && error.error.data) {
+        logger.error(`[UniversalRouter] Error data: ${error.error.data}`);
+      }
+      if (error.reason) {
+        logger.error(`[UniversalRouter] Error reason: ${error.reason}`);
       }
 
-      // Use a higher default gas limit
+      // Check for specific error types and provide helpful messages
+      // STF = SafeTransferFrom failed - usually means insufficient balance or no approval
+      const isSTFError = errorReason.includes('STF') || errorData.includes('535446'); // "STF" in hex
+      const isPermit2Error = errorData.startsWith('0xd81b2f2e');
+      const isExecutionReverted = errorReason.includes('execution reverted') || error.message?.includes('execution reverted');
+
+      // If gas estimation shows the transaction will revert, throw an error
+      // Don't send a transaction that we know will fail - it wastes gas
+      if (isExecutionReverted || isSTFError || isPermit2Error) {
+        // Include the original error reason for debugging
+        const originalReason = errorReason || error.message || 'Unknown';
+
+        let errorCode = 'EXECUTION_REVERTED';
+        let hint = '';
+
+        if (isSTFError) {
+          errorCode = 'STF_FAILED';
+          hint = 'SafeTransferFrom failed - usually means insufficient balance or missing approval.';
+        } else if (isPermit2Error) {
+          errorCode = 'PERMIT2_EXPIRED';
+          hint = 'Permit2 allowance expired or not set.';
+        }
+
+        // Format: "CODE: hint | Original: reason"
+        const userMessage = `${errorCode}: ${hint} | Original error: ${originalReason}`;
+
+        logger.error(`[UniversalRouter] Rejecting transaction: ${userMessage}`);
+        throw new Error(userMessage);
+      }
+
+      // For other non-revert errors (like network issues), use default gas
+      // This allows the transaction to be attempted
       const defaultGas = BigNumber.from(500000);
       logger.info(`[UniversalRouter] Using default gas estimate: ${defaultGas.toString()}`);
       return defaultGas;

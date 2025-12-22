@@ -381,9 +381,9 @@ export const approveRoute: FastifyPluginAsync = async (fastify) => {
       },
     },
     async (request) => {
-      const { network, address, spender, token, amount } = request.body;
-
-      return await approveEthereumToken(fastify, network, address, spender, token, amount);
+      const { network, address, walletAddress, spender, token, amount } = request.body;
+      const resolvedAddress = walletAddress || address;
+      return await approveEthereumToken(fastify, network, resolvedAddress, spender, token, amount);
     }
   );
 };

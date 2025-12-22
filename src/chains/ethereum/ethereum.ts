@@ -169,8 +169,10 @@ export class Ethereum {
     gasOptions.gasLimit = gasLimit ?? DEFAULT_GAS_LIMIT;
 
     // Check if the network supports EIP-1559
+    // BSC (chainId 56) supports EIP-1559 since BEP-95 upgrade
     const supportsEIP1559 =
       this.chainId === 1 ||
+      this.chainId === 56 ||
       this.chainId === 137 ||
       this.chainId === 42161 ||
       this.chainId === 10 ||
@@ -608,7 +610,9 @@ export class Ethereum {
     logger.info(`Approving ${amount.toString()} tokens for spender ${spender}`);
 
     // Prepare gas options for approval transaction
-    const gasOptions = await this.prepareGasOptions();
+    // Use 100000 gas limit for approve operations (standard ERC20 approve uses ~45000-65000 gas)
+    const APPROVE_GAS_LIMIT = 100000;
+    const gasOptions = await this.prepareGasOptions(undefined, APPROVE_GAS_LIMIT);
     const params: any = {
       ...gasOptions,
       nonce: await this.provider.getTransactionCount(wallet.address, 'pending'),
@@ -777,7 +781,8 @@ export class Ethereum {
     outputToken: string,
     expectedAmountIn: number,
     expectedAmountOut: number,
-    side?: 'BUY' | 'SELL'
+    side?: 'BUY' | 'SELL',
+    txHash?: string
   ): {
     signature: string;
     status: number;
@@ -793,9 +798,10 @@ export class Ethereum {
   } {
     if (!txReceipt) {
       // Transaction receipt not available - still pending
+      // But we should still return the txHash if available
       logger.warn('Transaction pending, no receipt available yet');
       return {
-        signature: '',
+        signature: txHash || '',
         status: 0, // PENDING
         data: undefined,
       };

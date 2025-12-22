@@ -227,8 +227,9 @@ export const allowancesRoute: FastifyPluginAsync = async (fastify) => {
       },
     },
     async (request) => {
-      const { network, address, spender, tokens } = request.body;
-      return await getEthereumAllowances(fastify, network, address, spender, tokens);
+      const { network, address, walletAddress, spender, tokens } = request.body;
+      const resolvedAddress = walletAddress || address;
+      return await getEthereumAllowances(fastify, network, resolvedAddress, spender, tokens);
     }
   );
 };

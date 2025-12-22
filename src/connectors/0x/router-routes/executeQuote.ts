@@ -65,6 +65,9 @@ async function executeQuote(
   };
 
   const txResponse = await wallet.sendTransaction(txData);
+  const txHash = txResponse.hash;
+  logger.info(`Transaction sent: ${txHash}`);
+
   const txReceipt = await waitForTransactionWithTimeout(txResponse);
 
   // Get token info for formatting amounts
@@ -80,12 +83,15 @@ async function executeQuote(
   const expectedAmountOut = parseFloat(zeroX.formatTokenAmount(quote.buyAmount, buyTokenInfo.decimals));
 
   // Use the new handleTransactionConfirmation helper
+  // Pass txHash so it's returned even when receipt is not yet available (pending transactions)
   const result = ethereum.handleTransactionConfirmation(
     txReceipt,
     quote.sellTokenAddress,
     quote.buyTokenAddress,
     expectedAmountIn,
-    expectedAmountOut
+    expectedAmountOut,
+    undefined, // side
+    txHash
   );
 
   // Handle different transaction states

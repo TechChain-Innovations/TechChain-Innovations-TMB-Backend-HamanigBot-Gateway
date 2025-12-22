@@ -239,9 +239,9 @@ export const wrapRoute: FastifyPluginAsync = async (fastify) => {
       },
     },
     async (request) => {
-      const { network, address, amount } = request.body;
-
-      return await wrapEthereum(fastify, network, address, amount);
+      const { network, address, walletAddress, amount } = request.body;
+      const resolvedAddress = walletAddress || address;
+      return await wrapEthereum(fastify, network, resolvedAddress, amount);
     }
   );
 };

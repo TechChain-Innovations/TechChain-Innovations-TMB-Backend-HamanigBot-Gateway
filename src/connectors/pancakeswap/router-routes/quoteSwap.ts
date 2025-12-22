@@ -1,6 +1,7 @@
 import { Static } from '@sinclair/typebox';
 import { FastifyPluginAsync, FastifyInstance } from 'fastify';
 import { v4 as uuidv4 } from 'uuid';
+import { BigNumber, utils } from 'ethers';
 
 import { Ethereum } from '../../../chains/ethereum/ethereum';
 import { getEthereumChainConfig } from '../../../chains/ethereum/ethereum.config';
@@ -10,6 +11,7 @@ import { quoteCache } from '../../../services/quote-cache';
 import { sanitizeErrorMessage } from '../../../services/sanitize';
 import { Pancakeswap } from '../pancakeswap';
 import { PancakeswapConfig } from '../pancakeswap.config';
+import { getPancakeswapPermit2Address, getUniversalRouterV2Address } from '../pancakeswap.contracts';
 import { PancakeswapQuoteSwapRequest, PancakeswapQuoteSwapResponse } from '../schemas';
 
 async function quoteSwap(
@@ -29,6 +31,7 @@ async function quoteSwap(
 
   const ethereum = await Ethereum.getInstance(network);
   const pancakeswap = await Pancakeswap.getInstance(network);
+  const isHardwareWallet = await ethereum.isHardwareWallet(walletAddress);
 
   // Resolve token symbols to token objects
   const baseTokenInfo = ethereum.getToken(baseToken);

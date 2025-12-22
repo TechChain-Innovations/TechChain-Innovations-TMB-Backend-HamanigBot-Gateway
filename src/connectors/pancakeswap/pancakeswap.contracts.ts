@@ -26,6 +26,9 @@ export interface PancakeswapContractAddresses {
 
   // Universal Router V2 (unified router for all protocols)
   universalRouterV2Address: Address;
+
+  // Permit2 (used by Universal Router transfers)
+  permit2Address?: Address;
 }
 
 export interface NetworkContractAddresses {
@@ -45,6 +48,8 @@ export const contractAddresses: NetworkContractAddresses = {
     pancakeswapV3PoolDeployerAddress: '0x41ff9AA7e16B8B1a8a8dc4f0eFacd93D02d071c9',
     // Universal Router V2 - Official Pancakeswap address
     universalRouterV2Address: '0x13f4EA83D0bd40E75C8222255bc855a974568Dd4',
+    // Uniswap Permit2 on ETH (fallback)
+    permit2Address: '0x000000000022D473030F116dDEE9F6B43aC78BA3',
   },
   arbitrum: {
     // V2 contracts - Official Pancakeswap addresses
@@ -58,6 +63,7 @@ export const contractAddresses: NetworkContractAddresses = {
     pancakeswapV3PoolDeployerAddress: '0x41ff9AA7e16B8B1a8a8dc4f0eFacd93D02d071c9',
     // Universal Router V2 - Official Pancakeswap address
     universalRouterV2Address: '0x32226588378236Fd0c7c4053999F88aC0e5cAc77',
+    permit2Address: '0x000000000022D473030F116dDEE9F6B43aC78BA3',
   },
   base: {
     // V2 contracts - Official Pancakeswap addresses
@@ -71,6 +77,7 @@ export const contractAddresses: NetworkContractAddresses = {
     pancakeswapV3PoolDeployerAddress: '0x41ff9AA7e16B8B1a8a8dc4f0eFacd93D02d071c9',
     // Universal Router V2 - Official Pancakeswap address
     universalRouterV2Address: '0x678Aa4bF4E210cf2166753e054d5b7c31cc7fa86',
+    permit2Address: '0x000000000022D473030F116dDEE9F6B43aC78BA3',
   },
   bsc: {
     // V2 contracts - Official Pancakeswap addresses
@@ -84,6 +91,8 @@ export const contractAddresses: NetworkContractAddresses = {
     pancakeswapV3PoolDeployerAddress: '0x41ff9AA7e16B8B1a8a8dc4f0eFacd93D02d071c9',
     // Universal Router V2 - Official Pancakeswap address
     universalRouterV2Address: '0x13f4EA83D0bd40E75C8222255bc855a974568Dd4',
+    // Official Pancake Permit2 on BSC
+    permit2Address: '0x31c2F6fcFf4F8759b3Bd5Bf0e1084A055615c768',
   },
   'bsc-testnet': {
     // V2 contracts - Official Pancakeswap addresses for BSC testnet
@@ -97,6 +106,7 @@ export const contractAddresses: NetworkContractAddresses = {
     pancakeswapV3PoolDeployerAddress: '0x41ff9AA7e16B8B1a8a8dc4f0eFacd93D02d071c9',
     // Universal Router V2 - Official Pancakeswap address
     universalRouterV2Address: '0x13f4EA83D0bd40E75C8222255bc855a974568Dd4',
+    permit2Address: '0x000000000022D473030F116dDEE9F6B43aC78BA3',
   },
   sepolia: {
     // V2 contracts - Official Pancakeswap addresses for Sepolia testnet
@@ -110,6 +120,7 @@ export const contractAddresses: NetworkContractAddresses = {
     pancakeswapV3PoolDeployerAddress: '0x41ff9AA7e16B8B1a8a8dc4f0eFacd93D02d071c9',
     // Universal Router V2 - Official Pancakeswap address for Sepolia
     universalRouterV2Address: '0x13f4EA83D0bd40E75C8222255bc855a974568Dd4',
+    permit2Address: '0x000000000022D473030F116dDEE9F6B43aC78BA3',
   },
 };
 
@@ -204,6 +215,16 @@ export function getPancakeswapV3PoolDeployerAddress(network: string): Address {
 
   if (!address) {
     throw new Error(`Pancakeswap V3 Factory address not configured for network: ${network}`);
+  }
+
+  return address;
+}
+
+export function getPancakeswapPermit2Address(network: string): Address {
+  const address = contractAddresses[network]?.permit2Address;
+
+  if (!address) {
+    throw new Error(`Permit2 address not configured for network: ${network}`);
   }
 
   return address;

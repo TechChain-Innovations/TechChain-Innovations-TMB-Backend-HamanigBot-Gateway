@@ -256,9 +256,9 @@ export const unwrapRoute: FastifyPluginAsync = async (fastify) => {
       },
     },
     async (request) => {
-      const { network, address, amount } = request.body;
-
-      return await unwrapEthereum(fastify, network, address, amount);
+      const { network, address, walletAddress, amount } = request.body;
+      const resolvedAddress = walletAddress || address;
+      return await unwrapEthereum(fastify, network, resolvedAddress, amount);
     }
   );
 };

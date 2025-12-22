@@ -102,6 +102,7 @@ async function executeQuote(
 
   // Execute the swap transaction
   let txReceipt;
+  let txHash: string | undefined;
 
   try {
     if (isHardwareWallet) {
@@ -130,6 +131,8 @@ async function executeQuote(
 
       // Send the signed transaction
       const txResponse = await ethereum.provider.sendTransaction(signedTx);
+      txHash = txResponse.hash;
+      logger.info(`Transaction sent: ${txHash}`);
 
       // Wait for confirmation with timeout (30 seconds for hardware wallets)
       txReceipt = await waitForTransactionWithTimeout(txResponse, 30000);
@@ -162,7 +165,8 @@ async function executeQuote(
 
       // Send transaction directly without relying on ethers' automatic gas estimation
       const txResponse = await wallet.sendTransaction(txData);
-      logger.info(`Transaction sent: ${txResponse.hash}`);
+      txHash = txResponse.hash;
+      logger.info(`Transaction sent: ${txHash}`);
 
       // Wait for transaction confirmation with timeout
       txReceipt = await waitForTransactionWithTimeout(txResponse);
@@ -219,13 +223,15 @@ async function executeQuote(
   const expectedAmountOut = parseFloat(quote.trade.outputAmount.toExact());
 
   // Use the new handleTransactionConfirmation helper
+  // Pass txHash so it's returned even when receipt is not yet available (pending transactions)
   const result = ethereum.handleTransactionConfirmation(
     txReceipt,
     inputToken.address,
     outputToken.address,
     expectedAmountIn,
     expectedAmountOut,
-    side
+    side,
+    txHash
   );
 
   // Handle different transaction states
