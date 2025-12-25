@@ -6,6 +6,7 @@ export interface EthereumNetworkConfig {
   chainID: number;
   nodeURL: string;
   nativeCurrencySymbol: string;
+  gasMode?: 'gateway' | 'dextrade';
   minGasPrice?: number;
   infuraAPIKey?: string;
   useInfuraWebSocket?: boolean;
@@ -26,6 +27,7 @@ export function getEthereumNetworkConfig(network: string): EthereumNetworkConfig
     chainID: ConfigManagerV2.getInstance().get(namespaceId + '.chainID'),
     nodeURL: ConfigManagerV2.getInstance().get(namespaceId + '.nodeURL'),
     nativeCurrencySymbol: ConfigManagerV2.getInstance().get(namespaceId + '.nativeCurrencySymbol'),
+    gasMode: ConfigManagerV2.getInstance().get(namespaceId + '.gasMode'),
     minGasPrice: ConfigManagerV2.getInstance().get(namespaceId + '.minGasPrice'),
   };
 }

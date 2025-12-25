@@ -35,6 +35,8 @@ export class Ethereum {
   public chainId: number;
   public rpcUrl: string;
   public minGasPrice: number;
+  public gasMode: 'gateway' | 'dextrade';
+  private dextradeGasPriceMultiplier: number;
   private _initialized: boolean = false;
   private infuraService?: InfuraService;
 
@@ -56,6 +58,11 @@ export class Ethereum {
     this.network = network;
     this.nativeTokenSymbol = config.nativeCurrencySymbol;
     this.minGasPrice = config.minGasPrice || 0.1; // Default to 0.1 GWEI if not specified
+    const rawGasMode = (config.gasMode || 'gateway').toString().toLowerCase();
+    this.gasMode = rawGasMode === 'dextrade' ? 'dextrade' : 'gateway';
+    logger.info(`Gas mode for network ${network}: ${this.gasMode}`);
+    const rawMultiplier = Number(process.env.GATEWAY_DEXTRADE_GAS_PRICE_MULTIPLIER ?? '2');
+    this.dextradeGasPriceMultiplier = Number.isFinite(rawMultiplier) && rawMultiplier > 0 ? rawMultiplier : 2;
 
     // Get rpcProvider from chain config
     const chainConfig = getEthereumChainConfig();
@@ -168,6 +175,54 @@ export class Ethereum {
     const DEFAULT_GAS_LIMIT = 300000;
     gasOptions.gasLimit = gasLimit ?? DEFAULT_GAS_LIMIT;
 
+    // DexTrade-compatible mode: use legacy gasPrice (eth_gasPrice) and type-0.
+    // This aligns with DexTrade's low-fee estimation path and avoids EIP-1559 fee bumping.
+    if (!gasPrice && this.gasMode === 'dextrade') {
+      try {
+        let rawGasPriceWei = await this.provider.getGasPrice();
+        if (rawGasPriceWei && rawGasPriceWei.gt(0)) {
+          try {
+            const latestBlock = await this.provider.getBlock('latest');
+            const baseFee = latestBlock?.baseFeePerGas;
+            if (baseFee && rawGasPriceWei.lt(baseFee)) {
+              logger.warn(
+                `DexTrade gasPrice below baseFee; bumping to baseFee. gasPrice=${utils.formatUnits(
+                  rawGasPriceWei,
+                  'gwei'
+                )} GWEI baseFee=${utils.formatUnits(baseFee, 'gwei')} GWEI`
+              );
+              rawGasPriceWei = baseFee;
+            }
+          } catch (baseFeeError: any) {
+            logger.warn(`DexTrade gas mode baseFee check failed: ${baseFeeError.message}`);
+          }
+          if (this.dextradeGasPriceMultiplier !== 1) {
+            const multiplierBps = Math.max(1, Math.round(this.dextradeGasPriceMultiplier * 1000));
+            rawGasPriceWei = rawGasPriceWei.mul(multiplierBps).div(1000);
+            logger.info(`DexTrade gas multiplier applied: x${this.dextradeGasPriceMultiplier}`);
+          }
+
+          gasOptions.type = 0;
+          gasOptions.gasPrice = rawGasPriceWei;
+          logger.info(
+            `Using DexTrade gas mode: gasPrice=${utils.formatUnits(rawGasPriceWei, 'gwei')} GWEI ` +
+              `with gasLimit=${gasOptions.gasLimit}`
+          );
+          return gasOptions;
+        }
+      } catch (error: any) {
+        logger.warn(`DexTrade gas mode getGasPrice failed, falling back: ${error.message}`);
+      }
+
+      const fallbackGasPriceGwei = await this.estimateGasPrice();
+      gasOptions.type = 0;
+      gasOptions.gasPrice = utils.parseUnits(fallbackGasPriceGwei.toString(), 'gwei');
+      logger.info(
+        `Using DexTrade gas mode fallback: ${fallbackGasPriceGwei} GWEI with gasLimit=${gasOptions.gasLimit}`
+      );
+      return gasOptions;
+    }
+
     // Check if the network supports EIP-1559
     // BSC (chainId 56) supports EIP-1559 since BEP-95 upgrade
     const supportsEIP1559 =
@@ -220,6 +275,104 @@ export class Ethereum {
     logger.info(`Using legacy gas pricing: ${gasPriceInGwei} GWEI with gasLimit: ${gasOptions.gasLimit}`);
 
     return gasOptions;
+  }
+
+  public async buildInsufficientFundsMessage(params: {
+    error: any;
+    walletAddress?: string;
+    txParams?: {
+      gasLimit?: any;
+      gasPrice?: any;
+      maxFeePerGas?: any;
+      value?: any;
+    };
+  }): Promise<string> {
+    const { error, walletAddress, txParams } = params;
+    const symbol = this.nativeTokenSymbol || 'ETH';
+
+    const rawStrings: string[] = [];
+    const pushString = (value: unknown) => {
+      if (typeof value === 'string' && value.trim()) {
+        rawStrings.push(value);
+      }
+    };
+    pushString(error?.message);
+    pushString(error?.body);
+    pushString(error?.error?.body);
+    pushString(error?.error?.message);
+    if (error?.error && typeof error.error === 'string') {
+      pushString(error.error);
+    }
+
+    let balanceWei: BigNumber | null = null;
+    let txCostWei: BigNumber | null = null;
+    let shortfallWei: BigNumber | null = null;
+
+    const balanceCostRegex = /balance\s+(\d+),\s*tx cost\s+(\d+),\s*overshot\s+(\d+)/i;
+    const haveWantRegex = /have\s+(\d+)\s+want\s+(\d+)/i;
+
+    for (const raw of rawStrings) {
+      const match = raw.match(balanceCostRegex);
+      if (match) {
+        balanceWei = BigNumber.from(match[1]);
+        txCostWei = BigNumber.from(match[2]);
+        shortfallWei = BigNumber.from(match[3]);
+        break;
+      }
+      const haveWant = raw.match(haveWantRegex);
+      if (haveWant) {
+        balanceWei = BigNumber.from(haveWant[1]);
+        txCostWei = BigNumber.from(haveWant[2]);
+        shortfallWei = txCostWei.sub(balanceWei);
+        break;
+      }
+    }
+
+    if (!txCostWei && txParams?.gasLimit && (txParams?.maxFeePerGas || txParams?.gasPrice)) {
+      try {
+        const gasLimit = BigNumber.from(txParams.gasLimit);
+        const feePerGas = BigNumber.from(txParams.maxFeePerGas ?? txParams.gasPrice);
+        const baseCost = gasLimit.mul(feePerGas);
+        const valueCost = txParams.value ? BigNumber.from(txParams.value) : BigNumber.from(0);
+        txCostWei = baseCost.add(valueCost);
+      } catch (err) {
+        logger.warn(`Failed to compute txCostWei: ${err instanceof Error ? err.message : String(err)}`);
+      }
+    }
+
+    if (!balanceWei && walletAddress) {
+      try {
+        balanceWei = await this.provider.getBalance(walletAddress);
+      } catch (err) {
+        logger.warn(`Failed to fetch balance for ${walletAddress}: ${err instanceof Error ? err.message : String(err)}`);
+      }
+    }
+
+    if (!shortfallWei && txCostWei && balanceWei) {
+      const delta = txCostWei.sub(balanceWei);
+      shortfallWei = delta.gt(0) ? delta : BigNumber.from(0);
+    }
+
+    const formatNative = (value: BigNumber | null): string | null => {
+      if (!value) return null;
+      const asEth = utils.formatEther(value);
+      const parsed = Number(asEth);
+      if (!Number.isFinite(parsed)) {
+        return asEth;
+      }
+      return parsed.toFixed(8);
+    };
+
+    const required = formatNative(txCostWei);
+    const available = formatNative(balanceWei);
+    const shortfall = formatNative(shortfallWei);
+
+    if (required || available || shortfall) {
+      return `Insufficient ${symbol} for gas. Required ~${required ?? 'unknown'} ${symbol}, ` +
+        `available ${available ?? 'unknown'} ${symbol}, shortfall ${shortfall ?? 'unknown'} ${symbol}.`;
+    }
+
+    return `Insufficient funds for transaction. Please ensure you have enough ${symbol} to cover gas costs.`;
   }
 
   /**

@@ -8,7 +8,7 @@ describe('InfuraService', () => {
   beforeEach(() => {
     mockConfig = {
       chainID: 1,
-      nodeURL: 'https://eth.llamarpc.com',
+      nodeURL: 'https://lb.drpc.live/ethereum/Ai3nGXKfwk5MuI141vmyBCglCX6-uzMR8I-jQmlfqV1j',
       nativeCurrencySymbol: 'ETH',
       minGasPrice: 0.1,
       infuraAPIKey: 'test-infura-key-123',

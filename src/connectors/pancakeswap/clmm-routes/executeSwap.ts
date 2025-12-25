@@ -28,6 +28,8 @@ export async function executeClmmSwap(
 ): Promise<SwapExecuteResponseType> {
   const ethereum = await Ethereum.getInstance(network);
   await ethereum.init();
+  let lastGasOptions: any;
+  let lastTxValue: BigNumber | undefined;
 
   const pancakeswap = await Pancakeswap.getInstance(network);
 
@@ -168,6 +170,7 @@ export async function executeClmmSwap(
 
       // Get gas options using estimateGasPrice
       const gasOptions = await ethereum.prepareGasOptions(undefined, CLMM_SWAP_GAS_LIMIT);
+      lastGasOptions = gasOptions;
 
       // Build unsigned transaction with gas parameters
       const unsignedTx = {
@@ -177,6 +180,7 @@ export async function executeClmmSwap(
         chainId: ethereum.chainId,
         ...gasOptions, // Include gas parameters from prepareGasOptions
       };
+      lastTxValue = (unsignedTx as any).value;
 
       // Sign with Ledger
       const signedTx = await ledger.signTransaction(walletAddress, unsignedTx as any);
@@ -202,6 +206,8 @@ export async function executeClmmSwap(
 
       // Use Ethereum's gas options
       const txOptions = await ethereum.prepareGasOptions(undefined, CLMM_SWAP_GAS_LIMIT);
+      lastGasOptions = txOptions;
+      lastTxValue = (txOptions as any).value;
 
       let tx;
       if (side === 'SELL') {
@@ -306,9 +312,12 @@ export async function executeClmmSwap(
 
     // Handle specific error cases
     if (error.message && error.message.includes('insufficient funds')) {
-      throw fastify.httpErrors.badRequest(
-        'Insufficient funds for transaction. Please ensure you have enough ETH to cover gas costs.'
-      );
+      const message = await ethereum.buildInsufficientFundsMessage({
+        error,
+        walletAddress,
+        txParams: { ...lastGasOptions, value: lastTxValue },
+      });
+      throw fastify.httpErrors.badRequest(message);
     } else if (error.message.includes('rejected on Ledger')) {
       throw fastify.httpErrors.badRequest('Transaction rejected on Ledger device');
     } else if (error.message.includes('Ledger device is locked')) {

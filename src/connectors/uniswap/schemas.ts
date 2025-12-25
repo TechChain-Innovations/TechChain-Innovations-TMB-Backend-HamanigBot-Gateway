@@ -360,6 +360,11 @@ export const UniswapExecuteSwapRequest = Type.Object({
       enum: [...UniswapConfig.networks],
     })
   ),
+  poolAddress: Type.Optional(
+    Type.String({
+      description: 'Pool address (optional - can be looked up from tokens)',
+    })
+  ),
   baseToken: Type.String({
     description: 'Token to determine swap direction',
     examples: [BASE_TOKEN],

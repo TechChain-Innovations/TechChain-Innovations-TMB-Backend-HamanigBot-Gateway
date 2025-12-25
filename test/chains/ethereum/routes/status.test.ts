@@ -38,7 +38,7 @@ describe('Ethereum Status Route', () => {
 
   describe('getEthereumStatus function', () => {
     const mockEthereumInstance = {
-      rpcUrl: 'https://eth.llamarpc.com',
+      rpcUrl: 'https://lb.drpc.live/ethereum/Ai3nGXKfwk5MuI141vmyBCglCX6-uzMR8I-jQmlfqV1j',
       nativeTokenSymbol: 'ETH',
       provider: {
         getBlockNumber: jest.fn(),
@@ -54,7 +54,7 @@ describe('Ethereum Status Route', () => {
       mockEthereum.getInstance.mockResolvedValue(mockEthereumInstance as any);
       mockEthereumInstance.provider.getBlockNumber.mockResolvedValue(23329000);
       // Reset rpcUrl to default
-      mockEthereumInstance.rpcUrl = 'https://eth.llamarpc.com';
+      mockEthereumInstance.rpcUrl = 'https://lb.drpc.live/ethereum/Ai3nGXKfwk5MuI141vmyBCglCX6-uzMR8I-jQmlfqV1j';
     });
 
     it('should return status with standard rpcUrl when rpcProvider is "url"', async () => {
@@ -69,7 +69,7 @@ describe('Ethereum Status Route', () => {
       expect(result).toEqual({
         chain: 'ethereum',
         network: 'mainnet',
-        rpcUrl: 'https://eth.llamarpc.com',
+        rpcUrl: 'https://lb.drpc.live/ethereum/Ai3nGXKfwk5MuI141vmyBCglCX6-uzMR8I-jQmlfqV1j',
         rpcProvider: 'url',
         currentBlockNumber: 23329000,
         nativeCurrency: 'ETH',
@@ -114,7 +114,7 @@ describe('Ethereum Status Route', () => {
       expect(result).toEqual({
         chain: 'ethereum',
         network: 'mainnet',
-        rpcUrl: 'https://eth.llamarpc.com',
+        rpcUrl: 'https://lb.drpc.live/ethereum/Ai3nGXKfwk5MuI141vmyBCglCX6-uzMR8I-jQmlfqV1j',
         rpcProvider: 'infura',
         currentBlockNumber: 23329000,
         nativeCurrency: 'ETH',
@@ -141,7 +141,7 @@ describe('Ethereum Status Route', () => {
       expect(result).toEqual({
         chain: 'ethereum',
         network: 'mainnet',
-        rpcUrl: 'https://eth.llamarpc.com',
+        rpcUrl: 'https://lb.drpc.live/ethereum/Ai3nGXKfwk5MuI141vmyBCglCX6-uzMR8I-jQmlfqV1j',
         rpcProvider: 'infura',
         currentBlockNumber: 23329000,
         nativeCurrency: 'ETH',
@@ -164,7 +164,7 @@ describe('Ethereum Status Route', () => {
       expect(result).toEqual({
         chain: 'ethereum',
         network: 'mainnet',
-        rpcUrl: 'https://eth.llamarpc.com',
+        rpcUrl: 'https://lb.drpc.live/ethereum/Ai3nGXKfwk5MuI141vmyBCglCX6-uzMR8I-jQmlfqV1j',
         rpcProvider: 'url',
         currentBlockNumber: 23329000,
         nativeCurrency: 'ETH',
@@ -205,7 +205,7 @@ describe('Ethereum Status Route', () => {
 
       // Mock a timeout scenario
       mockEthereumInstance.provider.getBlockNumber.mockImplementation(
-        () => new Promise((_, reject) => setTimeout(() => reject(new Error('Request timed out')), 100))
+        () => new Promise((_, reject) => setTimeout(() => reject(new Error('Request timed out')), 100)),
       );
 
       // Mock logger.warn to avoid console output during tests
@@ -216,7 +216,7 @@ describe('Ethereum Status Route', () => {
       expect(result).toEqual({
         chain: 'ethereum',
         network: 'mainnet',
-        rpcUrl: 'https://eth.llamarpc.com',
+        rpcUrl: 'https://lb.drpc.live/ethereum/Ai3nGXKfwk5MuI141vmyBCglCX6-uzMR8I-jQmlfqV1j',
         rpcProvider: 'url',
         currentBlockNumber: 0,
         nativeCurrency: 'ETH',
@@ -230,7 +230,7 @@ describe('Ethereum Status Route', () => {
 
   describe('GET /chains/ethereum/status', () => {
     const mockEthereumInstance = {
-      rpcUrl: 'https://eth.llamarpc.com',
+      rpcUrl: 'https://lb.drpc.live/ethereum/Ai3nGXKfwk5MuI141vmyBCglCX6-uzMR8I-jQmlfqV1j',
       nativeTokenSymbol: 'ETH',
       provider: {
         getBlockNumber: jest.fn(),
@@ -262,7 +262,7 @@ describe('Ethereum Status Route', () => {
       expect(responseBody).toEqual({
         chain: 'ethereum',
         network: 'mainnet',
-        rpcUrl: 'https://eth.llamarpc.com',
+        rpcUrl: 'https://lb.drpc.live/ethereum/Ai3nGXKfwk5MuI141vmyBCglCX6-uzMR8I-jQmlfqV1j',
         rpcProvider: 'url',
         currentBlockNumber: 23329000,
         nativeCurrency: 'ETH',

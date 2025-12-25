@@ -78,19 +78,23 @@ export async function executeClmmSwap(
   amount: number,
   side: 'BUY' | 'SELL',
   slippagePct: number,
+  poolAddress?: string,
   gasMax?: number,
   gasMultiplierPct?: number,
 ): Promise<SwapExecuteResponseType> {
   const releaseLock = await acquireWalletLock(walletAddress);
+  let ethereum: Ethereum | undefined;
+  let lastGasOptions: any;
+  let lastTxValue: BigNumber | undefined;
   try {
-  const ethereum = await Ethereum.getInstance(network);
+  ethereum = await Ethereum.getInstance(network);
   await ethereum.init();
 
   const uniswap = await Uniswap.getInstance(network);
 
   // Find pool address
-  const poolAddress = await uniswap.findDefaultPool(baseToken, quoteToken, 'clmm');
-  if (!poolAddress) {
+  const poolAddressToUse = poolAddress?.trim() || (await uniswap.findDefaultPool(baseToken, quoteToken, 'clmm'));
+  if (!poolAddressToUse) {
     throw fastify.httpErrors.notFound(`No CLMM pool found for pair ${baseToken}-${quoteToken}`);
   }
 
@@ -98,7 +102,7 @@ export async function executeClmmSwap(
   const { quote } = await getUniswapClmmQuote(
     fastify,
     network,
-    poolAddress,
+    poolAddressToUse,
     baseToken,
     quoteToken,
     amount,
@@ -114,7 +118,7 @@ export async function executeClmmSwap(
 
   logger.info(`Executing swap using SwapRouter02:`);
   logger.info(`Router address: ${routerAddress}`);
-  logger.info(`Pool address: ${poolAddress}`);
+  logger.info(`Pool address: ${poolAddressToUse}`);
   logger.info(`Input token: ${quote.inputToken.address}`);
   logger.info(`Output token: ${quote.outputToken.address}`);
   logger.info(`Side: ${side}`);
@@ -256,6 +260,7 @@ export async function executeClmmSwap(
       }
 
       const gasOptions = await buildGasOptions(ethereum, CLMM_SWAP_GAS_LIMIT, gasMax, gasMultiplierPct);
+      lastGasOptions = gasOptions;
 
       // Build unsigned transaction with gas parameters
       const unsignedTx = {
@@ -265,6 +270,7 @@ export async function executeClmmSwap(
         chainId: ethereum.chainId,
         ...gasOptions, // Include gas parameters from prepareGasOptions
       };
+      lastTxValue = (unsignedTx as any).value;
 
       // Sign with Ledger
       const signedTx = await ledger.signTransaction(walletAddress, unsignedTx as any);
@@ -289,6 +295,8 @@ export async function executeClmmSwap(
       const routerContract = new Contract(routerAddress, ISwapRouter02ABI, wallet);
 
       const txOptions = await buildGasOptions(ethereum, CLMM_SWAP_GAS_LIMIT, gasMax, gasMultiplierPct);
+      lastGasOptions = txOptions;
+      lastTxValue = (txOptions as any).value;
 
       let tx;
       if (side === 'SELL') {
@@ -392,9 +400,14 @@ export async function executeClmmSwap(
 
     // Handle specific error cases
     if (error.message && error.message.includes('insufficient funds')) {
-      throw fastify.httpErrors.badRequest(
-        'Insufficient funds for transaction. Please ensure you have enough ETH to cover gas costs.'
-      );
+      const message = ethereum
+        ? await ethereum.buildInsufficientFundsMessage({
+            error,
+            walletAddress,
+            txParams: { ...lastGasOptions, value: lastTxValue },
+          })
+        : 'Insufficient funds for transaction. Please ensure you have enough ETH to cover gas costs.';
+      throw fastify.httpErrors.badRequest(message);
     } else if (error.message.includes('rejected on Ledger')) {
       throw fastify.httpErrors.badRequest('Transaction rejected on Ledger device');
     } else if (error.message.includes('Ledger device is locked')) {
@@ -430,8 +443,18 @@ export const executeSwapRoute: FastifyPluginAsync = async (fastify) => {
     },
     async (request) => {
       try {
-        const { walletAddress, network, baseToken, quoteToken, amount, side, slippagePct, gasMax, gasMultiplierPct } =
-          request.body as typeof UniswapExecuteSwapRequest._type;
+        const {
+          walletAddress,
+          network,
+          baseToken,
+          quoteToken,
+          amount,
+          side,
+          slippagePct,
+          poolAddress,
+          gasMax,
+          gasMultiplierPct,
+        } = request.body as typeof UniswapExecuteSwapRequest._type;
 
         return await executeClmmSwap(
           fastify,
@@ -442,6 +465,7 @@ export const executeSwapRoute: FastifyPluginAsync = async (fastify) => {
           amount,
           side as 'BUY' | 'SELL',
           slippagePct,
+          poolAddress,
           gasMax,
           gasMultiplierPct,
         );

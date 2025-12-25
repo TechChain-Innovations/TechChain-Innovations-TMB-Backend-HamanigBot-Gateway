@@ -5,6 +5,11 @@
     "chainID": { "type": "integer" },
     "nodeURL": { "type": "string" },
     "nativeCurrencySymbol": { "type": "string" },
+    "gasMode": {
+      "type": "string",
+      "enum": ["gateway", "dextrade"],
+      "description": "Gas pricing mode. 'gateway' uses EIP-1559 (default). 'dextrade' uses feeData maxFeePerGas/gasPrice and legacy type-0."
+    },
     "minGasPrice": {
       "type": "number",
       "description": "Minimum gas price in GWEI"

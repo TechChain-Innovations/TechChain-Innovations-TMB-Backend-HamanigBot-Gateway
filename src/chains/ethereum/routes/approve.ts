@@ -72,6 +72,8 @@ export async function approveEthereumToken(
   }
 
   const amountBigNumber = amount ? utils.parseUnits(amount, fullToken.decimals) : constants.MaxUint256;
+  let lastGasOptions: any;
+  let lastTxValue: ethers.BigNumber | undefined;
 
   try {
     let approval;
@@ -150,6 +152,8 @@ export async function approveEthereumToken(
 
         // Get gas options using estimateGasPrice
         const gasOptions = await ethereum.prepareGasOptions(undefined, APPROVE_GAS_LIMIT);
+        lastGasOptions = gasOptions;
+        lastGasOptions = gasOptions;
 
         // Build unsigned transaction with gas parameters
         const unsignedTx = {
@@ -159,6 +163,7 @@ export async function approveEthereumToken(
           chainId: ethereum.chainId,
           ...gasOptions, // Include gas parameters from prepareGasOptions
         };
+        lastTxValue = (unsignedTx as any).value;
 
         // Sign with Ledger
         const signedTx = await ledger.signTransaction(address, unsignedTx as any);
@@ -192,8 +197,16 @@ export async function approveEthereumToken(
         // Instantiate a contract and pass in wallet, which act on behalf of that signer
         const contract = ethereum.getContract(fullToken.address, wallet);
 
+        const gasOptions = await ethereum.prepareGasOptions(undefined, APPROVE_GAS_LIMIT);
+        lastGasOptions = gasOptions;
+        const params: any = {
+          ...gasOptions,
+          nonce: await ethereum.provider.getTransactionCount(wallet.address, 'pending'),
+        };
+        lastTxValue = (params as any).value;
+
         // Call approve function
-        const tx = await ethereum.approveERC20(contract, wallet, spenderAddress, amountBigNumber);
+        const tx = await contract.approve(spenderAddress, amountBigNumber, params);
 
         // Wait for the transaction to be mined with timeout (60 seconds for approvals)
         const receipt = await waitForTransactionWithTimeout(tx as any, APPROVAL_TRANSACTION_TIMEOUT);
@@ -271,6 +284,7 @@ export async function approveEthereumToken(
           chainId: ethereum.chainId,
           ...gasOptions,
         };
+        lastTxValue = (unsignedTx as any).value;
 
         // Sign with Ledger
         const signedTx = await ledger.signTransaction(address, unsignedTx as any);
@@ -304,11 +318,16 @@ export async function approveEthereumToken(
           }, ${universalRouterAddress}, ${permit2Amount.toString()}, ${expiration})`
         );
 
+        const permit2GasOptions = await ethereum.prepareGasOptions(undefined, APPROVE_GAS_LIMIT);
+        lastGasOptions = permit2GasOptions;
+        lastTxValue = (permit2GasOptions as any).value;
+
         const permit2Tx = await permit2Contract.approve(
           fullToken.address,
           universalRouterAddress,
           permit2Amount,
-          expiration
+          expiration,
+          permit2GasOptions
         );
 
         // Wait for confirmation with extended timeout
@@ -349,9 +368,12 @@ export async function approveEthereumToken(
 
     // Handle specific error cases
     if (error.message && error.message.includes('insufficient funds')) {
-      throw fastify.httpErrors.badRequest(
-        'Insufficient funds for transaction. Please ensure you have enough ETH to cover gas costs.'
-      );
+      const message = await ethereum.buildInsufficientFundsMessage({
+        error,
+        walletAddress: address,
+        txParams: { ...lastGasOptions, value: lastTxValue },
+      });
+      throw fastify.httpErrors.badRequest(message);
     } else if (error.message.includes('rejected on Ledger')) {
       throw fastify.httpErrors.badRequest('Transaction rejected on Ledger device');
     } else if (error.message.includes('Ledger device is locked')) {

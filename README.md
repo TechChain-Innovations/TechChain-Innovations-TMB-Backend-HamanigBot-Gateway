@@ -407,7 +407,7 @@ Gateway supports optimized RPC providers for enhanced performance:
    ```yaml
    # In conf/chains/ethereum/mainnet.yml
    chainID: 1
-   nodeURL: https://eth.llamarpc.com  # fallback URL
+   nodeURL: https://lb.drpc.live/ethereum/Ai3nGXKfwk5MuI141vmyBCglCX6-uzMR8I-jQmlfqV1j  # fallback URL
    rpcProvider: infura
    ```
 
