@@ -63,3 +63,78 @@ jobs:
             BUILD_DATE=${{ steps.build_time.outputs.date }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+          
+      - name: Pick sha tag
+        id: bump
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          TAG="$(echo "${{ steps.meta.outputs.tags }}" | awk -F: '/:sha-/{print $2; exit}')"
+          if [[ -z "${TAG}" ]]; then
+            echo "ERROR: sha tag not found in meta tags:"
+            echo "${{ steps.meta.outputs.tags }}"
+            exit 1
+          fi
+
+          echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
+          echo "digest=${{ steps.build.outputs.digest || '' }}" >> "$GITHUB_OUTPUT"
+
+      - name: Checkout deploy repo (charts repo)
+        uses: actions/checkout@v4
+        with:
+          repository: TechChain-Innovations/TMB-HamanigBot-Gateway
+          token: ${{ secrets.INFRA_REPO_TOKEN }}
+          path: deploy
+
+      - name: Update image.tag in ALL values files (yq)
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd deploy
+
+          sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
+
+          TAG="${{ steps.bump.outputs.tag }}"
+          REPO="techchainsolutions/hamanigbot-gateway"
+
+          VALUES_DIR="charts/hummingbot-gateway"
+          FILES=(
+            "${VALUES_DIR}/values-dev.yaml"
+            "${VALUES_DIR}/values-release.yaml"
+            "${VALUES_DIR}/values-main.yaml"
+          )
+
+          for f in "${FILES[@]}"; do
+            if [[ ! -f "$f" ]]; then
+              echo "ERROR: file not found: $f"
+              echo "Dir listing:"
+              ls -la "$VALUES_DIR" || true
+              exit 1
+            fi
+
+            yq -i ".image.repository = \"${REPO}\"" "$f"
+            yq -i ".image.tag = \"${TAG}\"" "$f"
+          done
+
+          git diff
+
+      - name: Create Pull Request (bump image tag in 3 files)
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.INFRA_REPO_TOKEN }}
+          path: deploy
+          commit-message: "chore(gateway): bump image to ${{ steps.bump.outputs.tag }} (dev/release/main)"
+          title: "Bump gateway image to ${{ steps.bump.outputs.tag }} in dev/release/main"
+          body: |
+            Automated image tag update in 3 Helm values files:
+            - charts/hummingbot-gateway/values-dev.yaml
+            - charts/hummingbot-gateway/values-release.yaml
+            - charts/hummingbot-gateway/values-main.yaml
+
+            Image: techchainsolutions/hamanigbot-gateway:${{ steps.bump.outputs.tag }}
+            Digest: ${{ steps.bump.outputs.digest }}
+            Source: ${{ github.repository }}@${{ github.sha }}
+          branch: "bot/bump-gateway-${{ steps.bump.outputs.tag }}"
+          base: "dev"
