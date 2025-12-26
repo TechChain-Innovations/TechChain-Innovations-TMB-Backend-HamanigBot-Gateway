@@ -1,0 +1,5 @@
+chainID: 56
+nodeURL: https://lb.drpc.live/bsc/Ai3nGXKfwk5MuI141vmyBCglCX6-uzMR8I-jQmlfqV1j
+nativeCurrencySymbol: BNB
+minGasPrice: 1.0
+gasMode: dextrade

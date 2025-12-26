@@ -1,0 +1,4 @@
+chainID: 11155111
+nodeURL: https://sepolia.infura.io/v3/7b6686045b9d4b8795b602b5a931a720 
+nativeCurrencySymbol: ETH
+minGasPrice: 0.01
