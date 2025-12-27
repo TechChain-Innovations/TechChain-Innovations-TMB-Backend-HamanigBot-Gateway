@@ -1,4 +1,4 @@
-nodeURL: https://api.mainnet-beta.solana.com
+nodeURL: https://mainnet.helius-rpc.com/?api-key=b0943c67-8505-4432-8c34-1839e7ca0ae3
 nativeCurrencySymbol: SOL
 
 # Default compute units for a transaction
