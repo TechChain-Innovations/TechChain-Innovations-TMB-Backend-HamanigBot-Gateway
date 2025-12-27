@@ -512,8 +512,8 @@ export const startGateway = async () => {
 
   // Build info banner for easy deployment verification
   const buildTimestamp = process.env.BUILD_DATE || 'local-dev';
-  const buildCommit = process.env.COMMIT?.substring(0, 7) || 'unknown';
-  const buildBranch = process.env.BRANCH || 'local';
+  const buildCommit = process.env.COMMIT_SHA?.substring(0, 7) || 'unknown';
+  const buildBranch = process.env.COMMIT_BRANCH || 'local';
   console.log(`
 ╔════════════════════════════════════════════════════════════════╗
 ║                    🚀 DEPLOYMENT INFO 🚀                       ║
