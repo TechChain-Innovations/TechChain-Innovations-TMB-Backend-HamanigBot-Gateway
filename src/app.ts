@@ -509,6 +509,23 @@ export const startGateway = async () => {
 
   // Display ASCII logo
   console.log(`\n${asciiLogo.trim()}`);
+
+  // Build info banner for easy deployment verification
+  const buildTimestamp = process.env.BUILD_DATE || 'local-dev';
+  const buildCommit = process.env.COMMIT?.substring(0, 7) || 'unknown';
+  const buildBranch = process.env.BRANCH || 'local';
+  console.log(`
+╔════════════════════════════════════════════════════════════════╗
+║                    🚀 DEPLOYMENT INFO 🚀                       ║
+╠════════════════════════════════════════════════════════════════╣
+║  Version:    ${GATEWAY_VERSION.padEnd(47)}║
+║  Commit:     ${buildCommit.padEnd(47)}║
+║  Branch:     ${buildBranch.padEnd(47)}║
+║  Built:      ${buildTimestamp.padEnd(47)}║
+║  Started:    ${new Date().toISOString().padEnd(47)}║
+╚════════════════════════════════════════════════════════════════╝
+`);
+
   logger.info(`⚡️ Gateway version ${GATEWAY_VERSION} starting at ${protocol}://localhost:${port}`);
   logger.info(`🔧 Log level configured as: ${ConfigManagerV2.getInstance().get('server.logLevel') || 'info'}`);
 
