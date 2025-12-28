@@ -1005,3 +1005,4 @@ If you see errors like `Cannot find module '@ledgerhq/hw-transport-node-hid'` or
 - Open the appropriate app (Ethereum or Solana) on the device
 - Try different USB ports or cables
 - Close Ledger Live if it's running (it may lock the device)
+
