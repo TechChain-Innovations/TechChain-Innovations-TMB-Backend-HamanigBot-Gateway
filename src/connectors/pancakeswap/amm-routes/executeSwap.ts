@@ -32,18 +32,10 @@ async function buildGasOptions(
   if (!manual) {
     return ethereum.prepareGasOptions(undefined, gasLimit);
   }
-
-  const baseGwei = await ethereum.estimateGasPrice();
-  const withMultiplier = multiplier ? baseGwei * (1 + multiplier / 100) : baseGwei;
-  const capped = cap ? Math.min(withMultiplier, cap) : withMultiplier;
-  const effective = capped; // let chain/node decide if too low
-  const gasPriceWei = utils.parseUnits(effective.toString(), 'gwei');
-
-  return {
-    type: 0,
-    gasLimit: gasLimit ?? AMM_SWAP_GAS_LIMIT,
-    gasPrice: gasPriceWei,
-  };
+  return ethereum.prepareGasOptions(undefined, gasLimit, {
+    gasMax: cap,
+    gasMultiplierPct: multiplier,
+  });
 }
 
 export async function executeAmmSwap(

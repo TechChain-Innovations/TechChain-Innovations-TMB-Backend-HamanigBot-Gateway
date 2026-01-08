@@ -124,16 +124,28 @@ export class Ethereum {
     }
 
     try {
-      const baseFee: BigNumber = await this.provider.getGasPrice();
-      let priorityFee: BigNumber = BigNumber.from('0');
-      // Only get priority fee for mainnet
-      if (this.network === 'mainnet') {
-        priorityFee = BigNumber.from(await this.provider.send('eth_maxPriorityFeePerGas', []));
+      let gasPriceWei: BigNumber;
+      const supportsEIP1559 =
+        this.chainId === 1 ||
+        this.chainId === 56 ||
+        this.chainId === 137 ||
+        this.chainId === 42161 ||
+        this.chainId === 10 ||
+        this.chainId === 11155111 ||
+        this.chainId === 8453;
+
+      if (supportsEIP1559) {
+        const block = await this.provider.getBlock('latest');
+        const baseFee = block.baseFeePerGas || BigNumber.from('0');
+        const priorityFee = await this.estimatePriorityFeePerGas();
+        gasPriceWei = baseFee.add(priorityFee);
+      } else {
+        gasPriceWei = await this.provider.getGasPrice();
       }
 
       // Apply minimum gas price for all networks
       const minGasPriceWei = utils.parseUnits(this.minGasPrice.toString(), 'gwei');
-      const baseWithPriority = baseFee.add(priorityFee);
+      const baseWithPriority = gasPriceWei;
 
       // Use the larger of the current gas price or the configured minimum
       const adjustedFee = baseWithPriority.lt(minGasPriceWei) ? minGasPriceWei : baseWithPriority;
@@ -168,8 +180,16 @@ export class Ethereum {
    * @param gasLimit Gas limit (optional, defaults to 300000)
    * @returns Gas options object for ethers.js transaction
    */
-  public async prepareGasOptions(gasPrice?: number, gasLimit?: number): Promise<any> {
+  public async prepareGasOptions(
+    gasPrice?: number,
+    gasLimit?: number,
+    overrides?: { gasMax?: number; gasMultiplierPct?: number }
+  ): Promise<any> {
     const gasOptions: any = {};
+    const gasMax = overrides?.gasMax && overrides.gasMax > 0 ? overrides.gasMax : undefined;
+    const gasMultiplierPct =
+      overrides?.gasMultiplierPct && overrides.gasMultiplierPct > 0 ? overrides.gasMultiplierPct : undefined;
+    const hasOverrides = gasMax !== undefined || gasMultiplierPct !== undefined;
 
     // Set default gas limit if not provided
     const DEFAULT_GAS_LIMIT = 300000;
@@ -177,7 +197,7 @@ export class Ethereum {
 
     // DexTrade-compatible mode: use legacy gasPrice (eth_gasPrice) and type-0.
     // This aligns with DexTrade's low-fee estimation path and avoids EIP-1559 fee bumping.
-    if (!gasPrice && this.gasMode === 'dextrade') {
+    if (!gasPrice && this.gasMode === 'dextrade' && !hasOverrides) {
       try {
         let rawGasPriceWei = await this.provider.getGasPrice();
         if (rawGasPriceWei && rawGasPriceWei.gt(0)) {
@@ -236,33 +256,55 @@ export class Ethereum {
 
     if (supportsEIP1559) {
       try {
-        // Use EIP-1559 gas pricing (type 2)
-        const feeData = await this.provider.getFeeData();
+        // Get current base fee from latest block
+        const block = await this.provider.getBlock('latest');
+        const baseFee = block.baseFeePerGas || BigNumber.from('0');
 
-        if (feeData.maxFeePerGas && feeData.maxPriorityFeePerGas) {
-          // Get current base fee from latest block
-          const block = await this.provider.getBlock('latest');
-          const baseFee = block.baseFeePerGas || BigNumber.from('0');
+        let priorityFee = await this.estimatePriorityFeePerGas();
 
-          // Calculate recommended maxFeePerGas as 2 * baseFee + maxPriorityFeePerGas
-          const recommendedMaxFee = baseFee.mul(2).add(feeData.maxPriorityFeePerGas);
-
-          // Use the higher of network estimate or our calculation
-          const maxFeePerGas = feeData.maxFeePerGas.gt(recommendedMaxFee) ? feeData.maxFeePerGas : recommendedMaxFee;
-
-          gasOptions.type = 2;
-          gasOptions.maxFeePerGas = maxFeePerGas;
-          gasOptions.maxPriorityFeePerGas = feeData.maxPriorityFeePerGas;
-
-          logger.info(
-            `Using EIP-1559 pricing: baseFee=${utils.formatUnits(baseFee, 'gwei')} GWEI, maxFee=${utils.formatUnits(
-              maxFeePerGas,
-              'gwei'
-            )} GWEI, priority=${utils.formatUnits(feeData.maxPriorityFeePerGas, 'gwei')} GWEI`
-          );
-
-          return gasOptions;
+        // Ensure minimum priority fee of 0.01 gwei (10M wei) for transaction to be picked up
+        const minPriorityFee = utils.parseUnits('0.01', 'gwei');
+        if (priorityFee.lt(minPriorityFee)) {
+          priorityFee = minPriorityFee;
         }
+
+        let adjustedBaseFee = baseFee;
+        if (gasMultiplierPct) {
+          const multiplierBps = Math.max(1, Math.round((100 + gasMultiplierPct) * 100));
+          adjustedBaseFee = baseFee.mul(multiplierBps).div(10000);
+        }
+
+        // Calculate maxFeePerGas as 2 * adjustedBaseFee + priorityFee (allows for base fee doubling)
+        let maxFeePerGas = adjustedBaseFee.mul(2).add(priorityFee);
+
+        if (gasMax) {
+          const gasMaxWei = utils.parseUnits(gasMax.toString(), 'gwei');
+          if (maxFeePerGas.gt(gasMaxWei)) {
+            logger.info(
+              `Applying gasMax cap: maxFee ${utils.formatUnits(maxFeePerGas, 'gwei')} GWEI -> ${gasMax} GWEI`
+            );
+            maxFeePerGas = gasMaxWei;
+            const maxAllowedPriority = gasMaxWei.sub(adjustedBaseFee);
+            if (maxAllowedPriority.gt(0) && priorityFee.gt(maxAllowedPriority)) {
+              priorityFee = maxAllowedPriority;
+            }
+          }
+        }
+
+        gasOptions.type = 2;
+        gasOptions.maxFeePerGas = maxFeePerGas;
+        gasOptions.maxPriorityFeePerGas = priorityFee;
+
+        logger.info(
+          `Using EIP-1559 pricing: baseFee=${utils.formatUnits(baseFee, 'gwei')} GWEI${
+            gasMultiplierPct ? ` (x${(1 + gasMultiplierPct / 100).toFixed(2)})` : ''
+          }, maxFee=${utils.formatUnits(
+            maxFeePerGas,
+            'gwei'
+          )} GWEI, priority=${utils.formatUnits(priorityFee, 'gwei')} GWEI`
+        );
+
+        return gasOptions;
       } catch (error: any) {
         logger.warn(`Failed to get EIP-1559 fee data, falling back to legacy pricing: ${error.message}`);
       }
@@ -271,10 +313,74 @@ export class Ethereum {
     // Fallback to legacy gas pricing (type 0)
     const gasPriceInGwei = gasPrice ?? (await this.estimateGasPrice());
     gasOptions.type = 0;
-    gasOptions.gasPrice = utils.parseUnits(gasPriceInGwei.toString(), 'gwei');
-    logger.info(`Using legacy gas pricing: ${gasPriceInGwei} GWEI with gasLimit: ${gasOptions.gasLimit}`);
+    let gasPriceWei = utils.parseUnits(gasPriceInGwei.toString(), 'gwei');
+    if (gasMultiplierPct) {
+      const multiplierBps = Math.max(1, Math.round((100 + gasMultiplierPct) * 100));
+      gasPriceWei = gasPriceWei.mul(multiplierBps).div(10000);
+    }
+    if (gasMax) {
+      const gasMaxWei = utils.parseUnits(gasMax.toString(), 'gwei');
+      if (gasPriceWei.gt(gasMaxWei)) {
+        logger.info(
+          `Applying gasMax cap (legacy): gasPrice ${utils.formatUnits(gasPriceWei, 'gwei')} GWEI -> ${gasMax} GWEI`
+        );
+        gasPriceWei = gasMaxWei;
+      }
+    }
+    gasOptions.gasPrice = gasPriceWei;
+    logger.info(
+      `Using legacy gas pricing: ${utils.formatUnits(gasPriceWei, 'gwei')} GWEI with gasLimit: ${gasOptions.gasLimit}`
+    );
 
     return gasOptions;
+  }
+
+  /**
+   * Estimate EIP-1559 priority fee from recent blocks using fee history.
+   * Falls back to eth_maxPriorityFeePerGas when unavailable.
+   */
+  private async estimatePriorityFeePerGas(): Promise<BigNumber> {
+    try {
+      const blockCount = 5;
+      const percentile = 20;
+      const history = await this.provider.send('eth_feeHistory', [blockCount, 'latest', [percentile]]);
+
+      if (history && Array.isArray(history.reward)) {
+        const rewards = history.reward
+          .map((reward: any) =>
+            Array.isArray(reward) && reward.length > 0 ? BigNumber.from(reward[0]) : null
+          )
+          .filter((reward: BigNumber | null): reward is BigNumber => reward !== null);
+
+        if (rewards.length > 0) {
+          rewards.sort((a, b) => (a.gt(b) ? 1 : -1));
+          const minReward = rewards[0];
+          const medianReward = rewards[Math.floor(rewards.length / 2)];
+          const maxReward = rewards[rewards.length - 1];
+
+          logger.info(
+            `Priority fee (feeHistory p${percentile}) gwei: min=${utils.formatUnits(
+              minReward,
+              'gwei'
+            )}, median=${utils.formatUnits(medianReward, 'gwei')}, max=${utils.formatUnits(maxReward, 'gwei')}`
+          );
+
+          return medianReward;
+        }
+      }
+
+      logger.warn('Fee history returned no rewards, falling back to eth_maxPriorityFeePerGas.');
+    } catch (error: any) {
+      logger.warn(`Failed to fetch fee history for priority fee: ${error.message}`);
+    }
+
+    try {
+      return BigNumber.from(await this.provider.send('eth_maxPriorityFeePerGas', []));
+    } catch (error: any) {
+      logger.warn(`Failed to fetch eth_maxPriorityFeePerGas: ${error.message}`);
+    }
+
+    return utils.parseUnits('0.1', 'gwei');
   }
 
   public async buildInsufficientFundsMessage(params: {

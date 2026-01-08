@@ -308,7 +308,14 @@ const configureGatewayServer = () => {
     (request as any)._start = process.hrtime.bigint();
   });
 
+  // Endpoints to skip from request/response logging (high-frequency polling)
+  const SKIP_LOGGING_PATTERNS = [/^\/chains\/[^/]+\/poll$/];
+  const shouldSkipLogging = (url: string) => SKIP_LOGGING_PATTERNS.some((pattern) => pattern.test(url));
+
   server.addHook('preHandler', async (request) => {
+    if (shouldSkipLogging(request.url)) {
+      return;
+    }
     logger.info('➡️  Request', {
       id: request.id,
       method: request.method,
@@ -324,6 +331,9 @@ const configureGatewayServer = () => {
   });
 
   server.addHook('onResponse', async (request, reply) => {
+    if (shouldSkipLogging(request.url)) {
+      return;
+    }
     const start = (request as any)._start as bigint | undefined;
     const durationMs = start ? Number((process.hrtime.bigint() - start) / BigInt(1_000_000)) : undefined;
     logger.info('⬅️  Response', {

@@ -99,6 +99,20 @@ export const PancakeswapQuoteSwapRequest = Type.Object({
       default: ethereumChainConfig.defaultWallet,
     })
   ),
+  gasMax: Type.Optional(
+    Type.Number({
+      minimum: 0,
+      description: 'Manual gas price cap in Gwei (0 = auto)',
+      examples: [50],
+    })
+  ),
+  gasMultiplierPct: Type.Optional(
+    Type.Number({
+      minimum: 0,
+      description: 'Gas price multiplier percent (0 = auto)',
+      examples: [35],
+    })
+  ),
 });
 
 // Pancakeswap-specific quote-swap response

@@ -16,7 +16,9 @@ async function executeSwap(
   quoteToken: string,
   amount: number,
   side: 'BUY' | 'SELL',
-  slippagePct: number
+  slippagePct: number,
+  gasMax?: number,
+  gasMultiplierPct?: number
 ): Promise<SwapExecuteResponseType> {
   logger.info(`Executing swap: ${amount} ${baseToken} ${side} for ${quoteToken}`);
 
@@ -29,7 +31,9 @@ async function executeSwap(
     quoteToken,
     amount,
     side,
-    slippagePct
+    slippagePct,
+    gasMax,
+    gasMultiplierPct
   );
 
   // Step 2: Execute the quote
@@ -54,7 +58,7 @@ export const executeSwapRoute: FastifyPluginAsync = async (fastify) => {
     },
     async (request) => {
       try {
-        const { walletAddress, network, baseToken, quoteToken, amount, side, slippagePct } =
+        const { walletAddress, network, baseToken, quoteToken, amount, side, slippagePct, gasMax, gasMultiplierPct } =
           request.body as typeof UniswapExecuteSwapRequest._type;
 
         return await executeSwap(
@@ -65,7 +69,9 @@ export const executeSwapRoute: FastifyPluginAsync = async (fastify) => {
           quoteToken,
           amount,
           side as 'BUY' | 'SELL',
-          slippagePct
+          slippagePct,
+          gasMax,
+          gasMultiplierPct
         );
       } catch (e) {
         if (e.statusCode) throw e;

@@ -24,7 +24,7 @@ async function executeQuote(
   }
 
   const { quote, request } = cached;
-  const { inputToken, outputToken, side, amount } = request;
+  const { inputToken, outputToken, side, amount, gasMax, gasMultiplierPct } = request;
 
   const ethereum = await Ethereum.getInstance(network);
 
@@ -107,7 +107,10 @@ async function executeQuote(
 
       // Get gas options with increased gas limit for Universal Router V2
       const gasLimit = 500000; // Increased for Universal Router V2
-      const gasOptions = await ethereum.prepareGasOptions(undefined, gasLimit);
+      const gasOptions = await ethereum.prepareGasOptions(undefined, gasLimit, {
+        gasMax,
+        gasMultiplierPct,
+      });
 
       // Build unsigned transaction with gas parameters
       const unsignedTx = {
@@ -142,7 +145,10 @@ async function executeQuote(
       // Get gas options with increased gas limit for Universal Router V2
       // Pancakeswap Universal Router V2 swaps typically use between 200k-500k gas
       const gasLimit = 500000; // Increased for Universal Router V2
-      const gasOptions = await ethereum.prepareGasOptions(undefined, gasLimit);
+      const gasOptions = await ethereum.prepareGasOptions(undefined, gasLimit, {
+        gasMax,
+        gasMultiplierPct,
+      });
       logger.info(`Using gas limit: ${gasOptions.gasLimit?.toString() || gasLimit}`);
 
       // Build transaction parameters with gas options
