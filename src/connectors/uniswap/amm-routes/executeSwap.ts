@@ -3,6 +3,7 @@ import { FastifyPluginAsync, FastifyInstance } from 'fastify';
 
 import { Ethereum } from '../../../chains/ethereum/ethereum';
 import { EthereumLedger } from '../../../chains/ethereum/ethereum-ledger';
+import { acquireWalletLock, getNextNonce, invalidateNonce } from '../../../chains/ethereum/nonce-manager';
 import { getEthereumChainConfig } from '../../../chains/ethereum/ethereum.config';
 import { waitForTransactionWithTimeout } from '../../../chains/ethereum/ethereum.utils';
 import { ExecuteSwapRequestType, SwapExecuteResponseType, SwapExecuteResponse } from '../../../schemas/router-schema';
@@ -50,6 +51,7 @@ export async function executeAmmSwap(
   gasMax?: number,
   gasMultiplierPct?: number,
 ): Promise<SwapExecuteResponseType> {
+  const releaseLock = await acquireWalletLock(walletAddress, network);
   const ethereum = await Ethereum.getInstance(network);
   await ethereum.init();
   let lastGasOptions: any;
@@ -135,7 +137,7 @@ export async function executeAmmSwap(
       logger.info(`Hardware wallet detected for ${walletAddress}. Building swap transaction for Ledger signing.`);
 
       const ledger = new EthereumLedger();
-      const nonce = await ethereum.provider.getTransactionCount(walletAddress, 'latest');
+      const nonce = await getNextNonce(ethereum.provider, walletAddress, network);
 
       // Build the swap transaction data
       const iface = new utils.Interface(IUniswapV2Router02ABI.abi);
@@ -209,6 +211,7 @@ export async function executeAmmSwap(
 
       const gasOptions = await buildGasOptions(ethereum, AMM_SWAP_GAS_LIMIT, gasMax, gasMultiplierPct);
       const txOptions: any = { ...gasOptions };
+      txOptions.nonce = await getNextNonce(ethereum.provider, walletAddress, network);
       lastGasOptions = txOptions;
       lastTxValue = (txOptions as any).value;
 
@@ -294,6 +297,9 @@ export async function executeAmmSwap(
     return result;
   } catch (error) {
     logger.error(`Swap execution error: ${error.message}`);
+    if (error?.code === 'NONCE_EXPIRED' || error?.message?.toLowerCase().includes('nonce')) {
+      invalidateNonce(walletAddress, network);
+    }
 
     // Handle specific error cases
     if (error.message && error.message.includes('insufficient funds')) {
@@ -317,6 +323,8 @@ export async function executeAmmSwap(
     }
 
     throw fastify.httpErrors.internalServerError(`Failed to execute swap: ${error.message}`);
+  } finally {
+    releaseLock();
   }
 }
 

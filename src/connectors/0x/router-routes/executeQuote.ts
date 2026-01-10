@@ -1,7 +1,8 @@
-import { BigNumber } from 'ethers';
+import { BigNumber, providers } from 'ethers';
 import { FastifyPluginAsync, FastifyInstance } from 'fastify';
 
 import { Ethereum } from '../../../chains/ethereum/ethereum';
+import { acquireWalletLock, getNextNonce, invalidateNonce } from '../../../chains/ethereum/nonce-manager';
 import { waitForTransactionWithTimeout } from '../../../chains/ethereum/ethereum.utils';
 import { ExecuteQuoteRequestType, SwapExecuteResponseType, SwapExecuteResponse } from '../../../schemas/router-schema';
 import { logger } from '../../../services/logger';
@@ -56,7 +57,7 @@ async function executeQuote(
   }
 
   // Execute the swap transaction
-  const txData = {
+  const baseTxData: providers.TransactionRequest = {
     to: quote.to,
     data: quote.data,
     value: quote.value,
@@ -64,7 +65,22 @@ async function executeQuote(
     ...(gasPrice && { gasPrice: BigNumber.from(gasPrice) }),
   };
 
-  const txResponse = await wallet.sendTransaction(txData);
+  const releaseLock = await acquireWalletLock(walletAddress, network);
+  let txResponse;
+  try {
+    const txData: providers.TransactionRequest = {
+      ...baseTxData,
+      nonce: await getNextNonce(ethereum.provider, walletAddress, network),
+    };
+    txResponse = await wallet.sendTransaction(txData);
+  } catch (error) {
+    if (error?.code === 'NONCE_EXPIRED' || error?.message?.toLowerCase().includes('nonce')) {
+      invalidateNonce(walletAddress, network);
+    }
+    throw error;
+  } finally {
+    releaseLock();
+  }
   const txHash = txResponse.hash;
   logger.info(`Transaction sent: ${txHash}`);
 

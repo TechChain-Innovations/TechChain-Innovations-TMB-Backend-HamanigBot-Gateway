@@ -3,6 +3,7 @@ import { FastifyPluginAsync, FastifyInstance } from 'fastify';
 
 import { Ethereum } from '../../../chains/ethereum/ethereum';
 import { EthereumLedger } from '../../../chains/ethereum/ethereum-ledger';
+import { acquireWalletLock, getNextNonce, invalidateNonce } from '../../../chains/ethereum/nonce-manager';
 import { waitForTransactionWithTimeout } from '../../../chains/ethereum/ethereum.utils';
 import { ExecuteSwapRequestType, SwapExecuteResponseType, SwapExecuteResponse } from '../../../schemas/router-schema';
 import { logger } from '../../../services/logger';
@@ -26,6 +27,7 @@ export async function executeClmmSwap(
   side: 'BUY' | 'SELL',
   slippagePct: number
 ): Promise<SwapExecuteResponseType> {
+  const releaseLock = await acquireWalletLock(walletAddress, network);
   const ethereum = await Ethereum.getInstance(network);
   await ethereum.init();
   let lastGasOptions: any;
@@ -120,7 +122,7 @@ export async function executeClmmSwap(
       logger.info(`Hardware wallet detected for ${walletAddress}. Building swap transaction for Ledger signing.`);
 
       const ledger = new EthereumLedger();
-      const nonce = await ethereum.provider.getTransactionCount(walletAddress, 'latest');
+      const nonce = await getNextNonce(ethereum.provider, walletAddress, network);
 
       // Build the swap transaction data
       const iface = new utils.Interface(ISwapRouter02ABI);
@@ -206,6 +208,7 @@ export async function executeClmmSwap(
 
       // Use Ethereum's gas options
       const txOptions = await ethereum.prepareGasOptions(undefined, CLMM_SWAP_GAS_LIMIT);
+      txOptions.nonce = await getNextNonce(ethereum.provider, walletAddress, network);
       lastGasOptions = txOptions;
       lastTxValue = (txOptions as any).value;
 
@@ -303,6 +306,9 @@ export async function executeClmmSwap(
     };
   } catch (error) {
     logger.error(`Swap execution error: ${error.message}`);
+    if (error?.code === 'NONCE_EXPIRED' || error?.message?.toLowerCase().includes('nonce')) {
+      invalidateNonce(walletAddress, network);
+    }
     if (error.transaction) {
       logger.debug(`Transaction details: ${JSON.stringify(error.transaction)}`);
     }
@@ -332,6 +338,8 @@ export async function executeClmmSwap(
     }
 
     throw fastify.httpErrors.internalServerError(`Failed to execute swap: ${error.message}`);
+  } finally {
+    releaseLock();
   }
 }
 

@@ -7,6 +7,7 @@ import { bigNumberWithDecimalToStr } from '../../../services/base';
 import { logger } from '../../../services/logger';
 import { Ethereum } from '../ethereum';
 import { EthereumLedger } from '../ethereum-ledger';
+import { acquireWalletLock, getNextNonce, invalidateNonce } from '../nonce-manager';
 import { waitForTransactionWithTimeout, APPROVAL_TRANSACTION_TIMEOUT } from '../ethereum.utils';
 import { ApproveRequestSchema, ApproveResponseSchema, ApproveRequestType, ApproveResponseType } from '../schemas';
 
@@ -75,6 +76,7 @@ export async function approveEthereumToken(
   let lastGasOptions: any;
   let lastTxValue: ethers.BigNumber | undefined;
 
+  const releaseLock = await acquireWalletLock(address, network);
   try {
     let approval;
 
@@ -144,7 +146,7 @@ export async function approveEthereumToken(
         const ledger = new EthereumLedger();
 
         // Get nonce for the address
-        const nonce = await ethereum.provider.getTransactionCount(address, 'pending');
+        const nonce = await getNextNonce(ethereum.provider, address, network);
 
         // Build the approve transaction data
         const iface = new utils.Interface(['function approve(address spender, uint256 amount)']);
@@ -201,7 +203,7 @@ export async function approveEthereumToken(
         lastGasOptions = gasOptions;
         const params: any = {
           ...gasOptions,
-          nonce: await ethereum.provider.getTransactionCount(wallet.address, 'pending'),
+          nonce: await getNextNonce(ethereum.provider, wallet.address, network),
         };
         lastTxValue = (params as any).value;
 
@@ -262,7 +264,7 @@ export async function approveEthereumToken(
         logger.info(`Hardware wallet: Building Permit2.approve() transaction`);
 
         const ledger = new EthereumLedger();
-        const nonce = await ethereum.provider.getTransactionCount(address, 'pending');
+        const nonce = await getNextNonce(ethereum.provider, address, network);
 
         // Build the Permit2 approve transaction data
         const iface = new utils.Interface(permit2ApproveABI);
@@ -319,6 +321,7 @@ export async function approveEthereumToken(
         );
 
         const permit2GasOptions = await ethereum.prepareGasOptions(undefined, APPROVE_GAS_LIMIT);
+        permit2GasOptions.nonce = await getNextNonce(ethereum.provider, address, network);
         lastGasOptions = permit2GasOptions;
         lastTxValue = (permit2GasOptions as any).value;
 
@@ -365,6 +368,9 @@ export async function approveEthereumToken(
     };
   } catch (error) {
     logger.error(`Error approving token: ${error.message}`);
+    if (error?.code === 'NONCE_EXPIRED' || error?.message?.toLowerCase().includes('nonce')) {
+      invalidateNonce(address, network);
+    }
 
     // Handle specific error cases
     if (error.message && error.message.includes('insufficient funds')) {
@@ -383,6 +389,8 @@ export async function approveEthereumToken(
     }
 
     throw fastify.httpErrors.internalServerError(`Failed to approve token: ${error.message}`);
+  } finally {
+    releaseLock();
   }
 }
 

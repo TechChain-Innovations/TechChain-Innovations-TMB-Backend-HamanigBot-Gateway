@@ -5,6 +5,7 @@ import { bigNumberWithDecimalToStr } from '../../../services/base';
 import { logger } from '../../../services/logger';
 import { Ethereum } from '../ethereum';
 import { EthereumLedger } from '../ethereum-ledger';
+import { acquireWalletLock, getNextNonce, invalidateNonce } from '../nonce-manager';
 import { waitForTransactionWithTimeout, APPROVAL_TRANSACTION_TIMEOUT } from '../ethereum.utils';
 import { WrapRequestSchema, WrapResponseSchema, WrapRequestType, WrapResponseType } from '../schemas';
 
@@ -93,6 +94,7 @@ export async function wrapEthereum(fastify: FastifyInstance, network: string, ad
   // Parse amount to wei
   const amountInWei = utils.parseEther(amount);
 
+  const releaseLock = await acquireWalletLock(address, network);
   try {
     let transaction;
     let nonce: number;
@@ -105,7 +107,7 @@ export async function wrapEthereum(fastify: FastifyInstance, network: string, ad
       const ledger = new EthereumLedger();
 
       // Get nonce for the address
-      nonce = await ethereum.provider.getTransactionCount(address, 'latest');
+      nonce = await getNextNonce(ethereum.provider, address, network);
 
       // Build the wrap transaction data
       const iface = new utils.Interface(WETH9ABI);
@@ -159,7 +161,7 @@ export async function wrapEthereum(fastify: FastifyInstance, network: string, ad
       const gasOptions = await ethereum.prepareGasOptions(undefined, WRAP_GAS_LIMIT);
       const params: any = {
         ...gasOptions,
-        nonce: await ethereum.provider.getTransactionCount(wallet.address),
+        nonce: await getNextNonce(ethereum.provider, wallet.address, network),
         value: amountInWei, // Send native token with the transaction
       };
 
@@ -198,6 +200,9 @@ export async function wrapEthereum(fastify: FastifyInstance, network: string, ad
     };
   } catch (error) {
     logger.error(`Error wrapping ${wrappedInfo.nativeSymbol} to ${wrappedInfo.symbol}: ${error.message}`);
+    if (error?.code === 'NONCE_EXPIRED' || error?.message?.toLowerCase().includes('nonce')) {
+      invalidateNonce(address, network);
+    }
 
     // Handle specific error cases
     if (error.message && error.message.includes('insufficient funds')) {
@@ -219,6 +224,8 @@ export async function wrapEthereum(fastify: FastifyInstance, network: string, ad
     throw fastify.httpErrors.internalServerError(
       `Failed to wrap ${wrappedInfo.nativeSymbol} to ${wrappedInfo.symbol}: ${error.message}`
     );
+  } finally {
+    releaseLock();
   }
 }
 

@@ -4,6 +4,7 @@ import { approveEthereumToken } from '../../../chains/ethereum/routes/approve';
 
 import { Ethereum } from '../../../chains/ethereum/ethereum';
 import { EthereumLedger } from '../../../chains/ethereum/ethereum-ledger';
+import { acquireWalletLock, getNextNonce, invalidateNonce } from '../../../chains/ethereum/nonce-manager';
 import { waitForTransactionWithTimeout } from '../../../chains/ethereum/ethereum.utils';
 import { ExecuteSwapRequestType, SwapExecuteResponseType, SwapExecuteResponse } from '../../../schemas/router-schema';
 import { logger } from '../../../services/logger';
@@ -16,9 +17,6 @@ import { getUniswapClmmQuote } from './quoteSwap';
 
 // Default gas limit for CLMM swap operations
 const CLMM_SWAP_GAS_LIMIT = 350000;
-
-// In-memory per-wallet lock to serialize tx submissions and avoid nonce collisions
-const walletLocks = new Map<string, Promise<void>>();
 
 const normalizeGasInput = (value?: number | null) => (value && value > 0 ? value : undefined);
 
@@ -41,26 +39,6 @@ async function buildGasOptions(
   });
 }
 
-async function acquireWalletLock(address: string): Promise<() => void> {
-  const key = address.toLowerCase();
-  const prev = walletLocks.get(key) ?? Promise.resolve();
-
-  let releaseNext: () => void;
-  const next = new Promise<void>(resolve => {
-    releaseNext = resolve;
-  });
-
-  walletLocks.set(key, prev.then(() => next));
-  await prev;
-
-  return () => {
-    releaseNext();
-    if (walletLocks.get(key) === next) {
-      walletLocks.delete(key);
-    }
-  };
-}
-
 export async function executeClmmSwap(
   fastify: FastifyInstance,
   walletAddress: string,
@@ -74,7 +52,7 @@ export async function executeClmmSwap(
   gasMax?: number,
   gasMultiplierPct?: number,
 ): Promise<SwapExecuteResponseType> {
-  const releaseLock = await acquireWalletLock(walletAddress);
+  const releaseLock = await acquireWalletLock(walletAddress, network);
   let ethereum: Ethereum | undefined;
   let lastGasOptions: any;
   let lastTxValue: BigNumber | undefined;
@@ -204,7 +182,7 @@ export async function executeClmmSwap(
       logger.info(`Hardware wallet detected for ${walletAddress}. Building swap transaction for Ledger signing.`);
 
       const ledger = new EthereumLedger();
-      const nonce = await ethereum.provider.getTransactionCount(walletAddress, 'pending');
+      const nonce = await getNextNonce(ethereum.provider, walletAddress, network);
 
       // Build the swap transaction data
       const iface = new utils.Interface(ISwapRouter02ABI);
@@ -289,6 +267,7 @@ export async function executeClmmSwap(
       const routerContract = new Contract(routerAddress, ISwapRouter02ABI, wallet);
 
       const txOptions = await buildGasOptions(ethereum, CLMM_SWAP_GAS_LIMIT, gasMax, gasMultiplierPct);
+      txOptions.nonce = await getNextNonce(ethereum.provider, walletAddress, network);
       lastGasOptions = txOptions;
       lastTxValue = (txOptions as any).value;
 
@@ -380,6 +359,9 @@ export async function executeClmmSwap(
   return result;
   } catch (error) {
     logger.error(`Swap execution error: ${error.message}`);
+    if (error?.code === 'NONCE_EXPIRED' || error?.message?.toLowerCase().includes('nonce')) {
+      invalidateNonce(walletAddress, network);
+    }
     if (error.transaction) {
       logger.debug(`Transaction details: ${JSON.stringify(error.transaction)}`);
     }

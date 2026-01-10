@@ -12,6 +12,7 @@ import { walletPath, isHardwareWallet as checkIsHardwareWallet } from '../../wal
 
 import { getEthereumNetworkConfig, getEthereumChainConfig } from './ethereum.config';
 import { InfuraService } from './infura-service';
+import { getNextNonce } from './nonce-manager';
 
 // information about an Ethereum token
 export interface TokenInfo {
@@ -874,7 +875,7 @@ export class Ethereum {
     const gasOptions = await this.prepareGasOptions(undefined, APPROVE_GAS_LIMIT);
     const params: any = {
       ...gasOptions,
-      nonce: await this.provider.getTransactionCount(wallet.address, 'pending'),
+      nonce: await getNextNonce(this.provider, wallet.address, this.network),
     };
 
     // Don't add gasPrice when using EIP-1559 parameters
@@ -1000,7 +1001,7 @@ export class Ethereum {
     const gasOptions = await this.prepareGasOptions();
     const params: any = {
       ...gasOptions,
-      nonce: await this.provider.getTransactionCount(wallet.address),
+      nonce: await getNextNonce(this.provider, wallet.address, this.network),
       value: amountInWei, // Send native token with the transaction
     };
 

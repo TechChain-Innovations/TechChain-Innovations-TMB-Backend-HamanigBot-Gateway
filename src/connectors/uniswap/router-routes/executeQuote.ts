@@ -3,6 +3,7 @@ import { FastifyPluginAsync, FastifyInstance } from 'fastify';
 
 import { Ethereum } from '../../../chains/ethereum/ethereum';
 import { EthereumLedger } from '../../../chains/ethereum/ethereum-ledger';
+import { acquireWalletLock, getNextNonce, invalidateNonce } from '../../../chains/ethereum/nonce-manager';
 import { getEthereumChainConfig } from '../../../chains/ethereum/ethereum.config';
 import { waitForTransactionWithTimeout } from '../../../chains/ethereum/ethereum.utils';
 import { ExecuteQuoteRequestType, SwapExecuteResponseType, SwapExecuteResponse } from '../../../schemas/router-schema';
@@ -104,13 +105,14 @@ async function executeQuote(
   let txReceipt;
   let txHash: string | undefined;
 
+  const releaseLock = await acquireWalletLock(walletAddress, network);
   try {
     if (isHardwareWallet) {
       // Hardware wallet flow
       logger.info('Hardware wallet detected. Building swap transaction for Ledger signing.');
 
       const ledger = new EthereumLedger();
-      const nonce = await ethereum.provider.getTransactionCount(walletAddress, 'latest');
+      const nonce = await getNextNonce(ethereum.provider, walletAddress, network);
 
       // Get gas options with increased gas limit for Universal Router V2
       const gasLimit = 500000; // Increased for Universal Router V2
@@ -163,7 +165,7 @@ async function executeQuote(
         to: quote.methodParameters.to,
         data: quote.methodParameters.calldata,
         value: quote.methodParameters.value,
-        nonce: await ethereum.provider.getTransactionCount(walletAddress, 'latest'),
+        nonce: await getNextNonce(ethereum.provider, walletAddress, network),
         ...gasOptions, // Include gas parameters from prepareGasOptions (includes gasLimit)
       };
 
@@ -185,6 +187,9 @@ async function executeQuote(
     }
   } catch (error) {
     logger.error(`Swap execution error: ${error.message}`);
+    if (error?.code === 'NONCE_EXPIRED' || error?.message?.toLowerCase().includes('nonce')) {
+      invalidateNonce(walletAddress, network);
+    }
     // Log more details about the error for debugging Universal Router issues
     if (error.error && error.error.data) {
       logger.error(`Error data: ${error.error.data}`);
@@ -222,6 +227,8 @@ async function executeQuote(
     }
 
     throw fastify.httpErrors.internalServerError(`Failed to execute swap: ${error.message}`);
+  } finally {
+    releaseLock();
   }
 
   // Calculate expected amounts from the trade

@@ -5,6 +5,7 @@ import { bigNumberWithDecimalToStr } from '../../../services/base';
 import { logger } from '../../../services/logger';
 import { Ethereum } from '../ethereum';
 import { EthereumLedger } from '../ethereum-ledger';
+import { acquireWalletLock, getNextNonce, invalidateNonce } from '../nonce-manager';
 import { waitForTransactionWithTimeout, APPROVAL_TRANSACTION_TIMEOUT } from '../ethereum.utils';
 import { UnwrapRequestSchema, UnwrapResponseSchema, UnwrapRequestType, UnwrapResponseType } from '../schemas';
 
@@ -93,6 +94,7 @@ export async function unwrapEthereum(fastify: FastifyInstance, network: string, 
   // Parse amount to wei
   const amountInWei = utils.parseEther(amount);
 
+  const releaseLock = await acquireWalletLock(address, network);
   try {
     let transaction;
     let nonce: number;
@@ -105,7 +107,7 @@ export async function unwrapEthereum(fastify: FastifyInstance, network: string, 
       const ledger = new EthereumLedger();
 
       // Get nonce for the address
-      nonce = await ethereum.provider.getTransactionCount(address, 'latest');
+      nonce = await getNextNonce(ethereum.provider, address, network);
 
       // Check balance before unwrapping
       const wrappedContract = new ethers.Contract(wrappedInfo.address, WETH9ABI, ethereum.provider);
@@ -175,7 +177,7 @@ export async function unwrapEthereum(fastify: FastifyInstance, network: string, 
       const gasOptions = await ethereum.prepareGasOptions(undefined, UNWRAP_GAS_LIMIT);
       const params: any = {
         ...gasOptions,
-        nonce: await ethereum.provider.getTransactionCount(wallet.address),
+        nonce: await getNextNonce(ethereum.provider, wallet.address, network),
       };
 
       // Create transaction to call withdraw() function
@@ -213,6 +215,9 @@ export async function unwrapEthereum(fastify: FastifyInstance, network: string, 
     };
   } catch (error) {
     logger.error(`Error unwrapping ${wrappedInfo.symbol} to ${wrappedInfo.nativeSymbol}: ${error.message}`);
+    if (error?.code === 'NONCE_EXPIRED' || error?.message?.toLowerCase().includes('nonce')) {
+      invalidateNonce(address, network);
+    }
 
     // Handle specific error cases
     if (error.message && error.message.includes('insufficient funds')) {
@@ -236,6 +241,8 @@ export async function unwrapEthereum(fastify: FastifyInstance, network: string, 
     throw fastify.httpErrors.internalServerError(
       `Failed to unwrap ${wrappedInfo.symbol} to ${wrappedInfo.nativeSymbol}: ${error.message}`
     );
+  } finally {
+    releaseLock();
   }
 }
 

@@ -1,12 +1,14 @@
 import { BigNumber } from 'ethers';
 
 import { Ethereum } from '../../../../src/chains/ethereum/ethereum';
+import { acquireWalletLock, getNextNonce, invalidateNonce } from '../../../../src/chains/ethereum/nonce-manager';
 import { ZeroX } from '../../../../src/connectors/0x/0x';
 import { quoteCache } from '../../../../src/services/quote-cache';
 import { TokenService } from '../../../../src/services/token-service';
 import { fastifyWithTypeProvider } from '../../../utils/testUtils';
 
 jest.mock('../../../../src/chains/ethereum/ethereum');
+jest.mock('../../../../src/chains/ethereum/nonce-manager');
 jest.mock('../../../../src/connectors/0x/0x');
 jest.mock('../../../../src/services/token-service');
 
@@ -99,6 +101,10 @@ describe('POST /execute-quote', () => {
     jest.clearAllMocks();
     quoteCache.clear();
 
+    (acquireWalletLock as jest.Mock).mockResolvedValue(jest.fn());
+    (getNextNonce as jest.Mock).mockResolvedValue(42);
+    (invalidateNonce as jest.Mock).mockResolvedValue(undefined);
+
     // Mock TokenService
     const mockTokenService = {
       getToken: jest.fn().mockImplementation(async (_chain, _network, addressOrSymbol) => {
@@ -124,6 +130,7 @@ describe('POST /execute-quote', () => {
     mockTransaction.wait.mockResolvedValue(mockReceipt);
 
     const mockEthereumInstance = {
+      provider: { getTransactionCount: jest.fn() },
       getWallet: jest.fn().mockResolvedValue(mockWallet),
       getContract: jest.fn().mockReturnValue({}),
       getERC20Allowance: jest.fn().mockResolvedValue({
@@ -196,6 +203,64 @@ describe('POST /execute-quote', () => {
     expect(body.data).toHaveProperty('quoteTokenBalanceChange', 0);
     expect(body.data).toHaveProperty('tokenIn', mockWETH.address);
     expect(body.data).toHaveProperty('tokenOut', mockUSDC.address);
+
+    expect(acquireWalletLock).toHaveBeenCalledWith(mockWallet.address, 'mainnet');
+    expect(getNextNonce).toHaveBeenCalledWith(mockEthereumInstance.provider, mockWallet.address, 'mainnet');
+    expect(mockWallet.sendTransaction).toHaveBeenCalledWith(
+      expect.objectContaining({ nonce: 42 })
+    );
+  });
+
+  it('invalidates cached nonce when transaction returns nonce error', async () => {
+    const quoteId = 'test-quote-id';
+    quoteCache.set(quoteId, mockQuoteData);
+
+    const releaseLock = jest.fn();
+    (acquireWalletLock as jest.Mock).mockResolvedValue(releaseLock);
+
+    mockWallet.sendTransaction.mockRejectedValue(new Error('nonce too low'));
+
+    const mockEthereumInstance = {
+      provider: { getTransactionCount: jest.fn() },
+      getWallet: jest.fn().mockResolvedValue(mockWallet),
+      getContract: jest.fn().mockReturnValue({}),
+      getERC20Allowance: jest.fn().mockResolvedValue({
+        value: BigNumber.from('1000000000000000000'),
+        decimals: 18,
+      }),
+      nativeTokenSymbol: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
+      getToken: jest.fn().mockImplementation((symbolOrAddress) => {
+        if (symbolOrAddress.toLowerCase() === mockWETH.address.toLowerCase() || symbolOrAddress === 'WETH')
+          return mockWETH;
+        if (symbolOrAddress.toLowerCase() === mockUSDC.address.toLowerCase() || symbolOrAddress === 'USDC')
+          return mockUSDC;
+        return null;
+      }),
+      getTokenByAddress: jest.fn().mockImplementation((address) => {
+        if (address === mockWETH.address) return mockWETH;
+        if (address === mockUSDC.address) return mockUSDC;
+        return null;
+      }),
+      handleTransactionConfirmation: jest.fn(),
+    };
+    (Ethereum.getInstance as jest.Mock).mockResolvedValue(mockEthereumInstance);
+    (ZeroX.getInstance as jest.Mock).mockResolvedValue({
+      formatTokenAmount: jest.fn().mockReturnValue('0.1'),
+    });
+
+    const response = await server.inject({
+      method: 'POST',
+      url: '/execute-quote',
+      payload: {
+        network: 'mainnet',
+        walletAddress: mockWallet.address,
+        quoteId: quoteId,
+      },
+    });
+
+    expect(response.statusCode).toBe(500);
+    expect(invalidateNonce).toHaveBeenCalledWith(mockWallet.address, 'mainnet');
+    expect(releaseLock).toHaveBeenCalled();
   });
 
   it('should return 400 if quote not found', async () => {
@@ -221,6 +286,7 @@ describe('POST /execute-quote', () => {
     mockTransaction.wait.mockResolvedValue(mockReceipt);
 
     const mockEthereumInstance = {
+      provider: { getTransactionCount: jest.fn() },
       getWallet: jest.fn().mockResolvedValue(mockWallet),
       getContract: jest.fn().mockReturnValue({}),
       getERC20Allowance: jest.fn().mockResolvedValue({ value: BigNumber.from('0') }),
