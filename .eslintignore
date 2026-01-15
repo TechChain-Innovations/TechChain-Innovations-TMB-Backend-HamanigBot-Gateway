@@ -4,6 +4,7 @@
 /build
 /coverage
 /logs
+/conf
 
 # Generated files
 *.d.ts

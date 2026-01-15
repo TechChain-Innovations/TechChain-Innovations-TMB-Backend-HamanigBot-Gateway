@@ -6,6 +6,7 @@ import { EthereumLedger } from '../../../chains/ethereum/ethereum-ledger';
 import { acquireWalletLock, getNextNonce, invalidateNonce } from '../../../chains/ethereum/nonce-manager';
 import { getEthereumChainConfig } from '../../../chains/ethereum/ethereum.config';
 import { waitForTransactionWithTimeout } from '../../../chains/ethereum/ethereum.utils';
+import { GAS_LOG_TAGS, logGasDetails } from '../../../chains/ethereum/gas-logger';
 import { ExecuteQuoteRequestType, SwapExecuteResponseType, SwapExecuteResponse } from '../../../schemas/router-schema';
 import { logger } from '../../../services/logger';
 import { quoteCache } from '../../../services/quote-cache';
@@ -120,6 +121,14 @@ async function executeQuote(
         gasMax,
         gasMultiplierPct,
       });
+      await logGasDetails({
+        ethereum,
+        tag: GAS_LOG_TAGS.swap,
+        stage: 'Uniswap Router swap (hardware)',
+        gasOptions,
+        gasMax,
+        gasMultiplierPct,
+      });
 
       // Build unsigned transaction with gas parameters
       const unsignedTx = {
@@ -155,6 +164,14 @@ async function executeQuote(
       // Uniswap Universal Router V2 swaps typically use between 200k-500k gas
       const gasLimit = 500000; // Increased for Universal Router V2
       const gasOptions = await ethereum.prepareGasOptions(undefined, gasLimit, {
+        gasMax,
+        gasMultiplierPct,
+      });
+      await logGasDetails({
+        ethereum,
+        tag: GAS_LOG_TAGS.swap,
+        stage: 'Uniswap Router swap',
+        gasOptions,
         gasMax,
         gasMultiplierPct,
       });

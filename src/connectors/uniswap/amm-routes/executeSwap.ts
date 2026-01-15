@@ -6,6 +6,7 @@ import { EthereumLedger } from '../../../chains/ethereum/ethereum-ledger';
 import { acquireWalletLock, getNextNonce, invalidateNonce } from '../../../chains/ethereum/nonce-manager';
 import { getEthereumChainConfig } from '../../../chains/ethereum/ethereum.config';
 import { waitForTransactionWithTimeout } from '../../../chains/ethereum/ethereum.utils';
+import { GAS_LOG_TAGS, logGasDetails } from '../../../chains/ethereum/gas-logger';
 import { ExecuteSwapRequestType, SwapExecuteResponseType, SwapExecuteResponse } from '../../../schemas/router-schema';
 import { logger } from '../../../services/logger';
 import { UniswapAmmExecuteSwapRequest } from '../schemas';
@@ -174,6 +175,14 @@ export async function executeAmmSwap(
       }
 
       const gasOptions = await buildGasOptions(ethereum, AMM_SWAP_GAS_LIMIT, gasMax, gasMultiplierPct);
+      await logGasDetails({
+        ethereum,
+        tag: GAS_LOG_TAGS.swap,
+        stage: 'Uniswap AMM swap (hardware)',
+        gasOptions,
+        gasMax,
+        gasMultiplierPct,
+      });
       lastGasOptions = gasOptions;
 
       // Build unsigned transaction with gas parameters
@@ -210,6 +219,14 @@ export async function executeAmmSwap(
       const routerContract = new Contract(routerAddress, IUniswapV2Router02ABI.abi, wallet);
 
       const gasOptions = await buildGasOptions(ethereum, AMM_SWAP_GAS_LIMIT, gasMax, gasMultiplierPct);
+      await logGasDetails({
+        ethereum,
+        tag: GAS_LOG_TAGS.swap,
+        stage: 'Uniswap AMM swap',
+        gasOptions,
+        gasMax,
+        gasMultiplierPct,
+      });
       const txOptions: any = { ...gasOptions };
       txOptions.nonce = await getNextNonce(ethereum.provider, walletAddress, network);
       lastGasOptions = txOptions;

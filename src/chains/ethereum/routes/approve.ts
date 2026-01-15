@@ -6,6 +6,7 @@ import { getSpender as uniswapSpender } from '../../../connectors/uniswap/uniswa
 import { bigNumberWithDecimalToStr } from '../../../services/base';
 import { logger } from '../../../services/logger';
 import { Ethereum } from '../ethereum';
+import { GAS_LOG_TAGS, logGasDetails, normalizeGasOverrides } from '../gas-logger';
 import { EthereumLedger } from '../ethereum-ledger';
 import { acquireWalletLock, getNextNonce, invalidateNonce } from '../nonce-manager';
 import { waitForTransactionWithTimeout, APPROVAL_TRANSACTION_TIMEOUT } from '../ethereum.utils';
@@ -17,16 +18,20 @@ const APPROVE_GAS_LIMIT = 100000;
 // Permit2 address is constant across all chains
 const PERMIT2_ADDRESS = '0x000000000022D473030F116dDEE9F6B43aC78BA3';
 
+
 export async function approveEthereumToken(
   fastify: FastifyInstance,
   network: string,
   address: string,
   spender: string,
   token: string,
-  amount?: string
+  amount?: string,
+  overrides?: { gasMax?: number; gasMultiplierPct?: number }
 ) {
   const ethereum = await Ethereum.getInstance(network);
   await ethereum.init();
+  const normalizedOverrides = normalizeGasOverrides(overrides?.gasMax, overrides?.gasMultiplierPct);
+  const hasOverrides = normalizedOverrides.gasMax !== undefined || normalizedOverrides.gasMultiplierPct !== undefined;
 
   // Track if this is a Universal Router approval that needs Permit2
   let isUniversalRouter = false;
@@ -153,9 +158,21 @@ export async function approveEthereumToken(
         const data = iface.encodeFunctionData('approve', [spenderAddress, amountBigNumber]);
 
         // Get gas options using estimateGasPrice
-        const gasOptions = await ethereum.prepareGasOptions(undefined, APPROVE_GAS_LIMIT);
+        const gasOptions = await ethereum.prepareGasOptions(
+          undefined,
+          APPROVE_GAS_LIMIT,
+          hasOverrides ? normalizedOverrides : undefined,
+        );
         lastGasOptions = gasOptions;
         lastGasOptions = gasOptions;
+        await logGasDetails({
+          ethereum,
+          tag: GAS_LOG_TAGS.approve,
+          stage: 'ERC20 approve (hardware)',
+          gasOptions,
+          gasMax: normalizedOverrides.gasMax,
+          gasMultiplierPct: normalizedOverrides.gasMultiplierPct,
+        });
 
         // Build unsigned transaction with gas parameters
         const unsignedTx = {
@@ -199,8 +216,20 @@ export async function approveEthereumToken(
         // Instantiate a contract and pass in wallet, which act on behalf of that signer
         const contract = ethereum.getContract(fullToken.address, wallet);
 
-        const gasOptions = await ethereum.prepareGasOptions(undefined, APPROVE_GAS_LIMIT);
+        const gasOptions = await ethereum.prepareGasOptions(
+          undefined,
+          APPROVE_GAS_LIMIT,
+          hasOverrides ? normalizedOverrides : undefined,
+        );
         lastGasOptions = gasOptions;
+        await logGasDetails({
+          ethereum,
+          tag: GAS_LOG_TAGS.approve,
+          stage: 'ERC20 approve',
+          gasOptions,
+          gasMax: normalizedOverrides.gasMax,
+          gasMultiplierPct: normalizedOverrides.gasMultiplierPct,
+        });
         const params: any = {
           ...gasOptions,
           nonce: await getNextNonce(ethereum.provider, wallet.address, network),
@@ -276,7 +305,19 @@ export async function approveEthereumToken(
         ]);
 
         // Get gas options
-        const gasOptions = await ethereum.prepareGasOptions(undefined, APPROVE_GAS_LIMIT);
+        const gasOptions = await ethereum.prepareGasOptions(
+          undefined,
+          APPROVE_GAS_LIMIT,
+          hasOverrides ? normalizedOverrides : undefined,
+        );
+        await logGasDetails({
+          ethereum,
+          tag: GAS_LOG_TAGS.approve,
+          stage: 'Permit2 approve (hardware)',
+          gasOptions,
+          gasMax: normalizedOverrides.gasMax,
+          gasMultiplierPct: normalizedOverrides.gasMultiplierPct,
+        });
 
         // Build unsigned transaction
         const unsignedTx = {
@@ -320,7 +361,19 @@ export async function approveEthereumToken(
           }, ${universalRouterAddress}, ${permit2Amount.toString()}, ${expiration})`
         );
 
-        const permit2GasOptions = await ethereum.prepareGasOptions(undefined, APPROVE_GAS_LIMIT);
+        const permit2GasOptions = await ethereum.prepareGasOptions(
+          undefined,
+          APPROVE_GAS_LIMIT,
+          hasOverrides ? normalizedOverrides : undefined,
+        );
+        await logGasDetails({
+          ethereum,
+          tag: GAS_LOG_TAGS.approve,
+          stage: 'Permit2 approve',
+          gasOptions: permit2GasOptions,
+          gasMax: normalizedOverrides.gasMax,
+          gasMultiplierPct: normalizedOverrides.gasMultiplierPct,
+        });
         permit2GasOptions.nonce = await getNextNonce(ethereum.provider, address, network);
         lastGasOptions = permit2GasOptions;
         lastTxValue = (permit2GasOptions as any).value;
@@ -411,9 +464,12 @@ export const approveRoute: FastifyPluginAsync = async (fastify) => {
       },
     },
     async (request) => {
-      const { network, address, walletAddress, spender, token, amount } = request.body;
+      const { network, address, walletAddress, spender, token, amount, gasMax, gasMultiplierPct } = request.body;
       const resolvedAddress = walletAddress || address;
-      return await approveEthereumToken(fastify, network, resolvedAddress, spender, token, amount);
+      return await approveEthereumToken(fastify, network, resolvedAddress, spender, token, amount, {
+        gasMax,
+        gasMultiplierPct,
+      });
     }
   );
 };

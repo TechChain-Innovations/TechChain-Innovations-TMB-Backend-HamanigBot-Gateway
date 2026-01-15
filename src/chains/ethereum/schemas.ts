@@ -109,6 +109,18 @@ export const ApproveRequestSchema = Type.Object({
       default: '',
     })
   ),
+  gasMax: Type.Optional(
+    Type.Number({
+      description: 'Maximum gas price in Gwei (EVM). If omitted or 0, gateway auto gas is used.',
+      minimum: 0,
+    })
+  ),
+  gasMultiplierPct: Type.Optional(
+    Type.Number({
+      description: 'Gas multiplier percentage (e.g., 40 means +40% to base fee).',
+      minimum: 0,
+    })
+  ),
 });
 
 // Approve response schema

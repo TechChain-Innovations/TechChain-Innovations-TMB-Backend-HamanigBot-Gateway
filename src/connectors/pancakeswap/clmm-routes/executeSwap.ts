@@ -5,6 +5,7 @@ import { Ethereum } from '../../../chains/ethereum/ethereum';
 import { EthereumLedger } from '../../../chains/ethereum/ethereum-ledger';
 import { acquireWalletLock, getNextNonce, invalidateNonce } from '../../../chains/ethereum/nonce-manager';
 import { waitForTransactionWithTimeout } from '../../../chains/ethereum/ethereum.utils';
+import { GAS_LOG_TAGS, logGasDetails } from '../../../chains/ethereum/gas-logger';
 import { ExecuteSwapRequestType, SwapExecuteResponseType, SwapExecuteResponse } from '../../../schemas/router-schema';
 import { logger } from '../../../services/logger';
 import { Pancakeswap } from '../pancakeswap';
@@ -172,6 +173,12 @@ export async function executeClmmSwap(
 
       // Get gas options using estimateGasPrice
       const gasOptions = await ethereum.prepareGasOptions(undefined, CLMM_SWAP_GAS_LIMIT);
+      await logGasDetails({
+        ethereum,
+        tag: GAS_LOG_TAGS.swap,
+        stage: 'Pancakeswap CLMM swap (hardware)',
+        gasOptions,
+      });
       lastGasOptions = gasOptions;
 
       // Build unsigned transaction with gas parameters
@@ -208,6 +215,12 @@ export async function executeClmmSwap(
 
       // Use Ethereum's gas options
       const txOptions = await ethereum.prepareGasOptions(undefined, CLMM_SWAP_GAS_LIMIT);
+      await logGasDetails({
+        ethereum,
+        tag: GAS_LOG_TAGS.swap,
+        stage: 'Pancakeswap CLMM swap',
+        gasOptions: txOptions,
+      });
       txOptions.nonce = await getNextNonce(ethereum.provider, walletAddress, network);
       lastGasOptions = txOptions;
       lastTxValue = (txOptions as any).value;
