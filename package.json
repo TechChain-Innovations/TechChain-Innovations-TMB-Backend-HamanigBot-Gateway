@@ -170,7 +170,7 @@
     "/dist"
   ],
   "lint-staged": {
-    "{src,test}/**/*.{ts,js}": "eslint --fix",
+    "{src,test}/**/*.{ts,js}": "./scripts/lint.sh --fix",
     "**/*.json": [
       "prettier --write"
     ]

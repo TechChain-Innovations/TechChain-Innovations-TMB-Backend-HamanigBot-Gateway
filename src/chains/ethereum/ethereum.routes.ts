@@ -5,6 +5,7 @@ import { allowancesRoute } from './routes/allowances';
 import { approveRoute } from './routes/approve';
 import { balancesRoute } from './routes/balances';
 import { estimateGasRoute } from './routes/estimate-gas';
+import { nonceRoute } from './routes/nonce';
 import { pollRoute } from './routes/poll';
 import { statusRoute } from './routes/status';
 import { unwrapRoute } from './routes/unwrap';
@@ -31,6 +32,7 @@ export const ethereumRoutes: FastifyPluginAsync = async (fastify) => {
   fastify.register(approveRoute);
   fastify.register(wrapRoute);
   fastify.register(unwrapRoute);
+  fastify.register(nonceRoute); // Nonce API for wallet-service coordination
 };
 
 export default ethereumRoutes;

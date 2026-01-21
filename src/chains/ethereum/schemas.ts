@@ -18,7 +18,7 @@ export const EthereumNetworkParameter = Type.Optional(
     description: 'The Ethereum network to use',
     default: ethereumChainConfig.defaultNetwork,
     enum: EthereumNetworks,
-  })
+  }),
 );
 
 // Address parameter with proper defaults
@@ -26,7 +26,7 @@ export const EthereumAddressParameter = Type.Optional(
   Type.String({
     description: 'Ethereum wallet address',
     default: ethereumChainConfig.defaultWallet,
-  })
+  }),
 );
 
 // Status request schema
@@ -43,7 +43,7 @@ export const EthereumBalanceRequest = Type.Object({
       description:
         'A list of token symbols (ETH, USDC, WETH) or token addresses. Both formats are accepted and will be automatically detected. An empty array is treated the same as if the parameter was not provided, returning only non-zero balances (with the exception of ETH).',
       examples: [EXAMPLE_BALANCE_TOKENS],
-    })
+    }),
   ),
 });
 
@@ -68,7 +68,7 @@ export const AllowancesRequestSchema = Type.Object({
   walletAddress: Type.Optional(
     Type.String({
       description: 'Alias for address; if provided, this wallet will be used',
-    })
+    }),
   ),
   spender: Type.String({
     description: 'Connector name (e.g., uniswap/clmm, uniswap/amm, 0x/router) or contract address',
@@ -93,7 +93,7 @@ export const ApproveRequestSchema = Type.Object({
   walletAddress: Type.Optional(
     Type.String({
       description: 'Alias for address; if provided, this wallet will be used',
-    })
+    }),
   ),
   spender: Type.String({
     description: 'Connector name (e.g., uniswap/clmm, uniswap/amm, 0x/router) contract address',
@@ -107,19 +107,19 @@ export const ApproveRequestSchema = Type.Object({
     Type.String({
       description: 'The amount to approve. If not provided, defaults to maximum amount (unlimited approval).',
       default: '',
-    })
+    }),
   ),
   gasMax: Type.Optional(
     Type.Number({
       description: 'Maximum gas price in Gwei (EVM). If omitted or 0, gateway auto gas is used.',
       minimum: 0,
-    })
+    }),
   ),
   gasMultiplierPct: Type.Optional(
     Type.Number({
       description: 'Gas multiplier percentage (e.g., 40 means +40% to base fee).',
       minimum: 0,
-    })
+    }),
   ),
 });
 
@@ -136,7 +136,7 @@ export const ApproveResponseSchema = Type.Object({
       amount: Type.String(),
       nonce: Type.Number(),
       fee: Type.String(),
-    })
+    }),
   ),
 });
 
@@ -147,7 +147,7 @@ export const WrapRequestSchema = Type.Object({
   walletAddress: Type.Optional(
     Type.String({
       description: 'Alias for address; if provided, this wallet will be used',
-    })
+    }),
   ),
   amount: Type.String({
     description: 'The amount of native token to wrap (e.g., ETH, BNB, AVAX)',
@@ -169,7 +169,7 @@ export const WrapResponseSchema = Type.Object({
       wrappedAddress: Type.String(),
       nativeToken: Type.String(),
       wrappedToken: Type.String(),
-    })
+    }),
   ),
 });
 
@@ -180,7 +180,7 @@ export const UnwrapRequestSchema = Type.Object({
   walletAddress: Type.Optional(
     Type.String({
       description: 'Alias for address; if provided, this wallet will be used',
-    })
+    }),
   ),
   amount: Type.String({
     description: 'The amount of wrapped token to unwrap (e.g., WETH, WBNB, WAVAX)',
@@ -202,7 +202,96 @@ export const UnwrapResponseSchema = Type.Object({
       wrappedAddress: Type.String(),
       nativeToken: Type.String(),
       wrappedToken: Type.String(),
-    })
+    }),
+  ),
+});
+
+// ============================================================================
+// Nonce API Schemas (for wallet-service coordination)
+// ============================================================================
+
+// Nonce acquire request schema
+export const NonceAcquireRequestSchema = Type.Object({
+  network: EthereumNetworkParameter,
+  walletAddress: Type.String({
+    description: 'Wallet address to acquire nonce for',
+  }),
+  ttlMs: Type.Optional(
+    Type.Number({
+      description: 'Time-to-live for the lock in milliseconds (default: 60000)',
+      default: 60000,
+      minimum: 1000,
+      maximum: 300000, // Max 5 minutes
+    }),
+  ),
+});
+
+// Nonce acquire response schema
+export const NonceAcquireResponseSchema = Type.Object({
+  lockId: Type.String({
+    description: 'Unique lock identifier - must be used to release the lock',
+  }),
+  nonce: Type.Number({
+    description: 'The nonce to use for the transaction',
+  }),
+  expiresAt: Type.Number({
+    description: 'Unix timestamp (ms) when the lock will automatically expire',
+  }),
+});
+
+// Nonce release request schema
+export const NonceReleaseRequestSchema = Type.Object({
+  network: EthereumNetworkParameter,
+  walletAddress: Type.String({
+    description: 'Wallet address the lock was acquired for',
+  }),
+  lockId: Type.String({
+    description: 'Lock identifier from the acquire response',
+  }),
+  transactionSent: Type.Boolean({
+    description: 'Whether the transaction was actually sent to blockchain. If false, nonce is rolled back.',
+  }),
+});
+
+// Nonce release response schema
+export const NonceReleaseResponseSchema = Type.Object({
+  success: Type.Boolean({
+    description: 'Whether the lock was successfully released',
+  }),
+  message: Type.Optional(
+    Type.String({
+      description: 'Additional information about the release',
+    }),
+  ),
+});
+
+// Nonce invalidate request schema
+export const NonceInvalidateRequestSchema = Type.Object({
+  network: EthereumNetworkParameter,
+  walletAddress: Type.String({
+    description: 'Wallet address to invalidate nonce cache for',
+  }),
+});
+
+// Nonce invalidate response schema
+export const NonceInvalidateResponseSchema = Type.Object({
+  success: Type.Boolean(),
+});
+
+// Nonce status response schema
+export const NonceStatusResponseSchema = Type.Object({
+  activeLocks: Type.Number({
+    description: 'Number of currently active (non-expired) locks',
+  }),
+  locks: Type.Array(
+    Type.Object({
+      lockId: Type.String(),
+      address: Type.String(),
+      scope: Type.Optional(Type.String()),
+      nonce: Type.Number(),
+      expiresAt: Type.Number(),
+      isExpired: Type.Boolean(),
+    }),
   ),
 });
 
@@ -215,3 +304,12 @@ export type WrapRequestType = Static<typeof WrapRequestSchema>;
 export type WrapResponseType = Static<typeof WrapResponseSchema>;
 export type UnwrapRequestType = Static<typeof UnwrapRequestSchema>;
 export type UnwrapResponseType = Static<typeof UnwrapResponseSchema>;
+
+// Nonce API types
+export type NonceAcquireRequestType = Static<typeof NonceAcquireRequestSchema>;
+export type NonceAcquireResponseType = Static<typeof NonceAcquireResponseSchema>;
+export type NonceReleaseRequestType = Static<typeof NonceReleaseRequestSchema>;
+export type NonceReleaseResponseType = Static<typeof NonceReleaseResponseSchema>;
+export type NonceInvalidateRequestType = Static<typeof NonceInvalidateRequestSchema>;
+export type NonceInvalidateResponseType = Static<typeof NonceInvalidateResponseSchema>;
+export type NonceStatusResponseType = Static<typeof NonceStatusResponseSchema>;

@@ -107,5 +107,11 @@
     "symbol": "MTK",
     "address": "0x517EFF8DBd2B02AB9Ccec4Ed475F8Fe2b5870B71",
     "decimals": 18
+  },
+  {
+    "name": "SAI",
+    "symbol": "SAI",
+    "address": "0x3567aa22cd3ab9aEf23d7e18EE0D7cf16974d7e6",
+    "decimals": 18
   }
 ]

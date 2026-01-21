@@ -306,5 +306,16 @@
     "baseSymbol": "USDC",
     "quoteSymbol": "WETH",
     "address": "0x3289680dd4d6c10bb19b899729cda5eef58aeff1"
+  },
+  {
+    "type": "amm",
+    "network": "mainnet",
+    "baseSymbol": "SAI",
+    "quoteSymbol": "WETH",
+    "address": "0x1f9b4a5ddd586f8471cda36262c52e5872a7d257",
+    "baseAddress": "0x3567aa22cd3ab9aEf23d7e18EE0D7cf16974d7e6",
+    "quoteAddress": "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
+    "baseDecimals": 18,
+    "quoteDecimals": 18
   }
 ]

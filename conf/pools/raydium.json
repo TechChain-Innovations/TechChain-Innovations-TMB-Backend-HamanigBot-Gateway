@@ -219,7 +219,7 @@
   {
     "type": "clmm",
     "network": "mainnet-beta",
-    "baseSymbol": "SOL",
+    "baseSymbol": "WSOL",
     "quoteSymbol": "RAY",
     "address": "2AXXcN6oN9bBT5owwmTH53C7QHUXvhLeu718Kqt8rvY2"
   },
@@ -315,13 +315,13 @@
   {
     "type": "clmm",
     "network": "mainnet-beta",
-    "baseSymbol": "WSOL",
-    "quoteSymbol": "SOLAJAK",
+    "baseSymbol": "SOLAJAK",
+    "quoteSymbol": "WSOL",
     "address": "ETHuNky683FwJdxYDpiYJDbJR7ugkFm9CNaB81T6xsrS",
-    "baseAddress": "So11111111111111111111111111111111111111112",
-    "quoteAddress": "t2UzNy364yssziQm53Gg6sUuhicjccoB2usPLq2Pb9e",
-    "baseDecimals": 9,
-    "quoteDecimals": 6
+    "baseAddress": "t2UzNy364yssziQm53Gg6sUuhicjccoB2usPLq2Pb9e",
+    "quoteAddress": "So11111111111111111111111111111111111111112",
+    "baseDecimals": 6,
+    "quoteDecimals": 9
   },
   {
     "type": "clmm",

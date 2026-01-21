@@ -13,7 +13,9 @@ import Fastify, { FastifyInstance, FastifyError } from 'fastify';
 // Internal dependencies
 
 // Routes
+import { getEthereumChainConfig, getEthereumNetworkConfig } from './chains/ethereum/ethereum.config';
 import { ethereumRoutes } from './chains/ethereum/ethereum.routes';
+import { getSolanaChainConfig, getSolanaNetworkConfig } from './chains/solana/solana.config';
 import { solanaRoutes } from './chains/solana/solana.routes';
 import { configRoutes } from './config/config.routes';
 import { register0xRoutes } from './connectors/0x/0x.routes';
@@ -30,8 +32,6 @@ import { quoteCache } from './services/quote-cache';
 import { tokensRoutes } from './tokens/tokens.routes';
 import { GATEWAY_VERSION } from './version';
 import { walletRoutes } from './wallet/wallet.routes';
-import { getEthereumChainConfig, getEthereumNetworkConfig } from './chains/ethereum/ethereum.config';
-import { getSolanaChainConfig, getSolanaNetworkConfig } from './chains/solana/solana.config';
 
 import { asciiLogo } from './index';
 
@@ -192,9 +192,16 @@ const configureGatewayServer = () => {
   }
 
   // Register rate limiting globally
+  const rateLimitConfig = ConfigManagerV2.getInstance().get('server.rateLimit') ?? {};
+  const rateLimitMax =
+    typeof rateLimitConfig.max === 'number' && Number.isFinite(rateLimitConfig.max) && rateLimitConfig.max > 0
+      ? rateLimitConfig.max
+      : 10000;
+  const rateLimitWindow = rateLimitConfig.timeWindow ?? '1 minute';
+
   server.register(fastifyRateLimit, {
-    max: 1000, // maximum 1000 requests
-    timeWindow: '1 minute', // per 1 minute window
+    max: rateLimitMax, // maximum requests within timeWindow
+    timeWindow: rateLimitWindow, // per timeWindow
     global: true, // apply to all routes
     errorResponseBuilder: function (_request, context) {
       return {
@@ -356,7 +363,7 @@ const configureGatewayServer = () => {
   server.addContentTypeParser(
     'application/json',
     { parseAs: 'string' },
-    server.getDefaultJsonParser('ignore', 'ignore')
+    server.getDefaultJsonParser('ignore', 'ignore'),
   );
 
   // Global error handler

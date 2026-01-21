@@ -1,5 +1,5 @@
-# GMT Offset in hours (e.g. -8 for Pacific US Time, -5 for Eastern US Time)
-GMTOffset: -8
+# GMT Offset in hours (e.g. 9 for UTC+9, -8 for Pacific US Time, -5 for Eastern US Time)
+GMTOffset: 9
 
 # Port on which to run the Gateway server
 port: 15888
@@ -18,6 +18,13 @@ logPath: './logs'
 # IPs allowed to access gateway. localhost is allowed by default.
 ipWhitelist: []
 
+# Global rate limiting for the Gateway (Fastify rate-limit)
+# max: number of requests allowed per timeWindow
+# timeWindow: duration string (e.g. "1 minute") or milliseconds
+rateLimit:
+  max: 10000
+  timeWindow: '1 minute'
+
 # If true, logs will be stored in logPath and printed to stdout. If false, they
 # will only be stored in logPath and not printed to stdout.
 logToStdOut: true
@@ -27,4 +34,3 @@ fastifyLogs: false
 
 # Log level for the application (debug, info, warn, error)
 logLevel: debug
-

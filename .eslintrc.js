@@ -29,6 +29,7 @@ module.exports = {
     '@typescript-eslint/no-inferrable-types': 'off',
     '@typescript-eslint/no-namespace': 'off',
     'no-unused-expressions': 'warn',
+    '@typescript-eslint/no-unused-expressions': 'off',
     'no-useless-escape': 'warn',
     'no-constant-condition': 'warn',
     'no-async-promise-executor': 'warn',
