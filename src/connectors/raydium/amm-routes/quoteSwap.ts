@@ -394,9 +394,14 @@ export async function getRawSwapQuote(
   const baseDecimals = baseIsMintA ? result.poolInfo.mintA.decimals : result.poolInfo.mintB.decimals;
   const quoteDecimals = baseIsMintA ? result.poolInfo.mintB.decimals : result.poolInfo.mintA.decimals;
 
-  // baseReserve and quoteReserve are now at result level, not result.poolInfo
-  const baseReserveBefore = new Decimal(result.baseReserve.toString()).div(10 ** baseDecimals);
-  const quoteReserveBefore = new Decimal(result.quoteReserve.toString()).div(10 ** quoteDecimals);
+  // baseReserve and quoteReserve from SDK correspond to mintA and mintB respectively.
+  // We need to swap them if our trading "base" token is mintB (not mintA).
+  const baseReserveBefore = baseIsMintA
+    ? new Decimal(result.baseReserve.toString()).div(10 ** baseDecimals)
+    : new Decimal(result.quoteReserve.toString()).div(10 ** baseDecimals);
+  const quoteReserveBefore = baseIsMintA
+    ? new Decimal(result.quoteReserve.toString()).div(10 ** quoteDecimals)
+    : new Decimal(result.baseReserve.toString()).div(10 ** quoteDecimals);
 
   let baseReserveAfter = baseReserveBefore;
   let quoteReserveAfter = quoteReserveBefore;

@@ -160,7 +160,8 @@ describe('GET /quote-swap', () => {
     expect(body).toHaveProperty('amountOut', 14.85);
     expect(body).toHaveProperty('minAmountOut', 14.7);
     expect(body).toHaveProperty('price', 148.5);
-    expect(body).toHaveProperty('priceImpactPct', 1);
+    // Price impact is now correctly calculated from reserves, not SDK's static value
+    expect(body.priceImpactPct).toBeCloseTo(0.02, 1);
     expect(body).toHaveProperty('tokenIn', mockSOL.address);
     expect(body).toHaveProperty('tokenOut', mockUSDC.address);
     expect(body).toHaveProperty('maxAmountIn', 0.1);
@@ -239,7 +240,8 @@ describe('GET /quote-swap', () => {
     expect(body).toHaveProperty('tokenOut', mockSOL.address);
     expect(body).toHaveProperty('minAmountOut', 0.1);
     expect(body).toHaveProperty('price', 150);
-    expect(body).toHaveProperty('priceImpactPct', 1);
+    // Price impact is now correctly calculated from reserves, not SDK's static value
+    expect(body.priceImpactPct).toBeCloseTo(0.02, 1);
     expect(body).toHaveProperty('slippagePct', 1);
   });
 
