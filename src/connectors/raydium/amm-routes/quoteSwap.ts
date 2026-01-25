@@ -195,17 +195,6 @@ async function quoteCpmmSwap(
   } else if (amountOut) {
     // Exact output (swap base out)
     const outputAmount = new BN(amountOut);
-    const outputMintPk = new PublicKey(outputMint);
-
-    // Log inputs to swapBaseOut
-    logger.info(`CurveCalculator.swapBaseOut inputs: 
-      poolMintA=${poolInfo.mintA.address}, 
-      poolMintB=${poolInfo.mintB.address}, 
-      tradeFeeRate=${rpcData.configInfo!.tradeFeeRate.toString()}, 
-      baseReserve=${rpcData.baseReserve.toString()}, 
-      quoteReserve=${rpcData.quoteReserve.toString()}, 
-      outputMint=${outputMintPk.toString()}, 
-      outputAmount=${outputAmount.toString()}`);
 
     // swap pool mintA for mintB
     // input vault = reserves of the token we're paying (inputMint)
@@ -427,19 +416,6 @@ export async function getRawSwapQuote(
   const priceImpactPct = beforePrice.gt(0)
     ? beforePrice.minus(afterPrice).abs().div(beforePrice).mul(100).toNumber()
     : 0;
-
-  logger.info(
-    `[PriceImpact] baseIsMintA=${baseIsMintA} | baseDecimals=${baseDecimals} | quoteDecimals=${quoteDecimals}`,
-  );
-  logger.info(
-    `[PriceImpact] baseReserveBefore=${baseReserveBefore.toString()} | quoteReserveBefore=${quoteReserveBefore.toString()}`,
-  );
-  logger.info(
-    `[PriceImpact] baseReserveAfter=${baseReserveAfter.toString()} | quoteReserveAfter=${quoteReserveAfter.toString()}`,
-  );
-  logger.info(
-    `[PriceImpact] beforePrice=${beforePrice.toString()} | afterPrice=${afterPrice.toString()} | impact=${priceImpactPct}%`,
-  );
 
   return {
     ...result,
