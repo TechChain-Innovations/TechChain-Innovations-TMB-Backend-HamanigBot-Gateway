@@ -6,13 +6,13 @@ import { Solana } from '../../../chains/solana/solana';
 import { ExecuteSwapResponse, ExecuteSwapResponseType, ExecuteSwapRequestType } from '../../../schemas/amm-schema';
 import { logger } from '../../../services/logger';
 import { sanitizeErrorMessage } from '../../../services/sanitize';
+import { executeSwap as executeClmmSwap, mapSwapError } from '../clmm-routes/executeSwap';
 import { Raydium } from '../raydium';
 import { RaydiumConfig } from '../raydium.config';
+import { isValidClmm } from '../raydium.utils';
 import { RaydiumAmmExecuteSwapRequest } from '../schemas';
 
 import { getRawSwapQuote } from './quoteSwap';
-import { executeSwap as executeClmmSwap, mapSwapError } from '../clmm-routes/executeSwap';
-import { isValidClmm } from '../raydium.utils';
 
 async function executeSwap(
   fastify: FastifyInstance,
@@ -23,7 +23,8 @@ async function executeSwap(
   amount: number,
   side: 'BUY' | 'SELL',
   poolAddress: string,
-  slippagePct?: number
+  slippagePct?: number,
+  useNativeSolBalance: boolean = false,
 ): Promise<ExecuteSwapResponseType> {
   const solana = await Solana.getInstance(network);
   const raydium = await Raydium.getInstance(network);
@@ -49,7 +50,7 @@ async function executeSwap(
     quoteToken,
     amount,
     side,
-    effectiveSlippage
+    effectiveSlippage,
   );
 
   const inputToken = quote.inputToken;
@@ -78,6 +79,10 @@ async function executeSwap(
         fixedSide: 'out',
         inputMint: inputToken.address,
         txVersion: raydium.txVersion,
+        config: {
+          inputUseSolBalance: useNativeSolBalance,
+          outputUseSolBalance: useNativeSolBalance,
+        },
         computeBudgetConfig: {
           units: COMPUTE_UNITS,
           microLamports: priorityFeePerCU,
@@ -93,6 +98,10 @@ async function executeSwap(
         fixedSide: 'in',
         inputMint: inputToken.address,
         txVersion: raydium.txVersion,
+        config: {
+          inputUseSolBalance: useNativeSolBalance,
+          outputUseSolBalance: useNativeSolBalance,
+        },
         computeBudgetConfig: {
           units: COMPUTE_UNITS,
           microLamports: priorityFeePerCU,
@@ -100,6 +109,8 @@ async function executeSwap(
       })) as { transaction: VersionedTransaction });
     }
   } else if (poolInfo.poolType === 'cpmm') {
+    // Note: CPMM SDK automatically handles native SOL when token is WSOL
+    // No explicit useSOLBalance needed - SDK checks if mint === WSOLMint internally
     if (side === 'BUY') {
       // CPMM swap base out (exact output)
       ({ transaction } = (await raydium.raydiumSDK.cpmm.swap({
@@ -147,7 +158,7 @@ async function executeSwap(
     transaction,
     walletAddress,
     isHardwareWallet,
-    wallet
+    wallet,
   )) as VersionedTransaction;
 
   // Simulate transaction with proper error handling
@@ -163,14 +174,14 @@ async function executeSwap(
     inputToken.address,
     outputToken.address,
     walletAddress,
-    side
+    side,
   );
 
   if (result.status === 1) {
     logger.info(
       `Swap executed successfully: ${result.data?.amountIn.toFixed(4)} ${
         inputToken.symbol
-      } -> ${result.data?.amountOut.toFixed(4)} ${outputToken.symbol}`
+      } -> ${result.data?.amountOut.toFixed(4)} ${outputToken.symbol}`,
     );
   }
 
@@ -256,7 +267,7 @@ export const executeSwapRoute: FastifyPluginAsync = async (fastify) => {
                 side as 'BUY' | 'SELL',
                 poolAddress,
                 slippagePct,
-                useNativeSolBalance ?? false
+                useNativeSolBalance ?? false,
               );
             }
           } catch (e) {
@@ -265,7 +276,7 @@ export const executeSwapRoute: FastifyPluginAsync = async (fastify) => {
               throw e;
             }
             logger.warn(
-              `Pool type detection failed for ${poolAddress}, falling back to AMM path: ${(e as Error)?.message}`
+              `Pool type detection failed for ${poolAddress}, falling back to AMM path: ${(e as Error)?.message}`,
             );
           }
         }
@@ -281,7 +292,7 @@ export const executeSwapRoute: FastifyPluginAsync = async (fastify) => {
 
           if (!baseTokenInfo || !quoteTokenInfo) {
             throw fastify.httpErrors.badRequest(
-              sanitizeErrorMessage('Token not found: {}', !baseTokenInfo ? baseToken : quoteToken)
+              sanitizeErrorMessage('Token not found: {}', !baseTokenInfo ? baseToken : quoteToken),
             );
           }
 
@@ -294,12 +305,12 @@ export const executeSwapRoute: FastifyPluginAsync = async (fastify) => {
             networkToUse,
             'amm',
             baseTokenInfo.symbol,
-            quoteTokenInfo.symbol
+            quoteTokenInfo.symbol,
           );
 
           if (!pool) {
             throw fastify.httpErrors.notFound(
-              `No AMM pool found for ${baseTokenInfo.symbol}-${quoteTokenInfo.symbol} on Raydium`
+              `No AMM pool found for ${baseTokenInfo.symbol}-${quoteTokenInfo.symbol} on Raydium`,
             );
           }
 
@@ -317,12 +328,13 @@ export const executeSwapRoute: FastifyPluginAsync = async (fastify) => {
           amount,
           side as 'BUY' | 'SELL',
           poolAddressToUse,
-          slippagePct
+          slippagePct,
+          useNativeSolBalance ?? false,
         );
       } catch (e) {
         throw mapSwapError(fastify, e, errContext);
       }
-    }
+    },
   );
 };
 
